@@ -6,10 +6,10 @@ namespace App\Infrastructure\Doctrine\Type;
 
 use App\Domain\ValueObject\TelegramId;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Doctrine\DBAL\Types\StringType;
+use Doctrine\DBAL\Types\Type;
 use Override;
 
-final class TelegramIdType extends StringType
+final class TelegramIdType extends Type
 {
     public const string NAME = 'telegram_id';
 
@@ -27,5 +27,13 @@ final class TelegramIdType extends StringType
         }
 
         return new TelegramId($value);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
+    {
+        return $platform->getIntegerTypeDeclarationSQL($column);
     }
 }
