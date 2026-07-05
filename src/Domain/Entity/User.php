@@ -15,4 +15,12 @@ final class User
         public ?TelegramId $telegramId,
     ) {
     }
+
+    public static function joinByTelegram(TelegramId $telegramId): self
+    {
+        return new self(
+            Id::generate(),
+            $telegramId
+        );
+    }
 }
