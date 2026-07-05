@@ -12,6 +12,7 @@
       }
     },
     "require": {
+      "php": ">=8.4",
       "slim/slim": "^4.15",
       "slim/psr7": "^1.8",
       "webmozart/assert": "^2.4",
@@ -19,7 +20,11 @@
       "slim/twig-view": "^3.0",
       "php-di/php-di": "^7.0",
       "ramsey/uuid": "^4.9",
-      "predis/predis": "^2.0"
+      "predis/predis": "^2.0",
+      "doctrine/orm": "^3.6",
+      "symfony/console": "^8.1",
+      "laminas/laminas-config-aggregator": "^1.20",
+        "doctrine/migrations": "^3.9"
     },
     "require-dev": {
       "phpunit/phpunit": "^13.0",
@@ -33,6 +38,7 @@
       "cs-fix": "phpcbf src",
       "phpstan": "phpstan analyse src --level=max",
       "test": "phpunit --colors=always",
-      "test-coverage": "phpunit --colors=always --coverage-text"
+      "test-coverage": "phpunit --colors=always --coverage-text",
+      "app": "php bin/app.php --ansi"
     }
 }

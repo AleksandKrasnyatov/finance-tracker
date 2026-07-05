@@ -7,16 +7,16 @@ namespace App\Domain\ValueObject;
 use Ramsey\Uuid\Uuid;
 use Webmozart\Assert\Assert;
 
-final class Id
+final readonly class Id
 {
-    private(set) string $value {
-        get {
-            return $this->value;
-        }
-    }
+    /**
+     * @var non-empty-string
+     */
+    public string $value;
 
     public function __construct(string $value)
     {
+        Assert::notEmpty($value);
         Assert::uuid($value);
         $this->value = mb_strtolower($value);
     }
@@ -26,4 +26,8 @@ final class Id
         return new self(Uuid::uuid4()->toString());
     }
 
+    public function __toString(): string
+    {
+        return $this->value;
+    }
 }

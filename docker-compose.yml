@@ -15,9 +15,28 @@ services:
       context: docker/php-fpm
     volumes:
       - ./:/app
+    env_file:
+      - .env
 
   php-cli:
     build:
       context: docker/php-cli
     volumes:
       - ./:/app
+    env_file:
+      - .env
+
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - postgres:/var/lib/postgresql
+      - ./:/app
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres:

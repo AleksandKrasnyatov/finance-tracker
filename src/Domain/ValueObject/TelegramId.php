@@ -13,4 +13,9 @@ final readonly class TelegramId
     ) {
         Assert::notEq($this->value, 0);
     }
+
+    public function __toString(): string
+    {
+        return (string) $this->value;
+    }
 }
