@@ -1,9 +1,15 @@
 <?php
 
-use App\Kernel;
+declare(strict_types=1);
 
-require_once dirname(__DIR__) . '/vendor/autoload_runtime.php';
+use Psr\Container\ContainerInterface;
+use Slim\App;
 
-return static function (array $context) {
-    return new Kernel($context['APP_ENV'], (bool) $context['APP_DEBUG']);
-};
+require __DIR__ . '/../vendor/autoload.php';
+
+/** @var ContainerInterface $container */
+$container = require __DIR__ . '/../config/container.php';
+
+/** @var App $app */
+$app = (require __DIR__ . '/../config/app.php')($container);
+$app->run();
