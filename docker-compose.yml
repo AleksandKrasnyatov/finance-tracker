@@ -17,6 +17,8 @@ services:
       - ./:/app
     env_file:
       - .env
+    depends_on:
+      - postgres
 
   php-cli:
     build:
@@ -25,6 +27,8 @@ services:
       - ./:/app
     env_file:
       - .env
+    depends_on:
+      - postgres
 
   postgres:
     image: postgres:latest

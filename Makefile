@@ -1,4 +1,4 @@
-init: copy-env docker-down-clear docker-build docker-up composer-install
+init: copy-env docker-down-clear docker-build docker-up composer-install migrations
 up: docker-up
 down: docker-down
 restart: down up
@@ -21,6 +21,9 @@ docker-build:
 
 composer-install:
 	docker compose run --rm php-cli composer install
+
+migrations:
+	docker compose run --rm php-cli composer app migrations:migrate -- --no-interaction
 
 test:
 	docker compose run --rm php-cli composer test
