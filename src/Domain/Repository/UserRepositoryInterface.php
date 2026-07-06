@@ -3,10 +3,16 @@
 namespace App\Domain\Repository;
 
 use App\Domain\Entity\User;
+use App\Domain\ValueObject\Id;
 use App\Domain\ValueObject\TelegramId;
+use DomainException;
 
 interface UserRepositoryInterface
 {
+    /**
+     * @throws DomainException
+     */
+    public function get(Id $id): User;
     public function hasByTelegramId(TelegramId $telegramId): bool;
     public function save(User $user): void;
 }

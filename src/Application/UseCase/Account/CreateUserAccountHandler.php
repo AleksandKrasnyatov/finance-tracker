@@ -1,0 +1,37 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Application\UseCase\Account;
+
+use App\Domain\Entity\Account;
+use App\Domain\Enum\AccountType;
+use App\Domain\Repository\UserRepositoryInterface;
+use App\Domain\ValueObject\Id;
+use App\Infrastructure\Repository\Flusher;
+use DateTimeImmutable;
+
+final readonly class CreateUserAccountHandler
+{
+    public function __construct(
+        private UserRepositoryInterface $users,
+        private Flusher $flusher
+    ) {
+    }
+
+    public function handle(CreateUserAccountCommand $command): void
+    {
+        $user = $this->users->get(new Id($command->userId));
+
+        $account = new Account(
+            Id::generate(),
+            $command->name ?? 'Основной',
+            AccountType::tryFrom($command->type) ?? AccountType::Personal,
+            new DateTimeImmutable()
+        );
+
+        $user->addAccount($account);
+
+        $this->flusher->flush();
+    }
+}

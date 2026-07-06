@@ -11,7 +11,7 @@ use Override;
 
 final class IdType extends GuidType
 {
-    public const string NAME = 'user_id';
+    public const string NAME = 'id_type';
 
     #[Override]
     public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed

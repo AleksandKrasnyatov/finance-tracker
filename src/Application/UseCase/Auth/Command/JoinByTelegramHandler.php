@@ -7,6 +7,7 @@ namespace App\Application\UseCase\Auth\Command;
 use App\Domain\Entity\User;
 use App\Domain\Repository\UserRepositoryInterface;
 use App\Domain\ValueObject\TelegramId;
+use DateTimeImmutable;
 use DomainException;
 
 final readonly class JoinByTelegramHandler
@@ -23,7 +24,7 @@ final readonly class JoinByTelegramHandler
             throw new DomainException('User with this telegram id already exists.');
         }
 
-        $user = User::joinByTelegram($telegramId);
+        $user = User::joinByTelegram($telegramId, new DateTimeImmutable());
 
         $this->users->save($user);
     }
