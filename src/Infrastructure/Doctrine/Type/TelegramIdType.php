@@ -34,6 +34,6 @@ final class TelegramIdType extends Type
      */
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getIntegerTypeDeclarationSQL($column);
+        return $platform->getBigIntTypeDeclarationSQL($column);
     }
 }

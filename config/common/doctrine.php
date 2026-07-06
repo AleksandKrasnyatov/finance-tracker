@@ -7,6 +7,7 @@ use App\Infrastructure\Doctrine\Type\TelegramIdType;
 use Doctrine\Common\EventManager;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Schema\AbstractAsset;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -47,6 +48,14 @@ return [
 
         $config->setNamingStrategy(new UnderscoreNamingStrategy());
         $config->enableNativeLazyObjects(true);
+
+        $config->setSchemaAssetsFilter(function (string|object $assetName): bool {
+            $tableName = is_object($assetName)
+                ? (method_exists($assetName, 'getObjectName') ? $assetName->getObjectName() : (string) $assetName)
+                : $assetName;
+
+            return $tableName !== 'migrations';
+        });
 
         foreach ($settings['types'] as $name => $class) {
             if (!Type::hasType($name)) {

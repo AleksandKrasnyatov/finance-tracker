@@ -19,7 +19,7 @@ final class User
         #[ORM\Column(type: IdType::NAME)]
         #[ORM\Id]
         public Id $id,
-        #[ORM\Column(type: TelegramIdType::NAME)]
+        #[ORM\Column(type: TelegramIdType::NAME, nullable: true)]
         public ?TelegramId $telegramId,
     ) {
     }
