@@ -16,15 +16,15 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Table(name: 'users')]
-final readonly class User
+final class User
 {
     #[ORM\Column(type: IdType::NAME)]
     #[ORM\Id]
-    public Id $id;
+    public readonly Id $id;
     #[ORM\Column(type: TelegramIdType::NAME, nullable: true)]
-    public ?TelegramId $telegramId;
+    public readonly ?TelegramId $telegramId;
     #[ORM\Column(type: 'datetime_immutable')]
-    public DateTimeImmutable $createdAt;
+    public readonly DateTimeImmutable $createdAt;
     /**
      * @var Collection<int, UserAccount>
      */
@@ -53,6 +53,6 @@ final readonly class User
 
     public function addAccount(Account $account): void
     {
-        $this->accounts->add($account);
+        $this->accounts->add(new UserAccount($this, $account));
     }
 }

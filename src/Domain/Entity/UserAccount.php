@@ -19,7 +19,7 @@ final readonly class UserAccount
     #[ORM\Column(type: Types::GUID)]
     private UuidInterface $id;
 
-    #[ORM\ManyToOne(targetEntity: Account::class, inversedBy: 'members')]
+    #[ORM\ManyToOne(targetEntity: Account::class, inversedBy: 'members', cascade: ['persist'])]
     #[ORM\JoinColumn(name: 'account_id', nullable: false)]
     private Account $account;
 
@@ -31,8 +31,8 @@ final readonly class UserAccount
     private DateTimeImmutable $joinedAt;
 
     public function __construct(
-        Account $account,
         User $user,
+        Account $account,
     ) {
         $this->id = Uuid::uuid4();
         $this->account = $account;

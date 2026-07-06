@@ -6,8 +6,10 @@ namespace App\Infrastructure\Repository;
 
 use App\Domain\Entity\User;
 use App\Domain\Repository\UserRepositoryInterface;
+use App\Domain\ValueObject\Id;
 use App\Domain\ValueObject\TelegramId;
 use Doctrine\ORM\EntityManagerInterface;
+use DomainException;
 
 final readonly class UserRepository implements UserRepositoryInterface
 {
@@ -25,5 +27,14 @@ final readonly class UserRepository implements UserRepositoryInterface
     {
         $this->entityManager->persist($user);
         $this->entityManager->flush();
+    }
+
+    public function get(Id $id): User
+    {
+        $user = $this->entityManager->getRepository(User::class)->find($id->value);
+        if ($user === null) {
+            throw new DomainException('User is not found.');
+        }
+        return $user;
     }
 }
