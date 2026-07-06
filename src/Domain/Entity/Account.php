@@ -21,7 +21,7 @@ final readonly class Account
     #[ORM\Id]
     public Id $id;
     #[ORM\Column(type: 'string', length: 100)]
-    private string $name;
+    public string $name;
     #[ORM\Column(type:  Types::ENUM, enumType: AccountType::class)]
     public AccountType $type;
     #[ORM\Column(type: 'datetime_immutable')]

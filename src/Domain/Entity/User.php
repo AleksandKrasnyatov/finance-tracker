@@ -55,4 +55,13 @@ final class User
     {
         $this->accounts->add(new UserAccount($this, $account));
     }
+
+    /**
+     * @return Account[]
+     */
+    public function getAccounts(): array
+    {
+        /** @var Account[] */
+        return $this->accounts->map(static fn (UserAccount $network) => $network->getAccount())->toArray();
+    }
 }

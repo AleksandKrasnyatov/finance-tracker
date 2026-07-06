@@ -39,4 +39,9 @@ final readonly class UserAccount
         $this->user = $user;
         $this->joinedAt = new DateTimeImmutable();
     }
+
+    public function getAccount(): Account
+    {
+        return $this->account;
+    }
 }
