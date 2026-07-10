@@ -2,7 +2,7 @@ init: copy-env docker-down-clear docker-build docker-up composer-install migrati
 up: docker-up
 down: docker-down
 restart: down up
-check: lint cs-check phpstan test
+check: validate-schema lint cs-check phpstan test
 
 copy-env:
 	[ -f .env ] || cp .env.example .env
@@ -24,6 +24,9 @@ composer-install:
 
 migrations:
 	docker compose run --rm php-cli composer app migrations:migrate -- --no-interaction
+
+validate-schema:
+	docker compose run --rm php-cli composer app orm:validate-schema -- -v
 
 test:
 	docker compose run --rm php-cli composer test

@@ -34,8 +34,8 @@
     },
     "scripts": {
       "lint": "phplint",
-      "cs-check": "phpcs src",
-      "cs-fix": "phpcbf src",
+      "cs-check": "phpcs",
+      "cs-fix": "phpcbf",
       "phpstan": "phpstan analyse src --level=max",
       "test": "phpunit --colors=always",
       "test-coverage": "phpunit --colors=always --coverage-text",

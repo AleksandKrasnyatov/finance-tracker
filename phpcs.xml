@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<ruleset name="FinanceTracker">
+    <arg name="basepath" value="."/>
+    <arg name="colors"/>
+    <arg value="np"/>
+
+    <file>src</file>
+
+    <exclude-pattern>*/Infrastructure/Doctrine/Migration/*</exclude-pattern>
+
+    <rule ref="PSR12"/>
+</ruleset>
