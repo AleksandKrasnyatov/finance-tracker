@@ -26,6 +26,11 @@ final readonly class Id
         return new self(Uuid::uuid4()->toString());
     }
 
+    public function equals(Id $id): bool
+    {
+        return $this->value === $id->value;
+    }
+
     public function __toString(): string
     {
         return $this->value;

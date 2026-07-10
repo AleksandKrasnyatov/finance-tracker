@@ -23,14 +23,11 @@ final readonly class CreateUserAccountHandler
     {
         $user = $this->users->get(new Id($command->userId));
 
-        $account = new Account(
-            Id::generate(),
+        Account::create(
+            $user,
             $command->name ?? 'Основной',
             AccountType::tryFrom($command->type) ?? AccountType::Personal,
-            new DateTimeImmutable()
         );
-
-        $user->addAccount($account);
 
         $this->flusher->flush();
     }

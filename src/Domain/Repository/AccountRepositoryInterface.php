@@ -3,8 +3,13 @@
 namespace App\Domain\Repository;
 
 use App\Domain\Entity\Account;
+use App\Domain\ValueObject\Id;
+use DomainException;
 
 interface AccountRepositoryInterface
 {
-    public function save(Account $account): void;
+    /**
+     * @throws DomainException
+     */
+    public function get(Id $id): Account;
 }
