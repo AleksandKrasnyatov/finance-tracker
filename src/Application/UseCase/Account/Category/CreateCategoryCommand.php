@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\UseCase\Category;
+namespace App\Application\UseCase\Account\Category;
 
 final readonly class CreateCategoryCommand
 {
