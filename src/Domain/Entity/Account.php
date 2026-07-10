@@ -94,6 +94,25 @@ final class Account
         $this->categories->add($category);
     }
 
+    public function changeCategoryName(User $user, Id $categoryId, string $name): void
+    {
+        if (!$this->canManage($user)) {
+            throw new DomainException('User is not allowed to manage this account.');
+        }
+
+        $category = $this->getCategory($categoryId);
+
+        if (mb_strtolower($name) === $category->name) {
+            return;
+        }
+
+        if ($this->hasCategoryWithParams($name, $category->type)) {
+            throw new DomainException('Category with this name and type already exists.');
+        }
+
+        $category->rename($name);
+    }
+
     public function addTransaction(User $user, Category $category, Money $money, string $description = ''): void
     {
         if (!$this->canManage($user)) {
@@ -142,6 +161,19 @@ final class Account
     public function getTransactions(): array
     {
         return $this->transactions->toArray();
+    }
+
+    public function getCategory(Id $categoryId): Category
+    {
+        $category = $this->categories->findFirst(
+            static fn (int $key, Category $category) => $category->id->equals($categoryId),
+        );
+
+        if (empty($category)) {
+            throw new DomainException('Category not found.');
+        }
+
+        return $category;
     }
 
     /**

@@ -49,4 +49,10 @@ final class Category
         $this->name = mb_strtolower($name);
         $this->creator = $creator;
     }
+
+    public function rename(string $name): void
+    {
+        Assert::notEmpty($name);
+        $this->name = mb_strtolower($name);
+    }
 }
