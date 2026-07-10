@@ -33,6 +33,8 @@ class UserTest extends TestCase
 
         self::assertCount(1, $accounts = $user->getAccounts());
         self::assertEquals($account, $accounts[0] ?? null);
+        self::assertTrue($account->canManage($user));
+        self::assertCount(1, $account->getMembers());
     }
 
     public function testAddAccountDirectly(): void
@@ -44,5 +46,7 @@ class UserTest extends TestCase
 
         self::assertCount(1, $accounts = $user->getAccounts());
         self::assertEquals($account, $accounts[0] ?? null);
+        self::assertTrue($account->canManage($user));
+        self::assertCount(1, $account->getMembers());
     }
 }

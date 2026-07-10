@@ -8,24 +8,24 @@ use App\Domain\Entity\Account;
 use App\Domain\Entity\Category;
 use App\Domain\Enum\TransactionType;
 use App\Domain\Repository\CategoryRepositoryInterface;
-use App\Domain\ValueObject\Id;
 use Doctrine\ORM\EntityManagerInterface;
 use DomainException;
 
 final readonly class CategoryRepository implements CategoryRepositoryInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager,
     ) {
     }
 
-    public function getByNameAndType(string $name, TransactionType $type): Category
+    public function getByParams(Account $account, string $name, TransactionType $type): Category
     {
         $entity = $this->entityManager
             ->getRepository(Category::class)
             ->findOneBy([
-                'name' => $name,
-                'type' => $type->value,
+                'account' => $account,
+                'name' => mb_strtolower($name),
+                'type' => $type,
             ]);
 
         if ($entity === null) {

@@ -9,20 +9,24 @@ use App\Domain\Enum\AccountType;
 use App\Domain\ValueObject\Id;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use Test\Unit\Builder\UserBuilder;
 
 class CreateAccountTest extends TestCase
 {
     public function testSuccess(): void
     {
-        $account = new Account(
-            $id = Id::generate(),
+        $owner = new UserBuilder()->build();
+        $account = Account::create(
+            $owner,
             $name = 'TeSt',
             $type = AccountType::Personal,
         );
 
-        self::assertEquals($account->id, $id);
-        self::assertEquals($account->name, mb_strtolower($name));
-        self::assertEquals($account->type, $type);
+        self::assertEquals(mb_strtolower($name), $account->name);
+        self::assertEquals($type, $account->type);
+        self::assertTrue($account->canManage($owner));
+        self::assertCount(1, $owner->getAccounts());
+        self::assertEquals($account, $owner->getAccounts()[0]);
     }
 
     public function testException(): void

@@ -24,34 +24,38 @@ final readonly class Account
     #[ORM\Column(type: IdType::NAME)]
     #[ORM\Id]
     public Id $id;
+
     #[ORM\Column(type: Types::STRING, length: 100)]
     public string $name;
+
     #[ORM\Column(type: Types::ENUM, enumType: AccountType::class)]
     public AccountType $type;
+
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
     public DateTimeImmutable $createdAt;
+
     /**
      * @var Collection<int, UserAccount>
      */
     #[ORM\OneToMany(targetEntity: UserAccount::class, mappedBy: 'account')]
     private Collection $members;
+
     /**
      * @var Collection<int, Transaction>
      */
-    #[ORM\OneToMany(targetEntity: Transaction::class, cascade: ['persist'])]
-    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'account_id')]
+    #[ORM\OneToMany(targetEntity: Transaction::class, mappedBy: 'account', cascade: ['persist'])]
     private Collection $transactions;
+
     /**
      * @var Collection<int, Category>
      */
-    #[ORM\OneToMany(targetEntity: Category::class, cascade: ['persist'])]
-    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'account_id')]
-    public Collection $categories;
+    #[ORM\OneToMany(targetEntity: Category::class, mappedBy: 'account', cascade: ['persist'])]
+    private Collection $categories;
 
     public function __construct(
         Id $id,
         string $name,
-        AccountType $type
+        AccountType $type,
     ) {
         Assert::notEmpty($name);
 
@@ -67,10 +71,11 @@ final readonly class Account
     public static function create(
         User $owner,
         string $name,
-        AccountType $type
+        AccountType $type,
     ): self {
         $account = new self(Id::generate(), $name, $type);
         $owner->addAccount($account);
+
         return $account;
     }
 
@@ -84,7 +89,7 @@ final readonly class Account
             throw new DomainException('Category with this name and type already exists.');
         }
 
-        $category = new Category(Id::generate(), $type, $name, $user);
+        $category = new Category(Id::generate(), $this, $type, $name, $user);
 
         $this->categories->add($category);
     }
@@ -99,7 +104,7 @@ final readonly class Account
             throw new DomainException('Account does not have this category.');
         }
 
-        $transaction = new Transaction($user, $category, $money, $description);
+        $transaction = new Transaction($this, $user, $category, $money, $description);
 
         $this->transactions->add($transaction);
     }
@@ -113,7 +118,7 @@ final readonly class Account
     {
         return array_any(
             $this->getMembers(),
-            fn($member) => $user->equals($member->user)
+            static fn (UserAccount $member) => $user->equals($member->user),
         );
     }
 
@@ -124,8 +129,11 @@ final readonly class Account
 
     public function hasCategoryWithParams(string $name, TransactionType $type): bool
     {
-        return $this->categories
-            ->exists(fn (int $key, Category $category) => $category->name === $name && $category->type === $type);
+        $name = mb_strtolower($name);
+
+        return $this->categories->exists(
+            static fn (int $key, Category $category) => $category->name === $name && $category->type === $type,
+        );
     }
 
     /**

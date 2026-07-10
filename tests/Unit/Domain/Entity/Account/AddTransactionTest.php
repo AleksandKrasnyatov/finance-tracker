@@ -7,8 +7,8 @@ namespace Test\Unit\Domain\Entity\Account;
 use App\Domain\Entity\Account;
 use App\Domain\Entity\Category;
 use App\Domain\Entity\User;
+use App\Domain\Enum\AccountType;
 use App\Domain\Enum\TransactionType;
-use App\Domain\ValueObject\Id;
 use App\Domain\ValueObject\Money;
 use DomainException;
 use PHPUnit\Framework\Attributes\Test;
@@ -44,6 +44,7 @@ class AddTransactionTest extends TestCase
 
         self::assertCount(1, $this->account->getTransactions());
         $transaction = $this->account->getTransactions()[0];
+        self::assertEquals($this->account, $transaction->account);
         self::assertEquals($transaction->category, $this->accountCategory);
         self::assertEquals($transaction->money, $money);
         self::assertEquals($transaction->creator, $this->accountCreator);
@@ -55,10 +56,15 @@ class AddTransactionTest extends TestCase
     {
         $this->expectException(DomainException::class);
 
+        $otherUser = new UserBuilder()->build();
+        $otherAccount = Account::create($otherUser, 'other', AccountType::Personal);
+        $otherAccount->addCategory($otherUser, TransactionType::Expense, 'food');
+        $foreignCategory = $otherAccount->getCategories()[0];
+
         try {
             $this->account->addTransaction(
                 $this->accountCreator,
-                new Category(Id::generate(), TransactionType::Expense, 'food', $this->accountCreator),
+                $foreignCategory,
                 new Money('100.00')
             );
         } catch (DomainException $e) {

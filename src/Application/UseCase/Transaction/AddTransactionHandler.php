@@ -31,7 +31,7 @@ final readonly class AddTransactionHandler
         if (!$type = TransactionType::tryFrom($command->type)) {
             throw new DomainException('Invalid transaction type');
         }
-        $category = $this->categories->getByNameAndType($command->category, $type);
+        $category = $this->categories->getByParams($account, $command->category, $type);
         $money = new Money($command->amount);
 
         $account->addTransaction($user, $category, $money, $command->description);
