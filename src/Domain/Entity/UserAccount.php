@@ -12,21 +12,22 @@ use Ramsey\Uuid\Uuid;
 #[ORM\Entity]
 #[ORM\Table(name: 'user_accounts')]
 #[ORM\UniqueConstraint(columns: ['account_id', 'user_id'])]
-final readonly class UserAccount
+final class UserAccount
 {
     #[ORM\Id]
     #[ORM\Column(type: Types::GUID)]
-    public string $id;
+    private(set) string $id;
+
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
-    public DateTimeImmutable $joinedAt;
+    private(set) DateTimeImmutable $joinedAt;
 
     #[ORM\ManyToOne(cascade: ['persist'], inversedBy: 'members')]
     #[ORM\JoinColumn(name: 'account_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
-    public Account $account;
+    private(set) Account $account;
 
     #[ORM\ManyToOne(inversedBy: 'accounts')]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
-    public User $user;
+    private(set) User $user;
 
     public function __construct(
         User $user,

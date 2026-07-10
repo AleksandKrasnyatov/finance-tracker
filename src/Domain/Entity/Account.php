@@ -19,20 +19,20 @@ use Webmozart\Assert\Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'accounts')]
-final readonly class Account
+final class Account
 {
     #[ORM\Column(type: IdType::NAME)]
     #[ORM\Id]
-    public Id $id;
+    private(set) Id $id;
 
     #[ORM\Column(type: Types::STRING, length: 100)]
-    public string $name;
+    private(set) string $name;
 
     #[ORM\Column(type: Types::ENUM, enumType: AccountType::class)]
-    public AccountType $type;
+    private(set) AccountType $type;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
-    public DateTimeImmutable $createdAt;
+    private(set) DateTimeImmutable $createdAt;
 
     /**
      * @var Collection<int, UserAccount>

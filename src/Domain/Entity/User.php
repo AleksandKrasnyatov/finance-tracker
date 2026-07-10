@@ -21,11 +21,11 @@ final class User
 {
     #[ORM\Column(type: IdType::NAME)]
     #[ORM\Id]
-    public readonly Id $id;
+    private(set) Id $id;
     #[ORM\Column(type: TelegramIdType::NAME, nullable: true)]
-    public readonly ?TelegramId $telegramId;
+    private(set) ?TelegramId $telegramId;
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
-    public readonly DateTimeImmutable $createdAt;
+    private(set) DateTimeImmutable $createdAt;
     /**
      * @var Collection<int, UserAccount>
      */

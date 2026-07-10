@@ -36,7 +36,7 @@ final class AddCategoryTest extends TestCase
         self::assertEquals($category->type, $type);
         self::assertEquals($category->name, mb_strtolower($name));
         self::assertEquals($this->account, $category->account);
-        self::assertEquals($category->getCreator(), $this->accountCreator);
+        self::assertEquals($category->creator, $this->accountCreator);
     }
 
     #[Test]

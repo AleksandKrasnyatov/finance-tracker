@@ -13,32 +13,32 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'transactions')]
-final readonly class Transaction
+final class Transaction
 {
     #[ORM\Column(type: IdType::NAME)]
     #[ORM\Id]
-    public Id $id;
+    private(set) Id $id;
 
     #[ORM\ManyToOne(inversedBy: 'transactions')]
     #[ORM\JoinColumn(name: 'account_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
-    public Account $account;
+    private(set) Account $account;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'category_id', referencedColumnName: 'id', nullable: false)]
-    public Category $category;
+    private(set) Category $category;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
-    public string $description;
+    private(set) string $description;
 
     #[ORM\Embedded]
-    public Money $money;
+    private(set) Money $money;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'created_by', referencedColumnName: 'id', nullable: false)]
-    public User $creator;
+    private(set) User $creator;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
-    public DateTimeImmutable $createdAt;
+    private(set) DateTimeImmutable $createdAt;
 
     public function __construct(
         Account $account,

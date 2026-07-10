@@ -6,8 +6,8 @@ namespace App\Domain\ValueObject;
 
 use App\Domain\Enum\Currency;
 use Doctrine\DBAL\Types\Types;
-use Webmozart\Assert\Assert;
 use Doctrine\ORM\Mapping as ORM;
+use Webmozart\Assert\Assert;
 
 #[ORM\Embeddable]
 final readonly class Money

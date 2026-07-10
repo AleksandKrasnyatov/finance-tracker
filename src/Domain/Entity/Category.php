@@ -14,25 +14,25 @@ use Webmozart\Assert\Assert;
 #[ORM\Entity]
 #[ORM\Table(name: 'categories')]
 #[ORM\UniqueConstraint(columns: ['account_id', 'name', 'type'])]
-final readonly class Category
+final class Category
 {
     #[ORM\Column(type: IdType::NAME)]
     #[ORM\Id]
-    public Id $id;
+    private(set) Id $id;
 
     #[ORM\ManyToOne(inversedBy: 'categories')]
     #[ORM\JoinColumn(name: 'account_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
-    public Account $account;
+    private(set) Account $account;
 
     #[ORM\Column(type: Types::ENUM, enumType: TransactionType::class)]
-    public TransactionType $type;
+    private(set) TransactionType $type;
 
     #[ORM\Column(type: Types::STRING, length: 30)]
-    public string $name;
+    private(set) string $name;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'created_by', referencedColumnName: 'id', nullable: false)]
-    private User $creator;
+    private(set) User $creator;
 
     public function __construct(
         Id $id,
@@ -48,10 +48,5 @@ final readonly class Category
         $this->type = $type;
         $this->name = mb_strtolower($name);
         $this->creator = $creator;
-    }
-
-    public function getCreator(): User
-    {
-        return $this->creator;
     }
 }
