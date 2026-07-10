@@ -31,7 +31,7 @@ final readonly class Category
     public string $name;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: false)]
+    #[ORM\JoinColumn(name: 'created_by', referencedColumnName: 'id', nullable: false)]
     private User $creator;
 
     public function __construct(
