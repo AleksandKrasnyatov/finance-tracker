@@ -22,10 +22,10 @@ final readonly class AccountRepository implements AccountRepositoryInterface
 
     public function get(Id $id): Account
     {
-        $user = $this->entityManager->getRepository(Account::class)->find($id->value);
-        if ($user === null) {
+        $entity = $this->entityManager->getRepository(Account::class)->find($id->value);
+        if ($entity === null) {
             throw new DomainException('Account is not found.');
         }
-        return $user;
+        return $entity;
     }
 }

@@ -85,6 +85,7 @@ return [
             'subscribers' => [],
             'metadata_dirs' => [
                 __DIR__ . '/../../src/Domain/Entity',
+                __DIR__ . '/../../src/Domain/ValueObject',
             ],
             'types' => [
                 IdType::NAME => IdType::class,

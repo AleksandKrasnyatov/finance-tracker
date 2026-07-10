@@ -19,26 +19,19 @@ final readonly class CategoryRepository implements CategoryRepositoryInterface
     ) {
     }
 
-    public function get(Id $id): Account
-    {
-        $user = $this->entityManager->getRepository(Account::class)->find($id->value);
-        if ($user === null) {
-            throw new DomainException('User is not found.');
-        }
-        return $user;
-    }
-
     public function getByNameAndType(string $name, TransactionType $type): Category
     {
-        $user = $this->entityManager
+        $entity = $this->entityManager
             ->getRepository(Category::class)
-            ->findBy([
+            ->findOneBy([
                 'name' => $name,
                 'type' => $type->value,
             ]);
-        if ($user === null) {
-            throw new DomainException('User is not found.');
+
+        if ($entity === null) {
+            throw new DomainException('Category is not found.');
         }
-        return $user;
+
+        return $entity;
     }
 }

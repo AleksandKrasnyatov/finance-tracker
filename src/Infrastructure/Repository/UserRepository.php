@@ -31,10 +31,10 @@ final readonly class UserRepository implements UserRepositoryInterface
 
     public function get(Id $id): User
     {
-        $user = $this->entityManager->getRepository(User::class)->find($id->value);
-        if ($user === null) {
+        $entity = $this->entityManager->getRepository(User::class)->find($id->value);
+        if ($entity === null) {
             throw new DomainException('User is not found.');
         }
-        return $user;
+        return $entity;
     }
 }

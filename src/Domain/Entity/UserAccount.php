@@ -8,7 +8,6 @@ use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'user_accounts')]
@@ -17,31 +16,25 @@ final readonly class UserAccount
 {
     #[ORM\Id]
     #[ORM\Column(type: Types::GUID)]
-    private UuidInterface $id;
+    public string $id;
+    #[ORM\Column(type: Types::DATE_IMMUTABLE)]
+    public DateTimeImmutable $joinedAt;
 
-    #[ORM\ManyToOne(targetEntity: Account::class, inversedBy: 'members', cascade: ['persist'])]
-    #[ORM\JoinColumn(name: 'account_id', nullable: false)]
-    private Account $account;
+    #[ORM\ManyToOne(cascade: ['persist'], inversedBy: 'members')]
+    #[ORM\JoinColumn(name: 'account_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    public Account $account;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'accounts')]
+    #[ORM\ManyToOne(inversedBy: 'accounts')]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
-    private User $user;
-
-    #[ORM\Column(type: 'datetime_immutable')]
-    private DateTimeImmutable $joinedAt;
+    public User $user;
 
     public function __construct(
         User $user,
         Account $account,
     ) {
-        $this->id = Uuid::uuid4();
+        $this->id = Uuid::uuid4()->toString();
         $this->account = $account;
         $this->user = $user;
         $this->joinedAt = new DateTimeImmutable();
-    }
-
-    public function getAccount(): Account
-    {
-        return $this->account;
     }
 }
