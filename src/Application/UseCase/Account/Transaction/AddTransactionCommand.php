@@ -13,6 +13,7 @@ final readonly class AddTransactionCommand
         public string $amount,
         public string $category,
         public string $description = '',
+        public ?string $date = null,
     ) {
     }
 }

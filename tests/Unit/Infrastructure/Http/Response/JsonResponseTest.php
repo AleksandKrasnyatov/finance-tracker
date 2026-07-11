@@ -31,7 +31,7 @@ class JsonResponseTest extends TestCase
     }
 
     /**
-     * @return array[]
+     * @return array<string, list<array<string, int|string|null>|int|stdClass|string|null>>
      */
     public static function getCases(): array
     {

@@ -70,6 +70,11 @@ final class Category
         $this->transactions->add($transaction);
     }
 
+    public function removeTransaction(Transaction $transaction): void
+    {
+        $this->transactions->removeElement($transaction);
+    }
+
     /**
      * @return Transaction[]
      */

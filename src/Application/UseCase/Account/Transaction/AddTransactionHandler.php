@@ -11,6 +11,8 @@ use App\Domain\Repository\UserRepositoryInterface;
 use App\Domain\ValueObject\Id;
 use App\Domain\ValueObject\Money;
 use App\Infrastructure\Repository\Flusher;
+use DateMalformedStringException;
+use DateTimeImmutable;
 use DomainException;
 
 final readonly class AddTransactionHandler
@@ -23,6 +25,9 @@ final readonly class AddTransactionHandler
     ) {
     }
 
+    /**
+     * @throws DateMalformedStringException
+     */
     public function handle(AddTransactionCommand $command): void
     {
         $user = $this->users->get(new Id($command->userId));
@@ -33,8 +38,9 @@ final readonly class AddTransactionHandler
         }
         $category = $this->categories->getByParams($account, $command->category, $type);
         $money = new Money($command->amount);
+        $date = $command->date ? new DateTimeImmutable($command->date) : null;
 
-        $account->addTransaction($user, $category, $money, $command->description);
+        $account->addTransaction($user, $category, $money, $command->description, $date);
 
         $this->flusher->flush();
     }

@@ -132,7 +132,28 @@ final class Account
         $this->categories->removeElement($category);
     }
 
-    public function addTransaction(User $user, Category $category, Money $money, string $description = ''): void
+    public function addTransaction(
+        User $user,
+        Category $category,
+        Money $money,
+        string $description = '',
+        ?DateTimeImmutable $date = null
+    ): void {
+        if (!$this->canManage($user)) {
+            throw new DomainException('User is not allowed to manage this account.');
+        }
+
+        if (!$this->hasCategory($category)) {
+            throw new DomainException('Account does not have this category.');
+        }
+
+        $transaction = new Transaction($this, $user, $category, $money, $description, $date);
+
+        $this->transactions->add($transaction);
+        $category->addTransaction($transaction);
+    }
+
+    public function changeTransactionCategory(User $user, Id $transactionId, Category $category): void
     {
         if (!$this->canManage($user)) {
             throw new DomainException('User is not allowed to manage this account.');
@@ -142,9 +163,12 @@ final class Account
             throw new DomainException('Account does not have this category.');
         }
 
-        $transaction = new Transaction($this, $user, $category, $money, $description);
+        if (!$transaction = $this->getTransaction($transactionId)) {
+            throw new DomainException('Transaction not found.');
+        }
 
-        $this->transactions->add($transaction);
+        $transaction->category->removeTransaction($transaction);
+        $transaction->changeCategory($user, $category);
         $category->addTransaction($transaction);
     }
 
@@ -157,7 +181,7 @@ final class Account
     {
         return array_any(
             $this->getMembers(),
-            static fn (UserAccount $member) => $user->equals($member->user),
+            static fn(UserAccount $member) => $user->equals($member->user),
         );
     }
 
@@ -171,7 +195,14 @@ final class Account
         $name = mb_strtolower($name);
 
         return $this->categories->exists(
-            static fn (int $key, Category $category) => $category->name === $name && $category->type === $type,
+            static fn(int $key, Category $category) => $category->name === $name && $category->type === $type,
+        );
+    }
+
+    public function getTransaction(Id $transactionId): ?Transaction
+    {
+        return $this->transactions->findFirst(
+            static fn(int $key, Transaction $transaction) => $transaction->id->equals($transactionId),
         );
     }
 
@@ -186,7 +217,7 @@ final class Account
     public function getCategory(Id $categoryId): ?Category
     {
         return $this->categories->findFirst(
-            static fn (int $key, Category $category) => $category->id->equals($categoryId),
+            static fn(int $key, Category $category) => $category->id->equals($categoryId),
         );
     }
 
