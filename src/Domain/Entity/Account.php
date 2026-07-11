@@ -94,6 +94,21 @@ final class Account
         $this->categories->add($category);
     }
 
+    public function addDefaultCategories(User $user): void
+    {
+        if (!$this->canManage($user)) {
+            throw new DomainException('User is not allowed to manage this account.');
+        }
+
+        if (!$this->categories->isEmpty()) {
+            throw new DomainException('Account already has categories.');
+        }
+
+        foreach (Category::defaults() as [$type, $name]) {
+            $this->categories->add(new Category(Id::generate(), $this, $type, $name, $user));
+        }
+    }
+
     public function changeCategoryName(User $user, Id $categoryId, string $name): void
     {
         if (!$this->canManage($user)) {

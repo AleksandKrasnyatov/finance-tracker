@@ -59,6 +59,24 @@ final class Category
         $this->transactions = new ArrayCollection();
     }
 
+    /**
+     * @return list<array{TransactionType, non-empty-string}>
+     */
+    public static function defaults(): array
+    {
+        return [
+            [TransactionType::Income, 'зарплата'],
+            [TransactionType::Income, 'другое'],
+            [TransactionType::Expense, 'продукты'],
+            [TransactionType::Expense, 'кафе'],
+            [TransactionType::Expense, 'транспорт'],
+            [TransactionType::Expense, 'жильё'],
+            [TransactionType::Expense, 'здоровье'],
+            [TransactionType::Expense, 'развлечения'],
+            [TransactionType::Expense, 'другое'],
+        ];
+    }
+
     public function rename(string $name): void
     {
         Assert::notEmpty($name);
