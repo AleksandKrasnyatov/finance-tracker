@@ -5,8 +5,15 @@
     <arg value="np"/>
 
     <file>src</file>
+    <file>tests</file>
 
     <exclude-pattern>*/Infrastructure/Doctrine/Migration/*</exclude-pattern>
 
-    <rule ref="PSR12"/>
+    <rule ref="PSR12">
+        <exclude name="Generic.Files.LineLength"/>
+    </rule>
+
+    <rule ref="Generic.Files.LineLength">
+        <exclude-pattern>*/tests/*</exclude-pattern>
+    </rule>
 </ruleset>

@@ -36,7 +36,7 @@
       "lint": "phplint",
       "cs-check": "phpcs",
       "cs-fix": "phpcbf",
-      "phpstan": "phpstan analyse src --level=max",
+      "phpstan": "phpstan analyse",
       "test": "phpunit --colors=always",
       "test-coverage": "phpunit --colors=always --coverage-text",
       "app": "php bin/app.php --ansi"
