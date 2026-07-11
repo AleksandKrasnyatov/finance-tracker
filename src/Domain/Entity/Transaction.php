@@ -23,7 +23,7 @@ final class Transaction
     #[ORM\JoinColumn(name: 'account_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     private(set) Account $account;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(inversedBy: 'transactions')]
     #[ORM\JoinColumn(name: 'category_id', referencedColumnName: 'id', nullable: false)]
     private(set) Category $category;
 

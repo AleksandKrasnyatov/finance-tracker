@@ -100,7 +100,9 @@ final class Account
             throw new DomainException('User is not allowed to manage this account.');
         }
 
-        $category = $this->getCategory($categoryId);
+        if (!$category = $this->getCategory($categoryId)) {
+            throw new DomainException('Category not found.');
+        }
 
         if (mb_strtolower($name) === $category->name) {
             return;
@@ -111,6 +113,23 @@ final class Account
         }
 
         $category->rename($name);
+    }
+
+    public function deleteCategory(User $user, Id $categoryId): void
+    {
+        if (!$this->canManage($user)) {
+            throw new DomainException('User is not allowed to manage this account.');
+        }
+
+        if (!$category = $this->getCategory($categoryId)) {
+            return;
+        }
+
+        if (!empty($category->getTransactions())) {
+            throw new DomainException('Category has transactions. Delete transactions first.');
+        }
+
+        $this->categories->removeElement($category);
     }
 
     public function addTransaction(User $user, Category $category, Money $money, string $description = ''): void
@@ -126,6 +145,7 @@ final class Account
         $transaction = new Transaction($this, $user, $category, $money, $description);
 
         $this->transactions->add($transaction);
+        $category->addTransaction($transaction);
     }
 
     public function addMember(UserAccount $account): void
@@ -163,17 +183,11 @@ final class Account
         return $this->transactions->toArray();
     }
 
-    public function getCategory(Id $categoryId): Category
+    public function getCategory(Id $categoryId): ?Category
     {
-        $category = $this->categories->findFirst(
+        return $this->categories->findFirst(
             static fn (int $key, Category $category) => $category->id->equals($categoryId),
         );
-
-        if (empty($category)) {
-            throw new DomainException('Category not found.');
-        }
-
-        return $category;
     }
 
     /**

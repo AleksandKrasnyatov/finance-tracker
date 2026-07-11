@@ -2,13 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Test\Unit\Domain\Entity\Account;
+namespace Test\Unit\Domain\Entity\Account\Category;
 
 use App\Domain\Entity\Account;
 use App\Domain\Entity\Category;
 use App\Domain\Entity\User;
 use App\Domain\Enum\TransactionType;
-use App\Domain\ValueObject\Id;
 use DomainException;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

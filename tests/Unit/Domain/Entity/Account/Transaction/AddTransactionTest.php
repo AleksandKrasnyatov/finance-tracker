@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Test\Unit\Domain\Entity\Account;
+namespace Test\Unit\Domain\Entity\Account\Transaction;
 
 use App\Domain\Entity\Account;
 use App\Domain\Entity\Category;

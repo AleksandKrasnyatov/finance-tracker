@@ -7,6 +7,8 @@ namespace App\Domain\Entity;
 use App\Domain\Enum\TransactionType;
 use App\Domain\ValueObject\Id;
 use App\Infrastructure\Doctrine\Type\IdType;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Webmozart\Assert\Assert;
@@ -34,6 +36,12 @@ final class Category
     #[ORM\JoinColumn(name: 'created_by', referencedColumnName: 'id', nullable: false)]
     private(set) User $creator;
 
+    /**
+     * @var Collection<int, Transaction>
+     */
+    #[ORM\OneToMany(targetEntity: Transaction::class, mappedBy: 'category', cascade: ['persist'])]
+    private Collection $transactions;
+
     public function __construct(
         Id $id,
         Account $account,
@@ -48,11 +56,25 @@ final class Category
         $this->type = $type;
         $this->name = mb_strtolower($name);
         $this->creator = $creator;
+        $this->transactions = new ArrayCollection();
     }
 
     public function rename(string $name): void
     {
         Assert::notEmpty($name);
         $this->name = mb_strtolower($name);
+    }
+
+    public function addTransaction(Transaction $transaction): void
+    {
+        $this->transactions->add($transaction);
+    }
+
+    /**
+     * @return Transaction[]
+     */
+    public function getTransactions(): array
+    {
+        return $this->transactions->toArray();
     }
 }
