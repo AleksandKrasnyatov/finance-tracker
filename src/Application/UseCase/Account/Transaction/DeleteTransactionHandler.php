@@ -1,0 +1,30 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Application\UseCase\Account\Transaction;
+
+use App\Domain\Repository\AccountRepositoryInterface;
+use App\Domain\Repository\UserRepositoryInterface;
+use App\Domain\ValueObject\Id;
+use App\Infrastructure\Repository\Flusher;
+
+final readonly class DeleteTransactionHandler
+{
+    public function __construct(
+        private UserRepositoryInterface $users,
+        private AccountRepositoryInterface $accounts,
+        private Flusher $flusher,
+    ) {
+    }
+
+    public function handle(DeleteTransactionCommand $command): void
+    {
+        $user = $this->users->get(new Id($command->userId));
+        $account = $this->accounts->get(new Id($command->accountId));
+
+        $account->deleteTransaction($user, new Id($command->transactionId));
+
+        $this->flusher->flush();
+    }
+}

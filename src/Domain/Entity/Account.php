@@ -198,6 +198,20 @@ final class Account
         $transaction->changeDate($user, $date);
     }
 
+    public function deleteTransaction(User $user, Id $transactionId): void
+    {
+        if (!$this->canManage($user)) {
+            throw new DomainException('User is not allowed to manage this account.');
+        }
+
+        if (!$transaction = $this->getTransaction($transactionId)) {
+            return;
+        }
+
+        $transaction->category->removeTransaction($transaction);
+        $this->transactions->removeElement($transaction);
+    }
+
     public function addMember(UserAccount $account): void
     {
         $this->members->add($account);
