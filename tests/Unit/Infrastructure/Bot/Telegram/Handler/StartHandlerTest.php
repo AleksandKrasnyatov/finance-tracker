@@ -19,8 +19,8 @@ final class StartHandlerTest extends TestCase
     #[Test]
     public function givenStartCommandWhenHandledThenUserIsOnboardedAndWelcomed(): void
     {
-        $users = $this->createMock(UserRepositoryInterface::class);
-        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $users = $this->createStub(UserRepositoryInterface::class);
+        $entityManager = $this->createStub(EntityManagerInterface::class);
 
         $container = new Container();
         $container->set(UserRepositoryInterface::class, $users);
