@@ -45,3 +45,6 @@ phpstan:
 
 lint:
 	docker compose run --rm php-cli composer lint
+
+telegram-polling:
+	docker compose run --rm php-cli composer app telegram:run
