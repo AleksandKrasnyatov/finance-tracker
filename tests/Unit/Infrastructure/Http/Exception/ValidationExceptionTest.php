@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Test\Unit\Infrastructure\Http\Exception;
 
 use App\Infrastructure\Http\Exception\ValidationException;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-class ValidationExceptionTest extends TestCase
+final class ValidationExceptionTest extends TestCase
 {
-    public function testSuccess(): void
+    #[Test]
+    public function givenMessageAndErrorsWhenValidationExceptionIsCreatedThenMessageAndErrorsAreAccessible(): void
     {
         $exception = new ValidationException(
             ['body' => 'Тело запроса должно быть JSON-объектом'],

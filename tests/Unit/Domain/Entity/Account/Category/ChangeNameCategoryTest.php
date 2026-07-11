@@ -31,7 +31,7 @@ final class ChangeNameCategoryTest extends TestCase
     }
 
     #[Test]
-    public function givenUserHasAnAccountWithCategoryWhenTheUserChangesNameOfTheCategoryThanTheCategoryHasNewNameOnly(): void
+    public function givenUserHasAnAccountWithCategoryWhenTheUserChangesNameOfTheCategoryThenTheCategoryHasNewNameOnly(): void
     {
         $categoryId = $this->accountCategory->id;
         $this->account->changeCategoryName($this->accountCreator, $categoryId, $newName = 'snaCks');
@@ -46,7 +46,7 @@ final class ChangeNameCategoryTest extends TestCase
     }
 
     #[Test]
-    public function givenUserHasAnAccountWithCategoryWhenUnaccessibleUserChangesNameOfTheCategoryThanAnExceptionIsExpectedAndTheAccountStillHasUnchangedCategory(): void
+    public function givenUserHasAnAccountWithCategoryWhenInaccessibleUserChangesNameOfTheCategoryThenAnExceptionIsExpectedAndTheAccountStillHasUnchangedCategory(): void
     {
         $this->expectException(DomainException::class);
 
@@ -60,7 +60,7 @@ final class ChangeNameCategoryTest extends TestCase
     }
 
     #[Test]
-    public function givenUserHasAnAccountWithCategoryWhenTheUserChangesNameOfTheCategoryForTheCurrentNameThanTheAccountHasUnchangedCategory(): void
+    public function givenUserHasAnAccountWithCategoryWhenTheUserChangesNameOfTheCategoryForTheCurrentNameThenTheAccountHasUnchangedCategory(): void
     {
         $categoryId = $this->accountCategory->id;
         $name = mb_ucfirst($this->accountCategory->name);
@@ -76,7 +76,7 @@ final class ChangeNameCategoryTest extends TestCase
     }
 
     #[Test]
-    public function givenUserHasAnAccountWithCategoryWhenTheUserChangesNameOfTheCategoryForNameThatAlreadyExistsThanAnExceptionIsExpectedAndTheAccountStillHasUnchangedCategories(): void
+    public function givenUserHasAnAccountWithCategoryWhenTheUserChangesNameOfTheCategoryForNameThatAlreadyExistsThenAnExceptionIsExpectedAndTheAccountStillHasUnchangedCategories(): void
     {
         $this->account->addCategory($this->accountCreator, TransactionType::Expense, $newName = 'shopping');
         $secondExistsCategory = $this->account->getCategories()[1];

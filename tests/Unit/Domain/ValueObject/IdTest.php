@@ -6,19 +6,22 @@ namespace Test\Unit\Domain\ValueObject;
 
 use App\Domain\ValueObject\Id;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 
-class IdTest extends TestCase
+final class IdTest extends TestCase
 {
-    public function testSuccess(): void
+    #[Test]
+    public function givenValidUuidWhenIdIsCreatedThenValueMatches(): void
     {
         $id = new Id($value = Uuid::uuid4()->toString());
 
         self::assertEquals($value, $id->value);
     }
 
-    public function testCase(): void
+    #[Test]
+    public function givenUppercaseUuidWhenIdIsCreatedThenValueIsLowercased(): void
     {
         $value = Uuid::uuid4()->toString();
         $id = new Id(mb_strtoupper($value));
@@ -26,20 +29,23 @@ class IdTest extends TestCase
         self::assertEquals($value, $id->value);
     }
 
-    public function testGenerate(): void
+    #[Test]
+    public function givenNothingWhenIdIsGeneratedThenValueIsNotEmpty(): void
     {
         $id = Id::generate();
 
         self::assertNotEmpty($id->value);
     }
 
-    public function testIncorrect(): void
+    #[Test]
+    public function givenInvalidUuidWhenIdIsCreatedThenInvalidArgumentExceptionIsExpected(): void
     {
         $this->expectException(InvalidArgumentException::class);
         new Id('12345');
     }
 
-    public function testEmpty(): void
+    #[Test]
+    public function givenEmptyStringWhenIdIsCreatedThenInvalidArgumentExceptionIsExpected(): void
     {
         $this->expectException(InvalidArgumentException::class);
         new Id('');

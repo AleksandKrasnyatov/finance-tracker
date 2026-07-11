@@ -33,7 +33,7 @@ final class DeleteCategoryTest extends TestCase
     }
 
     #[Test]
-    public function givenUserHasAnAccountWithCategoryWithoutTransactionsWhenTheUserDeleteTheCategoryThanTheAccountStaysWithoutTheCategory(): void
+    public function givenUserHasAnAccountWithCategoryWithoutTransactionsWhenTheUserDeletesTheCategoryThenTheAccountStaysWithoutTheCategory(): void
     {
         $categoryId = $this->accountCategory->id;
         $this->account->deleteCategory($this->accountCreator, $categoryId);
@@ -42,7 +42,7 @@ final class DeleteCategoryTest extends TestCase
     }
 
     #[Test]
-    public function givenUserHasAnAccountWithCategoryWhenUnaccessibleUserDeleteTheCategoryThanAnExceptionIsExpectedAndTheAccountStillHasUnchangedCategory(): void
+    public function givenUserHasAnAccountWithCategoryWhenInaccessibleUserDeletesTheCategoryThenAnExceptionIsExpectedAndTheAccountStillHasUnchangedCategory(): void
     {
         $this->expectException(DomainException::class);
 
@@ -56,7 +56,7 @@ final class DeleteCategoryTest extends TestCase
     }
 
     #[Test]
-    public function givenUserHasAnAccountWithoutCategoryWhenTheUserDeletesACategoryThanNoExceptionsAndTheAccountStillDoesNotHaveAnyCategories(): void
+    public function givenUserHasAnAccountWhenTheUserDeletesMissingOrAlreadyDeletedCategoryThenNoExceptionsAndTheAccountDoesNotHaveAnyCategories(): void
     {
         $categoryId = $this->accountCategory->id;
         $this->account->deleteCategory($this->accountCreator, $categoryId);
@@ -67,7 +67,7 @@ final class DeleteCategoryTest extends TestCase
     }
 
     #[Test]
-    public function givenUserHasAnAccountWithCategoryWithTransactionsWhenTheUserDeleteTheCategoryThanAnExceptionIsExpectedAndTheAccountStillHasUnchangedCategory(): void
+    public function givenUserHasAnAccountWithCategoryWithTransactionsWhenTheUserDeletesTheCategoryThenAnExceptionIsExpectedAndTheAccountStillHasUnchangedCategory(): void
     {
         $this->account->addTransaction($this->accountCreator, $this->accountCategory, new Money('12'));
 

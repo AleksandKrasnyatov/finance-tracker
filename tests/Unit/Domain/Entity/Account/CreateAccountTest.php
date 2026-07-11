@@ -8,12 +8,14 @@ use App\Domain\Entity\Account;
 use App\Domain\Enum\AccountType;
 use App\Domain\ValueObject\Id;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Test\Unit\Builder\UserBuilder;
 
-class CreateAccountTest extends TestCase
+final class CreateAccountTest extends TestCase
 {
-    public function testSuccess(): void
+    #[Test]
+    public function givenValidDataWhenAccountIsCreatedThenAccountBelongsToOwnerAndCanBeManaged(): void
     {
         $owner = new UserBuilder()->build();
         $account = Account::create(
@@ -29,7 +31,8 @@ class CreateAccountTest extends TestCase
         self::assertEquals($account, $owner->getAccounts()[0]);
     }
 
-    public function testException(): void
+    #[Test]
+    public function givenEmptyNameWhenAccountIsCreatedThenInvalidArgumentExceptionIsExpected(): void
     {
         self::expectException(InvalidArgumentException::class);
 

@@ -43,7 +43,7 @@ final class ChangeTransactionMoneyTest extends TestCase
     }
 
     #[Test]
-    public function givenUserHasAnAccountWithATransactionWhenTheUserChangesTransactionMoneyThanTheTransactionHasNewMoneyOnly(): void
+    public function givenUserHasAnAccountWithATransactionWhenTheUserChangesTransactionMoneyThenTheTransactionHasNewMoneyOnly(): void
     {
         $this->account->changeTransactionMoney(
             $this->accountCreator,
@@ -60,7 +60,7 @@ final class ChangeTransactionMoneyTest extends TestCase
     }
 
     #[Test]
-    public function givenUserHasAnAccountWithATransactionWhenUnaccessibleUserChangesTransactionMoneyThanAnExceptionIsExpectedAndTheTransactionStaysUnchanged(): void
+    public function givenUserHasAnAccountWithATransactionWhenInaccessibleUserChangesTransactionMoneyThenAnExceptionIsExpectedAndTheTransactionStaysUnchanged(): void
     {
         $this->expectException(DomainException::class);
 
@@ -79,7 +79,7 @@ final class ChangeTransactionMoneyTest extends TestCase
     }
 
     #[Test]
-    public function givenUserHasAnAccountWithATransactionWhenTheUserChangesMoneyForUnknownTransactionThanAnExceptionIsExpectedAndTheTransactionStaysUnchanged(): void
+    public function givenUserHasAnAccountWithATransactionWhenTheUserChangesTransactionMoneyForUnknownTransactionThenAnExceptionIsExpectedAndTheTransactionStaysUnchanged(): void
     {
         $this->expectException(DomainException::class);
 

@@ -6,6 +6,7 @@ namespace Test\Unit\Infrastructure\Http\Middleware;
 
 use App\Infrastructure\Http\Exception\ValidationException;
 use App\Infrastructure\Http\Middleware\ValidationExceptionHandler;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -13,9 +14,10 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Slim\Psr7\Factory\ResponseFactory;
 use Slim\Psr7\Factory\ServerRequestFactory;
 
-class ValidationExceptionHandlerTest extends TestCase
+final class ValidationExceptionHandlerTest extends TestCase
 {
-    public function testSuccess(): void
+    #[Test]
+    public function givenHandlerWithoutExceptionWhenMiddlewareProcessesRequestThenOriginalResponseIsReturned(): void
     {
         $handler = self::createStub(RequestHandlerInterface::class);
         $handler->method('handle')->willReturn($source = self::createResponse());
@@ -25,7 +27,8 @@ class ValidationExceptionHandlerTest extends TestCase
         self::assertSame($source, $response);
     }
 
-    public function testException(): void
+    #[Test]
+    public function givenHandlerThrowsValidationExceptionWhenMiddlewareProcessesRequestThenUnprocessableEntityJsonIsReturned(): void
     {
         $middleware = new ValidationExceptionHandler();
 

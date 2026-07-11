@@ -42,7 +42,7 @@ final class DeleteTransactionTest extends TestCase
     }
 
     #[Test]
-    public function givenUserHasAnAccountWithATransactionWhenTheUserDeletesTheTransactionThanTheAccountAndCategoryStayWithoutTheTransaction(): void
+    public function givenUserHasAnAccountWithATransactionWhenTheUserDeletesTheTransactionThenTheAccountAndCategoryStayWithoutTheTransaction(): void
     {
         $this->account->deleteTransaction($this->accountCreator, $this->transaction->id);
 
@@ -51,7 +51,7 @@ final class DeleteTransactionTest extends TestCase
     }
 
     #[Test]
-    public function givenUserHasAnAccountWithATransactionWhenUnaccessibleUserDeletesTheTransactionThanAnExceptionIsExpectedAndTheTransactionStaysUnchanged(): void
+    public function givenUserHasAnAccountWithATransactionWhenInaccessibleUserDeletesTheTransactionThenAnExceptionIsExpectedAndTheTransactionStaysUnchanged(): void
     {
         $this->expectException(DomainException::class);
 
@@ -66,7 +66,7 @@ final class DeleteTransactionTest extends TestCase
     }
 
     #[Test]
-    public function givenUserHasAnAccountWhenTheUserDeletesUnknownOrAlreadyDeletedTransactionThanNoExceptionsAndTheAccountStaysConsistent(): void
+    public function givenUserHasAnAccountWhenTheUserDeletesUnknownOrAlreadyDeletedTransactionThenNoExceptionsAndTheAccountStaysConsistent(): void
     {
         $transactionId = $this->transaction->id;
         $this->account->deleteTransaction($this->accountCreator, $transactionId);

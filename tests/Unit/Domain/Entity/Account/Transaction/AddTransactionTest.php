@@ -33,7 +33,7 @@ class AddTransactionTest extends TestCase
     }
 
     #[Test]
-    public function givenUserHasAnAccountWithACategoryWhenTheUserAddsACorrectTransactionThanTheAccountHasTheTransaction(): void
+    public function givenUserHasAnAccountWithACategoryWhenTheUserAddsACorrectTransactionThenTheAccountHasTheTransaction(): void
     {
         $this->account->addTransaction(
             $this->accountCreator,
@@ -52,7 +52,7 @@ class AddTransactionTest extends TestCase
     }
 
     #[Test]
-    public function givenUserHasAnAccountWithACategoryWhenTheUserAddsATransactionForWrongCategoryThanAnExceptionIsExpectedAndTheAccountDoesNotHaveTheTransaction(): void
+    public function givenUserHasAnAccountWithACategoryWhenTheUserAddsATransactionForWrongCategoryThenAnExceptionIsExpectedAndTheAccountDoesNotHaveTheTransaction(): void
     {
         $this->expectException(DomainException::class);
 
@@ -74,7 +74,7 @@ class AddTransactionTest extends TestCase
     }
 
     #[Test]
-    public function givenUserHasAnAccountWithACategoryWhenUnaccessibleUserAddsACorrectTransactionThanAnExceptionIsExpectedAndTheAccountDoesNotHaveTheTransaction(): void
+    public function givenUserHasAnAccountWithACategoryWhenInaccessibleUserAddsACorrectTransactionThenAnExceptionIsExpectedAndTheAccountDoesNotHaveTheTransaction(): void
     {
         $this->expectException(DomainException::class);
 

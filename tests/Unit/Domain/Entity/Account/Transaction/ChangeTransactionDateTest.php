@@ -44,7 +44,7 @@ final class ChangeTransactionDateTest extends TestCase
     }
 
     #[Test]
-    public function givenUserHasAnAccountWithATransactionWhenTheUserChangesTransactionDateThanTheTransactionHasNewDateOnly(): void
+    public function givenUserHasAnAccountWithATransactionWhenTheUserChangesTransactionDateThenTheTransactionHasNewDateOnly(): void
     {
         $this->account->changeTransactionDate(
             $this->accountCreator,
@@ -62,7 +62,7 @@ final class ChangeTransactionDateTest extends TestCase
     }
 
     #[Test]
-    public function givenUserHasAnAccountWithATransactionWhenUnaccessibleUserChangesTransactionDateThanAnExceptionIsExpectedAndTheTransactionStaysUnchanged(): void
+    public function givenUserHasAnAccountWithATransactionWhenInaccessibleUserChangesTransactionDateThenAnExceptionIsExpectedAndTheTransactionStaysUnchanged(): void
     {
         $this->expectException(DomainException::class);
 
@@ -81,7 +81,7 @@ final class ChangeTransactionDateTest extends TestCase
     }
 
     #[Test]
-    public function givenUserHasAnAccountWithATransactionWhenTheUserChangesDateForUnknownTransactionThanAnExceptionIsExpectedAndTheTransactionStaysUnchanged(): void
+    public function givenUserHasAnAccountWithATransactionWhenTheUserChangesTransactionDateForUnknownTransactionThenAnExceptionIsExpectedAndTheTransactionStaysUnchanged(): void
     {
         $this->expectException(DomainException::class);
 

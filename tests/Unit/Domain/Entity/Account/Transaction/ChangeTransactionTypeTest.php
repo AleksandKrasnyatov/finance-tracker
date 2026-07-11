@@ -45,7 +45,7 @@ final class ChangeTransactionTypeTest extends TestCase
     }
 
     #[Test]
-    public function givenUserHasAnAccountWithATransactionWhenTheUserChangesTransactionCategoryThanTheTransactionHasNewCategoryOnly(): void
+    public function givenUserHasAnAccountWithATransactionWhenTheUserChangesTransactionCategoryThenTheTransactionHasNewCategoryOnly(): void
     {
         $this->account->changeTransactionCategory(
             $this->accountCreator,
@@ -64,7 +64,7 @@ final class ChangeTransactionTypeTest extends TestCase
     }
 
     #[Test]
-    public function givenUserHasAnAccountWithATransactionWhenUnaccessibleUserChangesTransactionCategoryThanAnExceptionIsExpectedAndTheTransactionStaysUnchanged(): void
+    public function givenUserHasAnAccountWithATransactionWhenInaccessibleUserChangesTransactionCategoryThenAnExceptionIsExpectedAndTheTransactionStaysUnchanged(): void
     {
         $this->expectException(DomainException::class);
 
@@ -85,7 +85,7 @@ final class ChangeTransactionTypeTest extends TestCase
     }
 
     #[Test]
-    public function givenUserHasAnAccountWithATransactionWhenTheUserChangesTransactionCategoryForWrongCategoryThanAnExceptionIsExpectedAndTheTransactionStaysUnchanged(): void
+    public function givenUserHasAnAccountWithATransactionWhenTheUserChangesTransactionCategoryForWrongCategoryThenAnExceptionIsExpectedAndTheTransactionStaysUnchanged(): void
     {
         $otherAccount = new AccountBuilder()
             ->withUser(new UserBuilder()->build())
@@ -112,7 +112,7 @@ final class ChangeTransactionTypeTest extends TestCase
     }
 
     #[Test]
-    public function givenUserHasAnAccountWithATransactionWhenTheUserChangesCategoryForUnknownTransactionThanAnExceptionIsExpectedAndTheTransactionStaysUnchanged(): void
+    public function givenUserHasAnAccountWithATransactionWhenTheUserChangesTransactionCategoryForUnknownTransactionThenAnExceptionIsExpectedAndTheTransactionStaysUnchanged(): void
     {
         $this->expectException(DomainException::class);
 

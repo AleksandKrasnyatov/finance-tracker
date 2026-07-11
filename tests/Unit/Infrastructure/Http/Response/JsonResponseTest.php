@@ -6,12 +6,14 @@ namespace Test\Unit\Infrastructure\Http\Response;
 
 use App\Infrastructure\Http\Response\JsonResponse;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
-class JsonResponseTest extends TestCase
+final class JsonResponseTest extends TestCase
 {
-    public function testWithCode(): void
+    #[Test]
+    public function givenPayloadAndStatusCodeWhenJsonResponseIsCreatedThenHeadersBodyAndStatusMatch(): void
     {
         $response = new JsonResponse(0, 201);
 
@@ -20,8 +22,9 @@ class JsonResponseTest extends TestCase
         self::assertEquals(201, $response->getStatusCode());
     }
 
+    #[Test]
     #[DataProvider('getCases')]
-    public function testResponse(mixed $source, mixed $expect): void
+    public function givenVariousPayloadsWhenJsonResponseIsCreatedThenBodyIsEncodedAsJson(mixed $source, mixed $expect): void
     {
         $response = new JsonResponse($source);
 

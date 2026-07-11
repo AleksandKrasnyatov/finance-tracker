@@ -27,7 +27,7 @@ final class AddCategoryTest extends TestCase
     }
 
     #[Test]
-    public function givenUserHasAnAccountWhenTheUserAddsACorrectCategoryThanTheAccountHasTheCategory(): void
+    public function givenUserHasAnAccountWhenTheUserAddsACorrectCategoryThenTheAccountHasTheCategory(): void
     {
         $this->account->addCategory($this->accountCreator, $type = TransactionType::Expense, $name = 'food');
 
@@ -40,7 +40,7 @@ final class AddCategoryTest extends TestCase
     }
 
     #[Test]
-    public function givenUserHasAnAccountWhenUnaccessibleUserAddsACorrectCategoryThanAnExceptionIsExpectedAndTheAccountDoesNotHaveTheCategory(): void
+    public function givenUserHasAnAccountWhenInaccessibleUserAddsACorrectCategoryThenAnExceptionIsExpectedAndTheAccountDoesNotHaveTheCategory(): void
     {
         $this->expectException(DomainException::class);
 
@@ -53,7 +53,7 @@ final class AddCategoryTest extends TestCase
     }
 
     #[Test]
-    public function givenUserHasAnAccountWhenTheUserAddsADuplicateCategoryThanAnExceptionIsExpectedAndTheAccountDoesNotHaveTheCategory(): void
+    public function givenUserHasAnAccountWhenTheUserAddsADuplicateCategoryThenAnExceptionIsExpectedAndTheAccountStillHasOnlyTheOriginalCategory(): void
     {
         $this->account->addCategory($this->accountCreator, TransactionType::Expense, 'food');
         $category = $this->account->getCategories()[0];
