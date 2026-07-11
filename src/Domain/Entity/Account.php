@@ -172,6 +172,19 @@ final class Account
         $category->addTransaction($transaction);
     }
 
+    public function changeTransactionMoney(User $user, Id $transactionId, Money $money): void
+    {
+        if (!$this->canManage($user)) {
+            throw new DomainException('User is not allowed to manage this account.');
+        }
+
+        if (!$transaction = $this->getTransaction($transactionId)) {
+            throw new DomainException('Transaction not found.');
+        }
+
+        $transaction->changeMoney($user, $money);
+    }
+
     public function addMember(UserAccount $account): void
     {
         $this->members->add($account);

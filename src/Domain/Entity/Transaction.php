@@ -66,4 +66,10 @@ final class Transaction
         $this->category = $category;
         $this->updater = $user;
     }
+
+    public function changeMoney(User $user, Money $money): void
+    {
+        $this->money = $money;
+        $this->updater = $user;
+    }
 }
