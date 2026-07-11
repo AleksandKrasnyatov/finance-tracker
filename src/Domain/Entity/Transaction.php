@@ -72,4 +72,10 @@ final class Transaction
         $this->money = $money;
         $this->updater = $user;
     }
+
+    public function changeDate(User $user, DateTimeImmutable $date): void
+    {
+        $this->date = $date;
+        $this->updater = $user;
+    }
 }

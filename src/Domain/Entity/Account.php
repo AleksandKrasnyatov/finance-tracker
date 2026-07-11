@@ -185,6 +185,19 @@ final class Account
         $transaction->changeMoney($user, $money);
     }
 
+    public function changeTransactionDate(User $user, Id $transactionId, DateTimeImmutable $date): void
+    {
+        if (!$this->canManage($user)) {
+            throw new DomainException('User is not allowed to manage this account.');
+        }
+
+        if (!$transaction = $this->getTransaction($transactionId)) {
+            throw new DomainException('Transaction not found.');
+        }
+
+        $transaction->changeDate($user, $date);
+    }
+
     public function addMember(UserAccount $account): void
     {
         $this->members->add($account);
