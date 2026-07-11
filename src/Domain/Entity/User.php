@@ -17,6 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Table(name: 'users')]
+#[ORM\UniqueConstraint(columns: ['telegram_id'])]
 final class User
 {
     #[ORM\Column(type: IdType::NAME)]

@@ -23,10 +23,9 @@ final readonly class UserRepository implements UserRepositoryInterface
         return 0 !== $this->entityManager->getRepository(User::class)->count(['telegramId' => $telegramId->value]);
     }
 
-    public function save(User $user): void
+    public function add(User $user): void
     {
         $this->entityManager->persist($user);
-        $this->entityManager->flush();
     }
 
     public function get(Id $id): User

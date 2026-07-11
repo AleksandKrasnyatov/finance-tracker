@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Infrastructure\Console\HelloCommand;
+use App\Infrastructure\Bot\Telegram\Console\RunTelegramBotCommand;
 use Doctrine\Migrations\Tools\Console\Command\ExecuteCommand;
 use Doctrine\Migrations\Tools\Console\Command\LatestCommand;
 use Doctrine\Migrations\Tools\Console\Command\ListCommand;
@@ -23,6 +24,7 @@ return [
         'console' => [
             'commands' => [
                 HelloCommand::class,
+                RunTelegramBotCommand::class,
 
                 ValidateSchemaCommand::class,
                 ExecuteCommand::class,
