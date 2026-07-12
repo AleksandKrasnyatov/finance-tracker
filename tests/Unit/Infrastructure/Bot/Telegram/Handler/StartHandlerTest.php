@@ -37,7 +37,7 @@ final class StartHandlerTest extends TestCase
         $telegramUser->first_name = 'Alex';
         $bot->setCommonUser($telegramUser);
 
-        new TelegramBot($bot, ['start' => StartHandler::class])->configure();
+        new TelegramBot($bot)->configure();
 
         $bot
             ->hearText('/start')
