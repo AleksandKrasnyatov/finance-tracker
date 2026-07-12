@@ -7,6 +7,7 @@ namespace App\Infrastructure\Bot\Telegram;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Psr\SimpleCache\CacheInterface;
 use RuntimeException;
 use SergiX44\Nutgram\Configuration;
 use SergiX44\Nutgram\Nutgram;
@@ -15,6 +16,7 @@ final readonly class TelegramBotFactory
 {
     public function __construct(
         private ContainerInterface $container,
+        private CacheInterface $cache,
         private string $token,
     ) {
     }
@@ -33,6 +35,7 @@ final readonly class TelegramBotFactory
             $this->token,
             new Configuration(
                 container: $this->container,
+                cache: $this->cache,
                 pollingAllowedUpdates: ['message'],
             ),
         ));
