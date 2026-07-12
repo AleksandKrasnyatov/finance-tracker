@@ -38,6 +38,13 @@ final class TelegramBot
                 ->error('Telegram update processing failed: {message}', [
                     'message' => $exception->getMessage(),
                     'exception' => $exception,
+                    'update_id' => $bot->update()?->update_id,
+                    'update_type' => $bot->update()?->getType()?->value,
+                    'user_id' => $bot->userId(),
+                    'chat_id' => $bot->chatId(),
+                    'text' => $bot->message()?->text,
+                    'callback_data' => $bot->callbackQuery()?->data,
+                    'callback_query_id' => $bot->callbackQuery()?->id,
                 ]);
 
             $bot->sendMessage('Не удалось выполнить команду. Попробуйте ещё раз позднее.');

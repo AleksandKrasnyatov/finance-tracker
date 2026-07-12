@@ -19,7 +19,7 @@ final readonly class NutgramFactory
      * @param list<string> $allowedUpdates
      */
     public function __construct(
-        private ContainerInterface $container,
+        private NutgramContainer $container,
         private CacheInterface $cache,
         private LoggerInterface $logger,
         private string $token,

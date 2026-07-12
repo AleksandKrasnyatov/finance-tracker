@@ -36,4 +36,16 @@ final readonly class UserRepository implements UserRepositoryInterface
         }
         return $entity;
     }
+
+    public function getByTelegramId(TelegramId $telegramId): User
+    {
+        $entity = $this->entityManager->getRepository(User::class)->findOneBy([
+            'telegramId' => $telegramId->value,
+        ]);
+        if ($entity === null) {
+            throw new DomainException('User is not found.');
+        }
+
+        return $entity;
+    }
 }
