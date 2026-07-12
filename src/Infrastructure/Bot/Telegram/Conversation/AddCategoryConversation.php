@@ -7,8 +7,7 @@ namespace App\Infrastructure\Bot\Telegram\Conversation;
 use App\Application\UseCase\Account\Category\CreateCategoryCommand;
 use App\Application\UseCase\Account\Category\CreateCategoryHandler;
 use App\Domain\Enum\TransactionType;
-use App\Domain\Repository\UserRepositoryInterface;
-use App\Domain\ValueObject\TelegramId;
+use App\Infrastructure\Bot\Telegram\TelegramUserData;
 use DomainException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -95,14 +94,13 @@ final class AddCategoryConversation extends Conversation
         }
 
         try {
-            $user = $bot->getContainer()->get(UserRepositoryInterface::class)->getByTelegramId(new TelegramId($userId));
-            $account = $user->getAccounts()[0] ?? throw new DomainException('Сначала выполните /start.');
+            $context = $bot->getContainer()->get(TelegramUserData::class)->getOrSet($bot);
 
             $bot->getContainer()
                 ->get(CreateCategoryHandler::class)
                 ->handle(new CreateCategoryCommand(
-                    $user->id->value,
-                    $account->id->value,
+                    $context['userId'],
+                    $context['accountId'],
                     $this->type->value ?? '',
                     $name,
                 ));

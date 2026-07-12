@@ -13,6 +13,7 @@ use App\Domain\Repository\CategoryRepositoryInterface;
 use App\Domain\Repository\UserRepositoryInterface;
 use App\Domain\ValueObject\TelegramId;
 use App\Infrastructure\Bot\Telegram\TelegramBot;
+use App\Infrastructure\Bot\Telegram\TelegramUserData;
 use DI\Container;
 use Doctrine\ORM\EntityManagerInterface;
 use DomainException;
@@ -43,6 +44,8 @@ final class AddTransactionHandlerTest extends TestCase
             ->withCategory(TransactionType::Expense, 'другое')
             ->build();
         $this->bot = $this->createBot();
+        $this->bot->setUserData(TelegramUserData::KEY_USER_ID, $this->user->id->value, $this->telegramId);
+        $this->bot->setUserData(TelegramUserData::KEY_ACCOUNT_ID, $this->account->id->value, $this->telegramId);
 
         parent::setUp();
     }

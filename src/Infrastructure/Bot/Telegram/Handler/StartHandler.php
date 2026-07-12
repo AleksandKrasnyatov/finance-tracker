@@ -6,6 +6,7 @@ namespace App\Infrastructure\Bot\Telegram\Handler;
 
 use App\Application\UseCase\Auth\Command\OnboardByTelegramCommand;
 use App\Application\UseCase\Auth\Command\OnboardByTelegramHandler;
+use App\Infrastructure\Bot\Telegram\TelegramUserData;
 use SergiX44\Nutgram\Nutgram;
 use UnexpectedValueException;
 
@@ -15,6 +16,7 @@ final readonly class StartHandler
 
     public function __construct(
         private OnboardByTelegramHandler $onboard,
+        private TelegramUserData $userData,
     ) {
     }
 
@@ -26,6 +28,7 @@ final readonly class StartHandler
         }
 
         $this->onboard->handle(new OnboardByTelegramCommand($telegramId));
+        $this->userData->refresh($bot);
 
         $bot->sendMessage(self::WELCOME_MESSAGE);
     }

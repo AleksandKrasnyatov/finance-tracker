@@ -7,8 +7,7 @@ namespace App\Infrastructure\Bot\Telegram\Handler;
 use App\Application\UseCase\Account\Transaction\AddTransactionCommand;
 use App\Application\UseCase\Account\Transaction\AddTransactionHandler as Handler;
 use App\Domain\Enum\TransactionType;
-use App\Domain\Repository\UserRepositoryInterface;
-use App\Domain\ValueObject\TelegramId;
+use App\Infrastructure\Bot\Telegram\TelegramUserData;
 use DomainException;
 use InvalidArgumentException;
 use SergiX44\Nutgram\Nutgram;
@@ -18,6 +17,7 @@ final readonly class AddTransactionHandler
 {
     public function __construct(
         private Handler $handler,
+        private TelegramUserData $userData,
     ) {
     }
 
@@ -28,8 +28,7 @@ final readonly class AddTransactionHandler
         string $category,
         ?string $description = null,
     ): void {
-        $telegramId = $bot->userId();
-        if ($telegramId === null) {
+        if ($bot->userId() === null) {
             throw new UnexpectedValueException('Telegram user is missing from the update.');
         }
 
@@ -38,13 +37,11 @@ final readonly class AddTransactionHandler
         $comment = trim((string)$description);
 
         try {
-            $user = $bot->getContainer()->get(UserRepositoryInterface::class)->getByTelegramId(new TelegramId($telegramId));
-            $account = $user->getAccounts()[0]
-                ?? throw new DomainException('Сначала выполните /start.');
+            $context = $this->userData->getOrSet($bot);
 
             $this->handler->handle(new AddTransactionCommand(
-                $user->id->value,
-                $account->id->value,
+                $context['userId'],
+                $context['accountId'],
                 $type->value,
                 $amount,
                 $category,

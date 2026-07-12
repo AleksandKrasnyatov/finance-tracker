@@ -11,6 +11,7 @@ use App\Domain\Repository\AccountRepositoryInterface;
 use App\Domain\Repository\UserRepositoryInterface;
 use App\Domain\ValueObject\TelegramId;
 use App\Infrastructure\Bot\Telegram\TelegramBot;
+use App\Infrastructure\Bot\Telegram\TelegramUserData;
 use DI\Container;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Test;
@@ -35,6 +36,8 @@ final class AddCategoryConversationTest extends TestCase
         $this->user = new UserBuilder()->withTelegramId(new TelegramId($this->telegramId))->build();
         $this->account = new AccountBuilder()->withUser($this->user)->build();
         $this->bot = $this->createBot();
+        $this->bot->setUserData(TelegramUserData::KEY_USER_ID, $this->user->id->value, $this->telegramId);
+        $this->bot->setUserData(TelegramUserData::KEY_ACCOUNT_ID, $this->account->id->value, $this->telegramId);
         parent::setUp();
     }
 
