@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Bot\Telegram;
 
-use App\Infrastructure\Bot\Telegram\Handler\StartHandler;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
@@ -16,8 +15,12 @@ final class TelegramBot
 {
     private bool $configured = false;
 
+    /**
+     * @param array<string, class-string> $commands
+     */
     public function __construct(
         private readonly Nutgram $bot,
+        private readonly array $commands,
     ) {
     }
 
@@ -27,7 +30,10 @@ final class TelegramBot
             return;
         }
 
-        $this->bot->onCommand('start', StartHandler::class);
+        foreach ($this->commands as $command => $handler) {
+            $this->bot->onCommand($command, $handler);
+        }
+
         $this->bot->onException(static function (Nutgram $bot, Throwable $exception): void {
             $bot->getContainer()
                 ->get(LoggerInterface::class)

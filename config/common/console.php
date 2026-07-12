@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Infrastructure\Console\HelloCommand;
 use App\Infrastructure\Bot\Telegram\Console\RunTelegramBotCommand;
+use App\Infrastructure\Bot\Telegram\Console\TelegramWebhookCommand;
 use Doctrine\Migrations\Tools\Console\Command\ExecuteCommand;
 use Doctrine\Migrations\Tools\Console\Command\LatestCommand;
 use Doctrine\Migrations\Tools\Console\Command\ListCommand;
@@ -25,6 +26,7 @@ return [
             'commands' => [
                 HelloCommand::class,
                 RunTelegramBotCommand::class,
+                TelegramWebhookCommand::class,
 
                 ValidateSchemaCommand::class,
                 ExecuteCommand::class,

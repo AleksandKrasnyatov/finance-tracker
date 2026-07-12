@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Test\Unit\Infrastructure\Bot\Telegram\Handler;
 
 use App\Domain\Repository\UserRepositoryInterface;
+use App\Infrastructure\Bot\Telegram\Handler\StartHandler;
 use App\Infrastructure\Bot\Telegram\TelegramBot;
 use DI\Container;
 use Doctrine\ORM\EntityManagerInterface;
@@ -36,7 +37,7 @@ final class StartHandlerTest extends TestCase
         $telegramUser->first_name = 'Alex';
         $bot->setCommonUser($telegramUser);
 
-        new TelegramBot($bot)->configure();
+        new TelegramBot($bot, ['start' => StartHandler::class])->configure();
 
         $bot
             ->hearText('/start')

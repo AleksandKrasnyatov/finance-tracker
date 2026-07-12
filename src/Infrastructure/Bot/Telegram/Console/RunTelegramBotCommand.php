@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Bot\Telegram\Console;
 
-use App\Infrastructure\Bot\Telegram\TelegramBotFactory;
+use App\Infrastructure\Bot\Telegram\TelegramBot;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use SergiX44\Nutgram\RunningMode\Polling;
@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class RunTelegramBotCommand extends Command
 {
     public function __construct(
-        private readonly TelegramBotFactory $telegramBotFactory,
+        private readonly TelegramBot $telegramBot,
     ) {
         parent::__construct();
     }
@@ -33,9 +33,8 @@ final class RunTelegramBotCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $telegramBot = $this->telegramBotFactory->create();
         $output->writeln('<info>Telegram bot is running.</info>');
-        $telegramBot->run(new Polling());
+        $this->telegramBot->run(new Polling());
 
         return Command::SUCCESS;
     }

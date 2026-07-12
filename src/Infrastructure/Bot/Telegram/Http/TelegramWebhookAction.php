@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Bot\Telegram\Http;
 
-use App\Infrastructure\Bot\Telegram\TelegramBotFactory;
+use App\Infrastructure\Bot\Telegram\TelegramBot;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -14,7 +14,7 @@ use RuntimeException;
 final readonly class TelegramWebhookAction
 {
     public function __construct(
-        private TelegramBotFactory $telegramBotFactory,
+        private TelegramBot $telegramBot,
         private string $secretToken,
     ) {
     }
@@ -35,7 +35,7 @@ final readonly class TelegramWebhookAction
             $this->secretToken,
         );
 
-        $this->telegramBotFactory->create()->run($telegramWebhook);
+        $this->telegramBot->run($telegramWebhook);
 
         return $response;
     }

@@ -20,7 +20,7 @@ final class TelegramWebhookTest extends TestCase
             $bot->sendMessage('test');
         });
 
-        new TelegramBot($bot)->run(new TelegramWebhook(
+        new TelegramBot($bot, [])->run(new TelegramWebhook(
             '{"update_id":1}',
             'invalid-secret',
             'expected-secret',
@@ -37,7 +37,7 @@ final class TelegramWebhookTest extends TestCase
             $bot->sendMessage('test');
         });
 
-        new TelegramBot($bot)->run(new TelegramWebhook(
+        new TelegramBot($bot, [])->run(new TelegramWebhook(
             '{"update_id":1}',
             'expected-secret',
             'expected-secret',
