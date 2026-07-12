@@ -19,6 +19,7 @@ services:
       - .env
     depends_on:
       - postgres
+      - redis
 
   php-cli:
     build:
@@ -29,6 +30,7 @@ services:
       - .env
     depends_on:
       - postgres
+      - redis
 
   postgres:
     image: postgres:latest
@@ -42,5 +44,13 @@ services:
     ports:
       - "5432:5432"
 
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis:/data
+
 volumes:
   postgres:
+  redis:
