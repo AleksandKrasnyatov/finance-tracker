@@ -7,6 +7,7 @@ namespace App\Infrastructure\Bot\Telegram;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
 use RuntimeException;
 use SergiX44\Nutgram\Configuration;
@@ -20,6 +21,7 @@ final readonly class NutgramFactory
     public function __construct(
         private ContainerInterface $container,
         private CacheInterface $cache,
+        private LoggerInterface $logger,
         private string $token,
         private array $allowedUpdates,
     ) {
@@ -40,6 +42,7 @@ final readonly class NutgramFactory
             new Configuration(
                 container: $this->container,
                 cache: $this->cache,
+                logger: $this->logger,
                 pollingAllowedUpdates: $this->allowedUpdates,
             ),
         );

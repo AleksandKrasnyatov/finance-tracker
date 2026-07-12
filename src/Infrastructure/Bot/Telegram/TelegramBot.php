@@ -35,7 +35,10 @@ final class TelegramBot
         $this->bot->onException(static function (Nutgram $bot, Throwable $exception): void {
             $bot->getContainer()
                 ->get(LoggerInterface::class)
-                ->error('Telegram update processing failed.', ['exception' => $exception]);
+                ->error('Telegram update processing failed: {message}', [
+                    'message' => $exception->getMessage(),
+                    'exception' => $exception,
+                ]);
 
             $bot->sendMessage('Не удалось выполнить команду. Попробуйте ещё раз позднее.');
         });
