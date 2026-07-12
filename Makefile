@@ -48,3 +48,9 @@ lint:
 
 telegram-polling:
 	docker compose run --rm php-cli composer app telegram:run
+
+telegram-add-webhook:
+	docker compose exec app php bin/app.php telegram:webhook
+
+telegram-delete-webhook:
+	docker compose exec app php bin/app.php telegram:webhook --delete
