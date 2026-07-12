@@ -95,12 +95,8 @@ final class AddCategoryConversation extends Conversation
         }
 
         try {
-            $user = $bot->getContainer()
-                ->get(UserRepositoryInterface::class)
-                ->getByTelegramId(new TelegramId($userId));
-
-            $account = $user->getAccounts()[0]
-                ?? throw new DomainException('Сначала выполните /start.');
+            $user = $bot->getContainer()->get(UserRepositoryInterface::class)->getByTelegramId(new TelegramId($userId));
+            $account = $user->getAccounts()[0] ?? throw new DomainException('Сначала выполните /start.');
 
             $bot->getContainer()
                 ->get(CreateCategoryHandler::class)
