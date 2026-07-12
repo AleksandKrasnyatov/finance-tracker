@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Bot\Telegram;
 
 use App\Infrastructure\Bot\Telegram\Conversation\AddCategoryConversation;
+use App\Infrastructure\Bot\Telegram\Handler\AddTransactionHandler;
 use App\Infrastructure\Bot\Telegram\Handler\StartHandler;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -31,6 +32,16 @@ final class TelegramBot
         $this->bot->onCommand('start', StartHandler::class);
         $this->bot->onCommand('category', AddCategoryConversation::class);
         $this->bot->onText('Добавить категорию', AddCategoryConversation::class);
+
+        $this->bot->onText('{sign}{amount} {category} {description}', AddTransactionHandler::class)
+            ->where('sign', '[+-]')
+            ->where('amount', '\d+(?:[.,]\d{1,2})?')
+            ->where('category', '\S+')
+            ->where('description', '.+');
+        $this->bot->onText('{sign}{amount} {category}', AddTransactionHandler::class)
+            ->where('sign', '[+-]')
+            ->where('amount', '\d+(?:[.,]\d{1,2})?')
+            ->where('category', '\S+');
 
         $this->bot->onException(static function (Nutgram $bot, Throwable $exception): void {
             $bot->getContainer()
