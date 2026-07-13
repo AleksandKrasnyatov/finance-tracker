@@ -1,0 +1,9 @@
+# Codeception Test Suite Configuration
+#
+# Suite for unit or integration tests (PHPUnit-style *Test.php under tests/Unit).
+
+actor: UnitTester
+modules:
+    enabled:
+        - Asserts
+step_decorators: ~

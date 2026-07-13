@@ -4,3 +4,4 @@
 .LSOverride
 /vendor/
 .env
+/tests/_output/

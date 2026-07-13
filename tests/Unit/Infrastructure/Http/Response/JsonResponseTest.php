@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Test\Unit\Infrastructure\Http\Response;
 
 use App\Infrastructure\Http\Response\JsonResponse;
+use JsonException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -22,8 +23,10 @@ final class JsonResponseTest extends TestCase
         self::assertEquals(201, $response->getStatusCode());
     }
 
+    /**
+     * @dataProvider getCases
+     */
     #[Test]
-    #[DataProvider('getCases')]
     public function givenVariousPayloadsWhenJsonResponseIsCreatedThenBodyIsEncodedAsJson(mixed $source, mixed $expect): void
     {
         $response = new JsonResponse($source);

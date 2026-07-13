@@ -31,6 +31,15 @@ validate-schema:
 test:
 	docker compose run --rm php-cli composer test
 
+test-unit:
+	docker compose run --rm php-cli composer test Unit
+
+test-functional:
+	docker compose run --rm php-cli composer test Functional
+
+test-acceptance:
+	docker compose run --rm php-cli composer test Acceptance
+
 test-coverage:
 	docker compose run --rm php-cli composer test-coverage
 
