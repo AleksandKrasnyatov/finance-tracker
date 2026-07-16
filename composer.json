@@ -35,7 +35,9 @@
         "overtrue/phplint": "^9.7",
         "codeception/codeception": "^5.3",
         "codeception/module-phpbrowser": "*",
-        "codeception/module-asserts": "*"
+        "codeception/module-asserts": "*",
+        "codeception/module-doctrine": "^3.3",
+        "doctrine/data-fixtures": "^2.2"
     },
     "scripts": {
         "lint": "phplint",

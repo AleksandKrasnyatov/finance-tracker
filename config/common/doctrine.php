@@ -27,12 +27,14 @@ return [
          *     types:array<string,class-string<Doctrine\DBAL\Types\Type>>,
          *     subscribers:string[],
          *     connection:array{
-         *          driver:"pdo_pgsql",
-         *          host:string,
-         *          user:string,
-         *          password:string,
-         *          dbname:string,
+         *          driver:"pdo_pgsql"|"pdo_sqlite",
+         *          host?:string,
+         *          user?:string,
+         *          password?:string,
+         *          dbname?:string,
          *          charset:string,
+         *          memory?:bool,
+         *          path?:string|null,
          *      }
          * } $settings
          */
