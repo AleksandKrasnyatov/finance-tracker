@@ -1,0 +1,46 @@
+bot:
+  welcome: 'Welcome! Your main account and categories are ready.'
+  error:
+    generic: 'Could not complete the command. Please try again later.'
+  transaction:
+    recorded: 'Recorded %sign%%amount% in "%category%" (%type%).'
+    recorded_with_comment: 'Recorded %sign%%amount% in "%category%" (%type%). Comment: %comment%'
+  category:
+    ask_type: 'What type of category?'
+    enter_name: 'Enter the category name:'
+    enter_name_text: 'Enter the category name as text:'
+    created: 'Category "%name%" (%type%) added.'
+    cancelled: 'Category creation cancelled.'
+  button:
+    add_category: 'Add category'
+    income: 'Income'
+    expense: 'Expense'
+    cancel: 'Cancel'
+
+enum:
+  transaction_type:
+    income: 'income'
+    expense: 'expense'
+
+seed:
+  account:
+    main: 'Main'
+  category:
+    salary: 'salary'
+    other_income: 'other'
+    groceries: 'groceries'
+    cafe: 'cafe'
+    transport: 'transport'
+    housing: 'housing'
+    health: 'health'
+    entertainment: 'entertainment'
+    other_expense: 'other'
+
+error:
+  category_not_found: 'Category not found. Check the name and sign (+ income / − expense), or add it via "Add category".'
+  start_required: 'Please run /start first.'
+
+web:
+  home:
+    title: 'Finance tracker bot'
+    heading: 'Home'

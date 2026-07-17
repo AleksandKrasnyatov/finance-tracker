@@ -27,7 +27,9 @@
         "doctrine/migrations": "^3.9",
         "nutgram/nutgram": "^4.47",
         "symfony/cache": "^8.1",
-        "monolog/monolog": "^3.10"
+        "monolog/monolog": "^3.10",
+        "symfony/translation": "^8.1",
+        "symfony/yaml": "^8.1"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^4.0",

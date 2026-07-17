@@ -1,0 +1,46 @@
+bot:
+  welcome: 'Добро пожаловать! Основной счёт и категории готовы к работе.'
+  error:
+    generic: 'Не удалось выполнить команду. Попробуйте ещё раз позднее.'
+  transaction:
+    recorded: 'Записал %sign%%amount% в «%category%» (%type%).'
+    recorded_with_comment: 'Записал %sign%%amount% в «%category%» (%type%). Комментарий: %comment%'
+  category:
+    ask_type: 'Какой тип категории?'
+    enter_name: 'Введите название категории:'
+    enter_name_text: 'Введите название категории текстом:'
+    created: 'Категория «%name%» (%type%) добавлена.'
+    cancelled: 'Добавление категории отменено.'
+  button:
+    add_category: 'Добавить категорию'
+    income: 'Доход'
+    expense: 'Расход'
+    cancel: 'Отмена'
+
+enum:
+  transaction_type:
+    income: 'доход'
+    expense: 'расход'
+
+seed:
+  account:
+    main: 'Основной'
+  category:
+    salary: 'зарплата'
+    other_income: 'другое'
+    groceries: 'продукты'
+    cafe: 'кафе'
+    transport: 'транспорт'
+    housing: 'жильё'
+    health: 'здоровье'
+    entertainment: 'развлечения'
+    other_expense: 'другое'
+
+error:
+  category_not_found: 'Категория не найдена. Проверьте название и знак (+ доход / − расход) или добавьте её через «Добавить категорию».'
+  start_required: 'Сначала выполните /start.'
+
+web:
+  home:
+    title: 'Бот учета финансов'
+    heading: 'Главная страница'
