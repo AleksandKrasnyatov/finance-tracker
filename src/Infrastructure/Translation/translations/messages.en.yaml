@@ -22,20 +22,6 @@ enum:
     income: 'income'
     expense: 'expense'
 
-seed:
-  account:
-    main: 'Main'
-  category:
-    salary: 'salary'
-    other_income: 'other'
-    groceries: 'groceries'
-    cafe: 'cafe'
-    transport: 'transport'
-    housing: 'housing'
-    health: 'health'
-    entertainment: 'entertainment'
-    other_expense: 'other'
-
 error:
   category_not_found: 'Category not found. Check the name and sign (+ income / − expense), or add it via "Add category".'
   start_required: 'Please run /start first.'

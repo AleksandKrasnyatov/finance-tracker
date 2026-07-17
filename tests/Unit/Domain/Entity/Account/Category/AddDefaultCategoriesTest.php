@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Test\Unit\Domain\Entity\Account\Category;
 
+use App\Domain\Dto\CategoryDto;
 use App\Domain\Entity\Account;
 use App\Domain\Entity\Category;
 use App\Domain\Entity\User;
@@ -19,10 +20,16 @@ final class AddDefaultCategoriesTest extends TestCase
     private User $accountCreator;
     private Account $account;
 
+    /**
+     * @var list<CategoryDto>
+     */
+    private array $defaultCategories;
+
     protected function setUp(): void
     {
         $this->accountCreator = new UserBuilder()->build();
         $this->account = new AccountBuilder()->withUser($this->accountCreator)->build();
+        $this->defaultCategories = Category::defaults();
 
         parent::setUp();
     }
@@ -30,15 +37,14 @@ final class AddDefaultCategoriesTest extends TestCase
     #[Test]
     public function givenUserHasAnEmptyAccountWhenTheUserAddsDefaultCategoriesThenTheAccountHasAllDefaultCategories(): void
     {
-        $this->account->addDefaultCategories($this->accountCreator);
+        $this->account->addDefaultCategories($this->accountCreator, $this->defaultCategories);
 
-        $expected = Category::defaults();
         $categories = $this->account->getCategories();
 
-        self::assertCount(count($expected), $categories);
-        foreach ($expected as $index => [$type, $name]) {
-            self::assertSame($type, $categories[$index]->type);
-            self::assertSame(mb_strtolower($name), $categories[$index]->name);
+        self::assertCount(count($this->defaultCategories), $categories);
+        foreach ($this->defaultCategories as $index => $expected) {
+            self::assertSame($expected->type, $categories[$index]->type);
+            self::assertSame(mb_strtolower($expected->name), $categories[$index]->name);
             self::assertSame($this->accountCreator, $categories[$index]->creator);
             self::assertSame($this->account, $categories[$index]->account);
         }
@@ -50,7 +56,7 @@ final class AddDefaultCategoriesTest extends TestCase
         $this->expectException(DomainException::class);
 
         try {
-            $this->account->addDefaultCategories(new UserBuilder()->build());
+            $this->account->addDefaultCategories(new UserBuilder()->build(), $this->defaultCategories);
         } catch (DomainException $e) {
             self::assertCount(0, $this->account->getCategories());
             throw $e;
@@ -66,7 +72,7 @@ final class AddDefaultCategoriesTest extends TestCase
         $this->expectException(DomainException::class);
 
         try {
-            $this->account->addDefaultCategories($this->accountCreator);
+            $this->account->addDefaultCategories($this->accountCreator, $this->defaultCategories);
         } catch (DomainException $e) {
             self::assertCount(1, $categories = $this->account->getCategories());
             self::assertSame($existing, $categories[0]);

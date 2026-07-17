@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\UseCase\Account\Category;
 
+use App\Application\Service\SeedCatalog;
 use App\Domain\Repository\AccountRepositoryInterface;
 use App\Domain\Repository\UserRepositoryInterface;
 use App\Domain\ValueObject\Id;
@@ -14,6 +15,7 @@ final readonly class AddDefaultCategoriesHandler
     public function __construct(
         private UserRepositoryInterface $users,
         private AccountRepositoryInterface $accounts,
+        private SeedCatalog $seeds,
         private Flusher $flusher,
     ) {
     }
@@ -23,7 +25,7 @@ final readonly class AddDefaultCategoriesHandler
         $user = $this->users->get(new Id($command->userId));
         $account = $this->accounts->get(new Id($command->accountId));
 
-        $account->addDefaultCategories($user);
+        $account->addDefaultCategories($user, $this->seeds->categories($user->locale));
 
         $this->flusher->flush();
     }

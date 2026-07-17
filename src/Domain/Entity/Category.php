@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Entity;
 
+use App\Domain\Dto\CategoryDto;
 use App\Domain\Enum\TransactionType;
 use App\Domain\ValueObject\Id;
 use App\Infrastructure\Doctrine\Type\IdType;
@@ -60,20 +61,20 @@ final class Category
     }
 
     /**
-     * @return list<array{TransactionType, non-empty-string}>
+     * @return list<CategoryDto>
      */
     public static function defaults(): array
     {
         return [
-            [TransactionType::Income, 'зарплата'],
-            [TransactionType::Income, 'другое'],
-            [TransactionType::Expense, 'продукты'],
-            [TransactionType::Expense, 'кафе'],
-            [TransactionType::Expense, 'транспорт'],
-            [TransactionType::Expense, 'жильё'],
-            [TransactionType::Expense, 'здоровье'],
-            [TransactionType::Expense, 'развлечения'],
-            [TransactionType::Expense, 'другое'],
+            new CategoryDto(TransactionType::Income, 'salary'),
+            new CategoryDto(TransactionType::Income, 'other'),
+            new CategoryDto(TransactionType::Expense, 'groceries'),
+            new CategoryDto(TransactionType::Expense, 'cafe'),
+            new CategoryDto(TransactionType::Expense, 'transport'),
+            new CategoryDto(TransactionType::Expense, 'housing'),
+            new CategoryDto(TransactionType::Expense, 'health'),
+            new CategoryDto(TransactionType::Expense, 'entertainment'),
+            new CategoryDto(TransactionType::Expense, 'other'),
         ];
     }
 

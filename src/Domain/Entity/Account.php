@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Entity;
 
+use App\Domain\Dto\CategoryDto;
 use App\Domain\Enum\AccountType;
 use App\Domain\Enum\TransactionType;
 use App\Domain\ValueObject\Id;
@@ -94,7 +95,10 @@ final class Account
         $this->categories->add($category);
     }
 
-    public function addDefaultCategories(User $user): void
+    /**
+     * @param list<CategoryDto> $categories
+     */
+    public function addDefaultCategories(User $user, array $categories): void
     {
         if (!$this->canManage($user)) {
             throw new DomainException('User is not allowed to manage this account.');
@@ -104,8 +108,14 @@ final class Account
             throw new DomainException('Account already has categories.');
         }
 
-        foreach (Category::defaults() as [$type, $name]) {
-            $this->categories->add(new Category(Id::generate(), $this, $type, $name, $user));
+        foreach ($categories as $category) {
+            $this->categories->add(new Category(
+                Id::generate(),
+                $this,
+                $category->type,
+                $category->name,
+                $user,
+            ));
         }
     }
 
