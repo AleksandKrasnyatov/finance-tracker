@@ -2,20 +2,11 @@
 
 declare(strict_types=1);
 
-use Symfony\Component\Translation\Loader\YamlFileLoader;
+use App\Infrastructure\Translation\TranslationFactory;
 use Symfony\Component\Translation\Translator;
-use Symfony\Contracts\Translation\TranslatorInterface;
+
+use function DI\factory;
 
 return [
-    TranslatorInterface::class => static function (): TranslatorInterface {
-        $translator = new Translator('en');
-        $translator->setFallbackLocales(['en']);
-        $translator->addLoader('yaml', new YamlFileLoader());
-
-        $translationsDir = dirname(__DIR__, 2) . '/translations';
-        $translator->addResource('yaml', $translationsDir . '/messages.ru.yaml', 'ru');
-        $translator->addResource('yaml', $translationsDir . '/messages.en.yaml', 'en');
-
-        return $translator;
-    },
+    Translator::class => factory(static fn (TranslationFactory $factory): Translator => $factory->create()),
 ];
