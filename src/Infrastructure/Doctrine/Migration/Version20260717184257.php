@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration.
  */
-final class Version20260711181746 extends AbstractMigration
+final class Version20260717184257 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -34,7 +34,7 @@ final class Version20260711181746 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_2A457AAC9B6B5FBA ON user_accounts (account_id)');
         $this->addSql('CREATE INDEX IDX_2A457AACA76ED395 ON user_accounts (user_id)');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_2A457AAC9B6B5FBAA76ED395 ON user_accounts (account_id, user_id)');
-        $this->addSql('CREATE TABLE users (id UUID NOT NULL, telegram_id BIGINT DEFAULT NULL, created_at DATE NOT NULL, PRIMARY KEY (id))');
+        $this->addSql('CREATE TABLE users (id UUID NOT NULL, telegram_id BIGINT DEFAULT NULL, locale VARCHAR(2) NOT NULL, created_at DATE NOT NULL, PRIMARY KEY (id))');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_1483A5E9CC0B3066 ON users (telegram_id)');
         $this->addSql('ALTER TABLE categories ADD CONSTRAINT FK_3AF346689B6B5FBA FOREIGN KEY (account_id) REFERENCES accounts (id) ON DELETE CASCADE NOT DEFERRABLE');
         $this->addSql('ALTER TABLE categories ADD CONSTRAINT FK_3AF34668DE12AB56 FOREIGN KEY (created_by) REFERENCES users (id) NOT DEFERRABLE');

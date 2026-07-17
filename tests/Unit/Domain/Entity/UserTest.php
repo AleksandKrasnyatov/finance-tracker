@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Test\Unit\Domain\Entity;
 
-use App\Domain\Entity\Account;
 use App\Domain\Entity\User;
-use App\Domain\Enum\AccountType;
+use App\Domain\Enum\Locale;
 use App\Domain\ValueObject\TelegramId;
 use DateTimeImmutable;
 use PHPUnit\Framework\Attributes\Test;
@@ -26,6 +25,29 @@ final class UserTest extends TestCase
 
         self::assertEquals($user->telegramId, $telegramId);
         self::assertEquals($user->createdAt, $date);
+        self::assertSame(Locale::Ru, $user->locale);
+    }
+
+    #[Test]
+    public function givenLocaleWhenUserJoinsByTelegramThenLocaleIsStored(): void
+    {
+        $user = User::joinByTelegram(
+            new TelegramId(1232424),
+            new DateTimeImmutable(),
+            Locale::En,
+        );
+
+        self::assertSame(Locale::En, $user->locale);
+    }
+
+    #[Test]
+    public function givenUserWhenLocaleIsChangedThenLocaleIsUpdated(): void
+    {
+        $user = new UserBuilder()->build();
+
+        $user->changeLocale(Locale::En);
+
+        self::assertSame(Locale::En, $user->locale);
     }
 
     #[Test]

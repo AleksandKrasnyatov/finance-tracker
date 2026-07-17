@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Entity;
 
+use App\Domain\Enum\Locale;
 use App\Domain\ValueObject\Id;
 use App\Domain\ValueObject\TelegramId;
 use App\Infrastructure\Doctrine\Type\IdType;
@@ -25,6 +26,8 @@ final class User
     private(set) Id $id;
     #[ORM\Column(type: TelegramIdType::NAME, nullable: true)]
     private(set) ?TelegramId $telegramId;
+    #[ORM\Column(type: Types::ENUM, enumType: Locale::class)]
+    private(set) Locale $locale;
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
     private(set) DateTimeImmutable $createdAt;
     /**
@@ -37,20 +40,31 @@ final class User
         Id $id,
         DateTimeImmutable $createdAt,
         ?TelegramId $telegramId = null,
+        Locale $locale = Locale::Ru,
     ) {
         $this->id = $id;
         $this->telegramId = $telegramId;
+        $this->locale = $locale;
         $this->createdAt = $createdAt;
         $this->accounts = new ArrayCollection();
     }
 
-    public static function joinByTelegram(TelegramId $telegramId, DateTimeImmutable $createdAt): self
-    {
+    public static function joinByTelegram(
+        TelegramId $telegramId,
+        DateTimeImmutable $createdAt,
+        Locale $locale = Locale::Ru,
+    ): self {
         return new self(
             Id::generate(),
             $createdAt,
             $telegramId,
+            $locale,
         );
+    }
+
+    public function changeLocale(Locale $locale): void
+    {
+        $this->locale = $locale;
     }
 
     public function equals(User $user): bool
