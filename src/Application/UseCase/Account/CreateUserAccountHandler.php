@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace App\Application\UseCase\Account;
 
+use App\Application\Service\SeedCatalog;
 use App\Domain\Entity\Account;
 use App\Domain\Enum\AccountType;
 use App\Domain\Repository\UserRepositoryInterface;
 use App\Domain\ValueObject\Id;
 use App\Infrastructure\Repository\Flusher;
-use DateTimeImmutable;
 
 final readonly class CreateUserAccountHandler
 {
     public function __construct(
         private UserRepositoryInterface $users,
-        private Flusher $flusher
+        private SeedCatalog $seeds,
+        private Flusher $flusher,
     ) {
     }
 
@@ -25,7 +26,7 @@ final readonly class CreateUserAccountHandler
 
         Account::create(
             $user,
-            $command->name ?? 'Основной',
+            $command->name ?? $this->seeds->accountName($user->locale),
             AccountType::tryFrom($command->type) ?? AccountType::Personal,
         );
 

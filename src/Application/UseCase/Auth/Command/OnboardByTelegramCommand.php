@@ -8,6 +8,7 @@ final readonly class OnboardByTelegramCommand
 {
     public function __construct(
         public int $telegramId,
+        public string $locale = '',
     ) {
     }
 }
