@@ -40,7 +40,7 @@ final class User
         Id $id,
         DateTimeImmutable $createdAt,
         ?TelegramId $telegramId = null,
-        Locale $locale = Locale::Ru,
+        Locale $locale = Locale::En,
     ) {
         $this->id = $id;
         $this->telegramId = $telegramId;
@@ -52,7 +52,7 @@ final class User
     public static function joinByTelegram(
         TelegramId $telegramId,
         DateTimeImmutable $createdAt,
-        Locale $locale = Locale::Ru,
+        Locale $locale = Locale::En,
     ): self {
         return new self(
             Id::generate(),

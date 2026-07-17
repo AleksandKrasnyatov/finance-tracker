@@ -25,7 +25,7 @@ final class UserTest extends TestCase
 
         self::assertEquals($user->telegramId, $telegramId);
         self::assertEquals($user->createdAt, $date);
-        self::assertSame(Locale::Ru, $user->locale);
+        self::assertSame(Locale::En, $user->locale);
     }
 
     #[Test]
@@ -34,10 +34,10 @@ final class UserTest extends TestCase
         $user = User::joinByTelegram(
             new TelegramId(1232424),
             new DateTimeImmutable(),
-            Locale::En,
+            Locale::Ru,
         );
 
-        self::assertSame(Locale::En, $user->locale);
+        self::assertSame(Locale::Ru, $user->locale);
     }
 
     #[Test]
@@ -45,9 +45,9 @@ final class UserTest extends TestCase
     {
         $user = new UserBuilder()->build();
 
-        $user->changeLocale(Locale::En);
+        $user->changeLocale(Locale::Ru);
 
-        self::assertSame(Locale::En, $user->locale);
+        self::assertSame(Locale::Ru, $user->locale);
     }
 
     #[Test]

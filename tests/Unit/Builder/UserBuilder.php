@@ -16,7 +16,7 @@ final class UserBuilder
 
     private DateTimeImmutable $createdAt;
     private ?TelegramId $telegramId = null;
-    private Locale $locale = Locale::Ru;
+    private Locale $locale = Locale::En;
 
     public function __construct()
     {

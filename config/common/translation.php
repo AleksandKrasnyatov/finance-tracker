@@ -8,8 +8,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 return [
     TranslatorInterface::class => static function (): TranslatorInterface {
-        $translator = new Translator('ru');
-        $translator->setFallbackLocales(['ru']);
+        $translator = new Translator('en');
+        $translator->setFallbackLocales(['en']);
         $translator->addLoader('yaml', new YamlFileLoader());
 
         $translationsDir = dirname(__DIR__, 2) . '/translations';
