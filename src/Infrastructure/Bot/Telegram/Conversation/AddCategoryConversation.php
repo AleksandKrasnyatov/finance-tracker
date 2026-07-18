@@ -11,8 +11,6 @@ use App\Domain\Enum\Locale;
 use App\Domain\Enum\TransactionType;
 use App\Infrastructure\Bot\Telegram\TelegramUserData;
 use DomainException;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Psr\SimpleCache\InvalidArgumentException;
 use SergiX44\Nutgram\Conversations\Conversation;
 use SergiX44\Nutgram\Nutgram;
@@ -24,33 +22,37 @@ final class AddCategoryConversation extends Conversation
 {
     public ?TransactionType $type = null;
 
+    public function __construct(
+        private readonly CreateCategoryHandler $createCategory,
+        private readonly TelegramUserData $userData,
+        private readonly TranslatorInterface $translator,
+    ) {
+    }
+
     /**
      * @throws InvalidArgumentException
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     public function start(Nutgram $bot): void
     {
         [$userId, $chatId] = $this->resolveIds($bot);
-        $translator = $this->translator($bot);
         $locale = $this->locale($bot);
 
         $bot->sendMessage(
-            text: $translator->trans('bot.category.ask_type', locale: $locale),
+            text: $this->translator->trans('bot.category.ask_type', locale: $locale),
             reply_markup: InlineKeyboardMarkup::make()
                 ->addRow(
                     InlineKeyboardButton::make(
-                        $translator->trans('bot.button.income', locale: $locale),
+                        $this->translator->trans('bot.button.income', locale: $locale),
                         callback_data: TransactionType::Income->value,
                     ),
                     InlineKeyboardButton::make(
-                        $translator->trans('bot.button.expense', locale: $locale),
+                        $this->translator->trans('bot.button.expense', locale: $locale),
                         callback_data: TransactionType::Expense->value,
                     ),
                 )
                 ->addRow(
                     InlineKeyboardButton::make(
-                        $translator->trans('bot.button.cancel', locale: $locale),
+                        $this->translator->trans('bot.button.cancel', locale: $locale),
                         callback_data: 'cancel',
                     ),
                 ),
@@ -71,13 +73,12 @@ final class AddCategoryConversation extends Conversation
         }
 
         [$userId, $chatId] = $this->resolveIds($bot);
-        $translator = $this->translator($bot);
         $locale = $this->locale($bot);
         $data = (string)$bot->callbackQuery()?->data;
         $bot->answerCallbackQuery();
 
         if ($data === 'cancel') {
-            $bot->sendMessage($translator->trans('bot.category.cancelled', locale: $locale));
+            $bot->sendMessage($this->translator->trans('bot.category.cancelled', locale: $locale));
             $bot->endConversation($userId, $chatId);
             $this->closing($bot);
             return;
@@ -89,40 +90,35 @@ final class AddCategoryConversation extends Conversation
         }
 
         $this->type = $type;
-        $bot->sendMessage($translator->trans('bot.category.enter_name', locale: $locale));
+        $bot->sendMessage($this->translator->trans('bot.category.enter_name', locale: $locale));
         $this->step = 'create';
         $bot->stepConversation($this, $userId, $chatId);
     }
 
     /**
-     * @throws NotFoundExceptionInterface
-     * @throws ContainerExceptionInterface
      * @throws InvalidArgumentException
      */
     public function create(Nutgram $bot): void
     {
         [$userId, $chatId] = $this->resolveIds($bot);
-        $translator = $this->translator($bot);
         $locale = $this->locale($bot);
         $name = trim((string)$bot->message()?->text);
         if ($name === '' || str_starts_with($name, '/')) {
-            $bot->sendMessage($translator->trans('bot.category.enter_name_text', locale: $locale));
+            $bot->sendMessage($this->translator->trans('bot.category.enter_name_text', locale: $locale));
             $this->step = 'create';
             $bot->stepConversation($this, $userId, $chatId);
             return;
         }
 
         try {
-            $context = $bot->getContainer()->get(TelegramUserData::class)->getOrSet($bot);
+            $context = $this->userData->getOrSet($bot);
 
-            $bot->getContainer()
-                ->get(CreateCategoryHandler::class)
-                ->handle(new CreateCategoryCommand(
-                    $context['userId'],
-                    $context['accountId'],
-                    $this->type->value ?? '',
-                    $name,
-                ));
+            $this->createCategory->handle(new CreateCategoryCommand(
+                $context['userId'],
+                $context['accountId'],
+                $this->type->value ?? '',
+                $name,
+            ));
         } catch (DomainException $exception) {
             $bot->sendMessage($exception->getMessage());
             $bot->endConversation($userId, $chatId);
@@ -132,9 +128,9 @@ final class AddCategoryConversation extends Conversation
 
         $typeLabel = $this->type === null
             ? ''
-            : $translator->trans($this->type->value, locale: $locale);
+            : $this->translator->trans($this->type->value, locale: $locale);
 
-        $bot->sendMessage($translator->trans(
+        $bot->sendMessage($this->translator->trans(
             'bot.category.created',
             [
                 '%name%' => $name,
@@ -161,21 +157,10 @@ final class AddCategoryConversation extends Conversation
     }
 
     /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     */
-    private function translator(Nutgram $bot): TranslatorInterface
-    {
-        return $bot->getContainer()->get(TranslatorInterface::class);
-    }
-
-    /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      * @throws InvalidArgumentException
      */
     private function locale(Nutgram $bot): Locale
     {
-        return $bot->getContainer()->get(TelegramUserData::class)->getOrSet($bot)['locale'];
+        return $this->userData->getOrSet($bot)['locale'];
     }
 }

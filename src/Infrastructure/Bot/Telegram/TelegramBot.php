@@ -12,6 +12,7 @@ use App\Infrastructure\Bot\Telegram\Handler\StartHandler;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
+use SergiX44\Nutgram\Conversations\Conversation;
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\RunningMode\RunningMode;
 use Throwable;
@@ -31,6 +32,8 @@ final class TelegramBot
         if ($this->configured) {
             return;
         }
+
+        Conversation::refreshOnDeserialize();
 
         $this->bot->onCommand('start', StartHandler::class);
         $this->bot->onCommand('category', AddCategoryConversation::class);
