@@ -89,9 +89,7 @@ final class AddTransactionHandlerCest
         $this->bot
             ->hearText('-100 unknown')
             ->reply()
-            ->assertReplyText(
-                'Category not found.',
-            );
+            ->assertReplyText('Category not found.');
 
         $I->dontSeeInRepository(Transaction::class, []);
     }
