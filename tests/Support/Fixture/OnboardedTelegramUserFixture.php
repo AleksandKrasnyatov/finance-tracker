@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Test\Support\Fixture;
 
 use App\Domain\Entity\Account;
+use App\Domain\Entity\Category;
 use App\Domain\Entity\User;
 use App\Domain\Enum\AccountType;
 use App\Domain\ValueObject\TelegramId;
@@ -22,8 +23,8 @@ final class OnboardedTelegramUserFixture implements FixtureInterface
             new TelegramId(self::TELEGRAM_ID),
             new DateTimeImmutable('2026-01-01'),
         );
-        $account = Account::create($user, 'Основной', AccountType::Personal);
-        $account->addDefaultCategories($user);
+        $account = Account::create($user, 'main', AccountType::Personal);
+        $account->addDefaultCategories($user, Category::defaults());
 
         $manager->persist($user);
         $manager->flush();
