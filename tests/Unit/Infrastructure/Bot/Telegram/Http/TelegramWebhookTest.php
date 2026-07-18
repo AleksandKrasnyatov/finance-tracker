@@ -5,19 +5,12 @@ declare(strict_types=1);
 namespace Test\Unit\Infrastructure\Bot\Telegram\Http;
 
 use App\Infrastructure\Bot\Telegram\Http\TelegramWebhook;
-use App\Infrastructure\Bot\Telegram\TelegramBot;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use SergiX44\Nutgram\Nutgram;
 
 final class TelegramWebhookTest extends TestCase
 {
-    /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     */
     #[Test]
     public function givenInvalidSecretWhenWebhookRunsThenBotDoesNotProcessUpdate(): void
     {
@@ -26,19 +19,16 @@ final class TelegramWebhookTest extends TestCase
             $bot->sendMessage('test');
         });
 
-        new TelegramBot($bot)->run(new TelegramWebhook(
+        $bot->setRunningMode(new TelegramWebhook(
             '{"update_id":1}',
             'invalid-secret',
             'expected-secret',
         ));
+        $bot->run();
 
         $bot->assertNoReply();
     }
 
-    /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     */
     #[Test]
     public function givenValidSecretWhenWebhookRunsThenBotProcessesUpdate(): void
     {
@@ -47,11 +37,12 @@ final class TelegramWebhookTest extends TestCase
             $bot->sendMessage('test');
         });
 
-        new TelegramBot($bot)->run(new TelegramWebhook(
+        $bot->setRunningMode(new TelegramWebhook(
             '{"update_id":1}',
             'expected-secret',
             'expected-secret',
         ));
+        $bot->run();
 
         $bot->assertReplyText('test');
     }

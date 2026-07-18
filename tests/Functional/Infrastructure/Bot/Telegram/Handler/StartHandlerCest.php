@@ -20,6 +20,8 @@ use Test\Support\Fixture\OnboardedTelegramUserFixture;
 use Test\Support\FunctionalTester;
 use Test\Support\TelegramBotTester;
 
+use function DI\value;
+
 final class StartHandlerCest
 {
     private TranslatorInterface $translator;
@@ -79,5 +81,9 @@ final class StartHandlerCest
 
         $I->assertSame($user->id->value, $bot->getUserData(TelegramUserData::KEY_USER_ID, $telegramId));
         $I->assertSame($account->id->value, $bot->getUserData(TelegramUserData::KEY_ACCOUNT_ID, $telegramId));
+        $I->assertSame(
+            $locale ?? Locale::default(),
+            $bot->getUserData(TelegramUserData::KEY_LOCALE, $telegramId),
+        );
     }
 }

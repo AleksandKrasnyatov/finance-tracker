@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Bot\Telegram;
 
+use App\Application\Gateway\TranslatorInterface;
+use App\Domain\Enum\Locale;
 use App\Infrastructure\Bot\Telegram\Conversation\AddCategoryConversation;
 use App\Infrastructure\Bot\Telegram\Handler\AddTransactionHandler;
 use App\Infrastructure\Bot\Telegram\Handler\StartHandler;
@@ -20,6 +22,7 @@ final class TelegramBot
 
     public function __construct(
         private readonly Nutgram $bot,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -31,7 +34,13 @@ final class TelegramBot
 
         $this->bot->onCommand('start', StartHandler::class);
         $this->bot->onCommand('category', AddCategoryConversation::class);
-        $this->bot->onText('Добавить категорию', AddCategoryConversation::class);
+
+        foreach ([Locale::En, Locale::Ru] as $locale) {
+            $this->bot->onText(
+                $this->translator->trans('bot.button.add_category', locale: $locale),
+                AddCategoryConversation::class,
+            );
+        }
 
         $this->bot->onText('{sign}{amount} {category} {description}', AddTransactionHandler::class)
             ->where('sign', '[+-]')
@@ -43,7 +52,7 @@ final class TelegramBot
             ->where('amount', '\d+(?:[.,]\d{1,2})?')
             ->where('category', '\S+');
 
-        $this->bot->onException(static function (Nutgram $bot, Throwable $exception): void {
+        $this->bot->onException(function (Nutgram $bot, Throwable $exception): void {
             $bot->getContainer()
                 ->get(LoggerInterface::class)
                 ->error('Telegram update processing failed: {message}', [
@@ -58,7 +67,10 @@ final class TelegramBot
                     'callback_query_id' => $bot->callbackQuery()?->id,
                 ]);
 
-            $bot->sendMessage('Не удалось выполнить команду. Попробуйте ещё раз позднее.');
+            $bot->sendMessage($this->translator->trans(
+                'bot.error.generic',
+                locale: Locale::fromLanguageCode($bot->user()?->language_code),
+            ));
         });
 
         $this->configured = true;

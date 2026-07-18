@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Bot\Telegram;
 
+use App\Domain\Enum\Locale;
 use App\Domain\Repository\UserRepositoryInterface;
 use App\Domain\ValueObject\TelegramId;
 use DomainException;
@@ -15,31 +16,47 @@ final readonly class TelegramUserData
 {
     public const string KEY_USER_ID = 'userId';
     public const string KEY_ACCOUNT_ID = 'currentAccountId';
+    public const string KEY_LOCALE = 'locale';
 
     public function __construct(
         private UserRepositoryInterface $users,
     ) {
     }
 
-    public function remember(Nutgram $bot, string $userId, string $accountId, ?int $telegramId = null): void
-    {
+    /**
+     * @throws InvalidArgumentException
+     */
+    public function remember(
+        Nutgram $bot,
+        string $userId,
+        string $accountId,
+        Locale $locale,
+        ?int $telegramId = null,
+    ): void {
         $bot->setUserData(self::KEY_USER_ID, $userId, $telegramId);
         $bot->setUserData(self::KEY_ACCOUNT_ID, $accountId, $telegramId);
+        $bot->setUserData(self::KEY_LOCALE, $locale, $telegramId);
     }
 
     /**
-     * @return array{userId: string, accountId: string}
+     * @return array{userId: string, accountId: string, locale: Locale}
      * @throws InvalidArgumentException
      */
     public function getOrSet(Nutgram $bot): array
     {
         $userId = $bot->getUserData(self::KEY_USER_ID);
         $accountId = $bot->getUserData(self::KEY_ACCOUNT_ID);
+        $locale = $bot->getUserData(self::KEY_LOCALE);
 
-        if (is_string($userId) && $userId !== '' && is_string($accountId) && $accountId !== '') {
+        if (
+            !empty($userId)
+            && !empty($accountId)
+            && !empty($locale)
+        ) {
             return [
                 'userId' => $userId,
                 'accountId' => $accountId,
+                'locale' => $locale,
             ];
         }
 
@@ -47,7 +64,8 @@ final readonly class TelegramUserData
     }
 
     /**
-     * @return array{userId: string, accountId: string}
+     * @return array{userId: string, accountId: string, locale: Locale}
+     * @throws InvalidArgumentException
      */
     public function refresh(Nutgram $bot): array
     {
@@ -57,13 +75,14 @@ final readonly class TelegramUserData
         }
 
         $user = $this->users->getByTelegramId(new TelegramId($telegramId));
-        $account = $user->getAccounts()[0] ?? throw new DomainException('Сначала выполните /start.');
+        $account = $user->getAccounts()[0] ?? throw new DomainException('Please run /start first.');
 
-        $this->remember($bot, $user->id->value, $account->id->value, $telegramId);
+        $this->remember($bot, $user->id->value, $account->id->value, $user->locale, $telegramId);
 
         return [
             'userId' => $user->id->value,
             'accountId' => $account->id->value,
+            'locale' => $user->locale,
         ];
     }
 }
