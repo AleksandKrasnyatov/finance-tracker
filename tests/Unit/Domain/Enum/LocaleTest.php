@@ -2,14 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Test\Unit\Infrastructure\Translation;
+namespace Test\Unit\Domain\Enum;
 
 use App\Domain\Enum\Locale;
-use App\Infrastructure\Translation\LocaleMapper;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-final class LocaleMapperTest extends TestCase
+final class LocaleTest extends TestCase
 {
     /**
      * @dataProvider languageCodes
@@ -17,9 +16,7 @@ final class LocaleMapperTest extends TestCase
     #[Test]
     public function mapsTelegramLanguageCode(?string $languageCode, Locale $expected): void
     {
-        $mapper = new LocaleMapper();
-
-        self::assertSame($expected, $mapper->fromTelegramLanguageCode($languageCode));
+        self::assertSame($expected, Locale::fromLanguageCode($languageCode));
     }
 
     /**

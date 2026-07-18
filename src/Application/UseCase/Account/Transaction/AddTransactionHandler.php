@@ -32,10 +32,9 @@ final readonly class AddTransactionHandler
     {
         $user = $this->users->get(new Id($command->userId));
         $account = $this->accounts->get(new Id($command->accountId));
+        $type = TransactionType::makeFrom($command->type);
 
-        if (!$type = TransactionType::tryFrom($command->type)) {
-            throw new DomainException('Invalid transaction type');
-        }
+        //todo можно упростить как будто, если передавать id категории
         $category = $this->categories->getByParams($account, $command->category, $type);
         $money = new Money($command->amount);
         $date = $command->date ? new DateTimeImmutable($command->date) : null;
