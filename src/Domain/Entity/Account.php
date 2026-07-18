@@ -46,13 +46,23 @@ final class Account
     /**
      * @var Collection<int, Transaction>
      */
-    #[ORM\OneToMany(targetEntity: Transaction::class, mappedBy: 'account', cascade: ['persist'])]
+    #[ORM\OneToMany(
+        targetEntity: Transaction::class,
+        mappedBy: 'account',
+        cascade: ['persist', 'remove'],
+        orphanRemoval: true,
+    )]
     private Collection $transactions;
 
     /**
      * @var Collection<int, Category>
      */
-    #[ORM\OneToMany(targetEntity: Category::class, mappedBy: 'account', cascade: ['persist'])]
+    #[ORM\OneToMany(
+        targetEntity: Category::class,
+        mappedBy: 'account',
+        cascade: ['persist', 'remove'],
+        orphanRemoval: true,
+    )]
     private Collection $categories;
 
     public function __construct(

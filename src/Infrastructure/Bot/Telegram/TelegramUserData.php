@@ -39,6 +39,18 @@ final readonly class TelegramUserData
     }
 
     /**
+     * @throws InvalidArgumentException
+     */
+    public function clear(Nutgram $bot): void
+    {
+        $telegramId = $bot->userId();
+
+        $bot->deleteUserData(self::KEY_USER_ID, $telegramId);
+        $bot->deleteUserData(self::KEY_ACCOUNT_ID, $telegramId);
+        $bot->deleteUserData(self::KEY_LOCALE, $telegramId);
+    }
+
+    /**
      * @return array{userId: string, accountId: string, locale: Locale}
      * @throws InvalidArgumentException
      */

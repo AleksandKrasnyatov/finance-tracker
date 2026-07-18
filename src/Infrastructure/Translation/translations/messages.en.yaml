@@ -1,5 +1,6 @@
 bot:
   welcome: 'Welcome! Your main account and categories are ready.'
+  reset: 'All your data has been deleted. Send /start to begin again.'
   error:
     generic: 'Could not complete the command. Please try again later.'
 

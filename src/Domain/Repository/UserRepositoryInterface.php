@@ -24,4 +24,6 @@ interface UserRepositoryInterface
     public function hasByTelegramId(TelegramId $telegramId): bool;
 
     public function add(User $user): void;
+
+    public function remove(User $user): void;
 }

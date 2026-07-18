@@ -28,6 +28,11 @@ final readonly class UserRepository implements UserRepositoryInterface
         $this->entityManager->persist($user);
     }
 
+    public function remove(User $user): void
+    {
+        $this->entityManager->remove($user);
+    }
+
     public function get(Id $id): User
     {
         $entity = $this->entityManager->getRepository(User::class)->find($id->value);

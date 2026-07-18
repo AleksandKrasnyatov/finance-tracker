@@ -14,4 +14,6 @@ interface AccountRepositoryInterface
      * @throws DomainException
      */
     public function get(Id $id): Account;
+
+    public function remove(Account $account): void;
 }

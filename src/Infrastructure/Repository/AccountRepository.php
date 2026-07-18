@@ -5,11 +5,8 @@ declare(strict_types=1);
 namespace App\Infrastructure\Repository;
 
 use App\Domain\Entity\Account;
-use App\Domain\Entity\User;
 use App\Domain\Repository\AccountRepositoryInterface;
-use App\Domain\Repository\UserRepositoryInterface;
 use App\Domain\ValueObject\Id;
-use App\Domain\ValueObject\TelegramId;
 use Doctrine\ORM\EntityManagerInterface;
 use DomainException;
 
@@ -27,5 +24,10 @@ final readonly class AccountRepository implements AccountRepositoryInterface
             throw new DomainException('Account is not found.');
         }
         return $entity;
+    }
+
+    public function remove(Account $account): void
+    {
+        $this->entityManager->remove($account);
     }
 }

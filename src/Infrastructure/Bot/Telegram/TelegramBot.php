@@ -9,6 +9,7 @@ use App\Domain\Enum\Locale;
 use App\Infrastructure\Bot\Telegram\Conversation\AddCategoryConversation;
 use App\Infrastructure\Bot\Telegram\Handler\AddTransactionHandler;
 use App\Infrastructure\Bot\Telegram\Handler\ExceptionHandler;
+use App\Infrastructure\Bot\Telegram\Handler\ResetHandler;
 use App\Infrastructure\Bot\Telegram\Handler\StartHandler;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -35,6 +36,7 @@ final class TelegramBot
         Conversation::refreshOnDeserialize();
 
         $this->bot->onCommand('start', StartHandler::class);
+        $this->bot->onCommand('reset', ResetHandler::class);
         $this->bot->onCommand('category', AddCategoryConversation::class);
 
         foreach ([Locale::En, Locale::Ru] as $locale) {
