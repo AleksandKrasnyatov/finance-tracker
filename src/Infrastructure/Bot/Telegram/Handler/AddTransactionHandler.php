@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Bot\Telegram\Handler;
 
+use App\Application\Gateway\TranslatorInterface;
 use App\Application\UseCase\Account\Transaction\AddTransactionCommand;
 use App\Application\UseCase\Account\Transaction\AddTransactionHandler as Handler;
+use App\Domain\Enum\Locale;
 use App\Domain\Enum\TransactionType;
 use App\Infrastructure\Bot\Telegram\TelegramUserData;
 use DomainException;
@@ -18,6 +20,7 @@ final readonly class AddTransactionHandler
     public function __construct(
         private Handler $handler,
         private TelegramUserData $userData,
+        private TranslatorInterface $translator,
     ) {
     }
 
@@ -35,10 +38,10 @@ final readonly class AddTransactionHandler
         $type = $this->resolveType($sign);
         $amount = str_replace(',', '.', $amount);
         $comment = trim((string)$description);
+        $context = $this->userData->getOrSet($bot);
+        $locale = $context['locale'];
 
         try {
-            $context = $this->userData->getOrSet($bot);
-
             $this->handler->handle(new AddTransactionCommand(
                 $context['userId'],
                 $context['accountId'],
@@ -48,15 +51,17 @@ final readonly class AddTransactionHandler
                 $comment,
             ));
         } catch (DomainException | InvalidArgumentException $exception) {
-            $bot->sendMessage($this->userMessage($exception));
+            $bot->sendMessage($this->userMessage($exception, $locale));
             return;
         }
 
-        $categoryName = mb_strtolower($category);
-        $message = "Записал {$sign}{$amount} в «{$categoryName}» ({$type->title()}).";
-        if ($comment !== '') {
-            $message .= " Комментарий: {$comment}";
-        }
+        $message = $this->translator->trans('bot.transaction.recorded', [
+            '%sign%' => $sign,
+            '%amount%' => $amount,
+            '%category%' => mb_strtolower($category),
+            '%type%' => $this->translator->trans($type->value, locale: $locale),
+            '%comment%' => !empty($comment) ? " ($comment)" : '',
+        ], $locale);
 
         $bot->sendMessage($message);
     }
@@ -73,12 +78,16 @@ final readonly class AddTransactionHandler
     /**
      * todo нужно разобраться с обработкой исключений
      */
-    private function userMessage(DomainException|InvalidArgumentException $exception): string
+    private function userMessage(DomainException|InvalidArgumentException $exception, Locale $locale): string
     {
-        return match ($exception->getMessage()) {
-            'Category is not found.' => 'Категория не найдена. Проверьте название и знак (+ доход / − расход) или добавьте её через «Добавить категорию».',
-            'The user has no account.', 'Сначала выполните /start.' => 'Сначала выполните /start.',
-            default => $exception->getMessage(),
+        $key = match ($exception->getMessage()) {
+            'Category is not found.' => 'error.category_not_found',
+            'The user has no account.', 'Please run /start first.' => 'error.start_required',
+            default => null,
         };
+
+        return $key === null
+            ? $exception->getMessage()
+            : $this->translator->trans($key, locale: $locale);
     }
 }

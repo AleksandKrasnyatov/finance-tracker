@@ -24,14 +24,14 @@ final class AddTransactionHandlerCest
     public function givenUserHasCategoryWhenAddsExpenseThenTransactionIsPersisted(FunctionalTester $I): void
     {
         $this->bot
-            ->hearText('-150,50 продукты')
+            ->hearText('-150,50 groceries')
             ->reply()
-            ->assertReplyText('Записал -150.50 в «продукты» (расход).');
+            ->assertReplyText('Recorded -150.50 in "groceries" (expense).');
 
         $transaction = $I->grabEntityFromRepository(Transaction::class, [
             'description' => '',
             'category' => [
-                'name' => 'продукты',
+                'name' => 'groceries',
                 'type' => TransactionType::Expense,
             ],
         ]);
@@ -41,13 +41,13 @@ final class AddTransactionHandlerCest
     public function givenUserHasCategoryWhenAddsIncomeThenTransactionIsPersisted(FunctionalTester $I): void
     {
         $this->bot
-            ->hearText('+100000 зарплата')
+            ->hearText('+100000 salary')
             ->reply()
-            ->assertReplyText('Записал +100000 в «зарплата» (доход).');
+            ->assertReplyText('Recorded +100000 in "salary" (income).');
 
         $I->seeInRepository(Transaction::class, [
             'category' => [
-                'name' => 'зарплата',
+                'name' => 'salary',
                 'type' => TransactionType::Income,
             ],
         ]);
@@ -56,14 +56,14 @@ final class AddTransactionHandlerCest
     public function givenUserHasCategoryWhenAddsExpenseWithCommentThenCommentIsPersisted(FunctionalTester $I): void
     {
         $this->bot
-            ->hearText('-100 продукты обед с коллегами')
+            ->hearText('-100 groceries lunch with colleagues')
             ->reply()
-            ->assertReplyText('Записал -100 в «продукты» (расход). Комментарий: обед с коллегами');
+            ->assertReplyText('Recorded -100 in "groceries" (expense) (lunch with colleagues).');
 
         $I->seeInRepository(Transaction::class, [
-            'description' => 'обед с коллегами',
+            'description' => 'lunch with colleagues',
             'category' => [
-                'name' => 'продукты',
+                'name' => 'groceries',
                 'type' => TransactionType::Expense,
             ],
         ]);
@@ -72,13 +72,13 @@ final class AddTransactionHandlerCest
     public function givenAmbiguousCategoryNameWhenAddsIncomeThenIncomeCategoryIsUsed(FunctionalTester $I): void
     {
         $this->bot
-            ->hearText('+50 другое')
+            ->hearText('+50 other')
             ->reply()
-            ->assertReplyText('Записал +50 в «другое» (доход).');
+            ->assertReplyText('Recorded +50 in "other" (income).');
 
         $I->seeInRepository(Transaction::class, [
             'category' => [
-                'name' => 'другое',
+                'name' => 'other',
                 'type' => TransactionType::Income,
             ],
         ]);
@@ -87,9 +87,11 @@ final class AddTransactionHandlerCest
     public function givenUnknownCategoryWhenAddsExpenseThenErrorAndNothingPersisted(FunctionalTester $I): void
     {
         $this->bot
-            ->hearText('-100 неизвестная')
+            ->hearText('-100 unknown')
             ->reply()
-            ->assertReplyText('Категория не найдена. Проверьте название и знак (+ доход / − расход) или добавьте её через «Добавить категорию».');
+            ->assertReplyText(
+                'Category not found. Check the name and sign (+ income / − expense), or add it via "Add category".',
+            );
 
         $I->dontSeeInRepository(Transaction::class, []);
     }

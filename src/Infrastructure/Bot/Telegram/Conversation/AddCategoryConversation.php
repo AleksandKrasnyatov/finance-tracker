@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Bot\Telegram\Conversation;
 
+use App\Application\Gateway\TranslatorInterface;
 use App\Application\UseCase\Account\Category\CreateCategoryCommand;
 use App\Application\UseCase\Account\Category\CreateCategoryHandler;
+use App\Domain\Enum\Locale;
 use App\Domain\Enum\TransactionType;
 use App\Infrastructure\Bot\Telegram\TelegramUserData;
 use DomainException;
@@ -24,20 +26,33 @@ final class AddCategoryConversation extends Conversation
 
     /**
      * @throws InvalidArgumentException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function start(Nutgram $bot): void
     {
         [$userId, $chatId] = $this->resolveIds($bot);
+        $translator = $this->translator($bot);
+        $locale = $this->locale($bot);
 
         $bot->sendMessage(
-            text: 'Какой тип категории?',
+            text: $translator->trans('bot.category.ask_type', locale: $locale),
             reply_markup: InlineKeyboardMarkup::make()
                 ->addRow(
-                    InlineKeyboardButton::make('Доход', callback_data: TransactionType::Income->value),
-                    InlineKeyboardButton::make('Расход', callback_data: TransactionType::Expense->value),
+                    InlineKeyboardButton::make(
+                        $translator->trans('bot.button.income', locale: $locale),
+                        callback_data: TransactionType::Income->value,
+                    ),
+                    InlineKeyboardButton::make(
+                        $translator->trans('bot.button.expense', locale: $locale),
+                        callback_data: TransactionType::Expense->value,
+                    ),
                 )
                 ->addRow(
-                    InlineKeyboardButton::make('Отмена', callback_data: 'cancel'),
+                    InlineKeyboardButton::make(
+                        $translator->trans('bot.button.cancel', locale: $locale),
+                        callback_data: 'cancel',
+                    ),
                 ),
         );
 
@@ -56,11 +71,13 @@ final class AddCategoryConversation extends Conversation
         }
 
         [$userId, $chatId] = $this->resolveIds($bot);
+        $translator = $this->translator($bot);
+        $locale = $this->locale($bot);
         $data = (string)$bot->callbackQuery()?->data;
         $bot->answerCallbackQuery();
 
         if ($data === 'cancel') {
-            $bot->sendMessage('Добавление категории отменено.');
+            $bot->sendMessage($translator->trans('bot.category.cancelled', locale: $locale));
             $bot->endConversation($userId, $chatId);
             $this->closing($bot);
             return;
@@ -72,7 +89,7 @@ final class AddCategoryConversation extends Conversation
         }
 
         $this->type = $type;
-        $bot->sendMessage('Введите название категории:');
+        $bot->sendMessage($translator->trans('bot.category.enter_name', locale: $locale));
         $this->step = 'create';
         $bot->stepConversation($this, $userId, $chatId);
     }
@@ -85,9 +102,11 @@ final class AddCategoryConversation extends Conversation
     public function create(Nutgram $bot): void
     {
         [$userId, $chatId] = $this->resolveIds($bot);
+        $translator = $this->translator($bot);
+        $locale = $this->locale($bot);
         $name = trim((string)$bot->message()?->text);
         if ($name === '' || str_starts_with($name, '/')) {
-            $bot->sendMessage('Введите название категории текстом:');
+            $bot->sendMessage($translator->trans('bot.category.enter_name_text', locale: $locale));
             $this->step = 'create';
             $bot->stepConversation($this, $userId, $chatId);
             return;
@@ -111,8 +130,18 @@ final class AddCategoryConversation extends Conversation
             return;
         }
 
-        $typeLabel = $this->type?->title();
-        $bot->sendMessage("Категория «{$name}» ({$typeLabel}) добавлена.");
+        $typeLabel = $this->type === null
+            ? ''
+            : $translator->trans($this->type->value, locale: $locale);
+
+        $bot->sendMessage($translator->trans(
+            'bot.category.created',
+            [
+                '%name%' => $name,
+                '%type%' => $typeLabel,
+            ],
+            $locale,
+        ));
         $bot->endConversation($userId, $chatId);
         $this->closing($bot);
     }
@@ -129,5 +158,24 @@ final class AddCategoryConversation extends Conversation
         }
 
         return [$userId, $chatId];
+    }
+
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    private function translator(Nutgram $bot): TranslatorInterface
+    {
+        return $bot->getContainer()->get(TranslatorInterface::class);
+    }
+
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws InvalidArgumentException
+     */
+    private function locale(Nutgram $bot): Locale
+    {
+        return $bot->getContainer()->get(TelegramUserData::class)->getOrSet($bot)['locale'];
     }
 }

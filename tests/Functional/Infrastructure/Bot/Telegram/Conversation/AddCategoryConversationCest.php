@@ -29,7 +29,7 @@ final class AddCategoryConversationCest
      */
     public function givenGivenUserHasAnAccountWhenTheUserAddsACategoryFromBotWithCorrectAnswersThenAllStepsHasSuccessAndTheAccountHasTheCategory(FunctionalTester $I): void
     {
-        $telegramId =  OnboardedTelegramUserFixture::TELEGRAM_ID;
+        $telegramId = OnboardedTelegramUserFixture::TELEGRAM_ID;
 
         $this->bot->willStartConversation()
             ->hearUpdateType(UpdateType::MESSAGE, [
@@ -38,20 +38,20 @@ final class AddCategoryConversationCest
                 'chat' => ['id' => $telegramId, 'type' => 'private'],
             ])
             ->reply()
-            ->assertReplyText('Какой тип категории?')
+            ->assertReplyText('What type of category?')
             ->assertActiveConversation($telegramId, $telegramId);
 
         $this->bot->hearCallbackQueryData('expense')
             ->reply()
-            ->assertReply('sendMessage', ['text' => 'Введите название категории:'], 1);
+            ->assertReply('sendMessage', ['text' => 'Enter the category name:'], 1);
 
         $this->bot->hearUpdateType(UpdateType::MESSAGE, [
-            'text' => $newCategoryName = 'Подписки',
+            'text' => $newCategoryName = 'Subscriptions',
             'from' => ['id' => $telegramId, 'is_bot' => false, 'first_name' => 'Alex'],
             'chat' => ['id' => $telegramId, 'type' => 'private'],
         ])
             ->reply()
-            ->assertReplyText('Категория «Подписки» (расход) добавлена.')
+            ->assertReplyText('Category "Subscriptions" (expense) added.')
             ->assertNoConversation($telegramId, $telegramId);
 
         $user = $I->grabEntityFromRepository(User::class, ['telegramId' => $telegramId]);

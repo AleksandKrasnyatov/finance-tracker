@@ -3,8 +3,7 @@ bot:
   error:
     generic: 'Could not complete the command. Please try again later.'
   transaction:
-    recorded: 'Recorded %sign%%amount% in "%category%" (%type%).'
-    recorded_with_comment: 'Recorded %sign%%amount% in "%category%" (%type%). Comment: %comment%'
+    recorded: 'Recorded %sign%%amount% in "%category%" (%type%)%comment%.'
   category:
     ask_type: 'What type of category?'
     enter_name: 'Enter the category name:'
@@ -17,16 +16,6 @@ bot:
     expense: 'Expense'
     cancel: 'Cancel'
 
-enum:
-  transaction_type:
-    income: 'income'
-    expense: 'expense'
-
 error:
   category_not_found: 'Category not found. Check the name and sign (+ income / − expense), or add it via "Add category".'
   start_required: 'Please run /start first.'
-
-web:
-  home:
-    title: 'Finance tracker bot'
-    heading: 'Home'

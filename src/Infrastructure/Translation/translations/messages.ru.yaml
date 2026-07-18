@@ -8,13 +8,15 @@ housing: 'жильё'
 health: 'здоровье'
 entertainment: 'развлечения'
 
+income: 'доход'
+expense: 'расход'
+
 bot:
   welcome: 'Добро пожаловать! Основной счёт и категории готовы к работе.'
   error:
     generic: 'Не удалось выполнить команду. Попробуйте ещё раз позднее.'
   transaction:
-    recorded: 'Записал %sign%%amount% в «%category%» (%type%).'
-    recorded_with_comment: 'Записал %sign%%amount% в «%category%» (%type%). Комментарий: %comment%'
+    recorded: 'Записал %sign%%amount% в «%category%» (%type%)%comment%.'
   category:
     ask_type: 'Какой тип категории?'
     enter_name: 'Введите название категории:'
@@ -27,16 +29,6 @@ bot:
     expense: 'Расход'
     cancel: 'Отмена'
 
-enum:
-  transaction_type:
-    income: 'доход'
-    expense: 'расход'
-
 error:
   category_not_found: 'Категория не найдена. Проверьте название и знак (+ доход / − расход) или добавьте её через «Добавить категорию».'
   start_required: 'Сначала выполните /start.'
-
-web:
-  home:
-    title: 'Бот учета финансов'
-    heading: 'Главная страница'
