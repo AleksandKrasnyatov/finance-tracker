@@ -8,10 +8,16 @@ use App\Infrastructure\Bot\Telegram\Http\TelegramWebhook;
 use App\Infrastructure\Bot\Telegram\TelegramBot;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use SergiX44\Nutgram\Nutgram;
 
 final class TelegramWebhookTest extends TestCase
 {
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     #[Test]
     public function givenInvalidSecretWhenWebhookRunsThenBotDoesNotProcessUpdate(): void
     {
@@ -29,6 +35,10 @@ final class TelegramWebhookTest extends TestCase
         $bot->assertNoReply();
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     #[Test]
     public function givenValidSecretWhenWebhookRunsThenBotProcessesUpdate(): void
     {

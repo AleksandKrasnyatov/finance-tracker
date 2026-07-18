@@ -13,7 +13,7 @@ final class ValidationException extends DomainException
      */
     public function __construct(
         public readonly array $errors,
-        string $message = 'Ошибка валидации',
+        string $message = 'Validation failed',
     ) {
         parent::__construct($message);
     }

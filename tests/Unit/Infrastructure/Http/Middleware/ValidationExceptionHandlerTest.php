@@ -32,7 +32,7 @@ final class ValidationExceptionHandlerTest extends TestCase
     {
         $middleware = new ValidationExceptionHandler();
 
-        $errors = ['name' => 'Имя не может быть пустым'];
+        $errors = ['name' => 'Name cannot be empty'];
 
         $handler = self::createStub(RequestHandlerInterface::class);
         $handler->method('handle')->willThrowException(new ValidationException($errors));
@@ -43,7 +43,7 @@ final class ValidationExceptionHandlerTest extends TestCase
         self::assertJson($body = (string) $response->getBody());
         self::assertSame(
             [
-                'message' => 'Ошибка валидации',
+                'message' => 'Validation failed',
                 'errors' => $errors,
             ],
             json_decode($body, true)

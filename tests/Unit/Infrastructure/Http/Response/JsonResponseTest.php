@@ -13,6 +13,9 @@ use stdClass;
 
 final class JsonResponseTest extends TestCase
 {
+    /**
+     * @throws JsonException
+     */
     #[Test]
     public function givenPayloadAndStatusCodeWhenJsonResponseIsCreatedThenHeadersBodyAndStatusMatch(): void
     {
@@ -25,6 +28,7 @@ final class JsonResponseTest extends TestCase
 
     /**
      * @dataProvider getCases
+     * @throws JsonException
      */
     #[Test]
     public function givenVariousPayloadsWhenJsonResponseIsCreatedThenBodyIsEncodedAsJson(mixed $source, mixed $expect): void

@@ -14,13 +14,13 @@ final class ValidationExceptionTest extends TestCase
     public function givenMessageAndErrorsWhenValidationExceptionIsCreatedThenMessageAndErrorsAreAccessible(): void
     {
         $exception = new ValidationException(
-            ['body' => 'Тело запроса должно быть JSON-объектом'],
-            'Некорректный запрос',
+            ['body' => 'Body must be JSON-encoded'],
+            'Incorrect request',
         );
 
-        self::assertSame('Некорректный запрос', $exception->getMessage());
+        self::assertSame('Incorrect request', $exception->getMessage());
         self::assertSame(
-            ['body' => 'Тело запроса должно быть JSON-объектом'],
+            ['body' => 'Body must be JSON-encoded'],
             $exception->errors
         );
     }
