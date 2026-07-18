@@ -35,16 +35,14 @@ final class ErrorHandlerCest
     #[Examples(exception: Exception::class, messageKey: 'bot.error.generic')]
     #[Examples(exception: NoAccessException::class, messageKey: 'bot.error.no_access')]
     #[Examples(exception: AccountManageException::class, messageKey: 'bot.error.account_manage')]
-    public function givenHandlerThrowsExceptionWhenUpdateIsProcessedThenErrorMessageIsSent(
-        FunctionalTester $I,
-        Example $example,
-    ): void {
+    public function givenHandlerThrowsExceptionWhenUpdateIsProcessedThenErrorMessageIsSent(Example $example): void
+    {
         /** @var class-string<Throwable> $exceptionClass */
         $exceptionClass = $example['exception'];
         /** @var string $messageKey */
         $messageKey = $example['messageKey'];
 
-        $this->bot->onUpdate(static fn () => throw new $exceptionClass());
+        $this->bot->onUpdate(static fn() => throw new $exceptionClass());
 
         $this->bot
             ->hearText('/anything')

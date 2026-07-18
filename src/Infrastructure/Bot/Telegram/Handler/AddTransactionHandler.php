@@ -7,11 +7,10 @@ namespace App\Infrastructure\Bot\Telegram\Handler;
 use App\Application\Gateway\TranslatorInterface;
 use App\Application\UseCase\Account\Transaction\AddTransactionCommand;
 use App\Application\UseCase\Account\Transaction\AddTransactionHandler as Handler;
-use App\Domain\Enum\Locale;
 use App\Domain\Enum\TransactionType;
 use App\Infrastructure\Bot\Telegram\TelegramUserData;
-use DomainException;
-use InvalidArgumentException;
+use DateMalformedStringException;
+use Psr\SimpleCache\InvalidArgumentException;
 use SergiX44\Nutgram\Nutgram;
 use UnexpectedValueException;
 
@@ -24,6 +23,10 @@ final readonly class AddTransactionHandler
     ) {
     }
 
+    /**
+     * @throws DateMalformedStringException
+     * @throws InvalidArgumentException
+     */
     public function __invoke(
         Nutgram $bot,
         string $sign,
@@ -35,25 +38,20 @@ final readonly class AddTransactionHandler
             throw new UnexpectedValueException('Telegram user is missing from the update.');
         }
 
-        $type = $this->resolveType($sign);
+        $type = TransactionType::fromSign($sign);
         $amount = str_replace(',', '.', $amount);
         $comment = trim((string)$description);
         $context = $this->userData->getOrSet($bot);
         $locale = $context['locale'];
 
-        try {
-            $this->handler->handle(new AddTransactionCommand(
-                $context['userId'],
-                $context['accountId'],
-                $type->value,
-                $amount,
-                $category,
-                $comment,
-            ));
-        } catch (DomainException | InvalidArgumentException $exception) {
-            $bot->sendMessage($this->userMessage($exception, $locale));
-            return;
-        }
+        $this->handler->handle(new AddTransactionCommand(
+            $context['userId'],
+            $context['accountId'],
+            $type->value,
+            $amount,
+            $category,
+            $comment,
+        ));
 
         $message = $this->translator->trans('bot.transaction.recorded', [
             '%sign%' => $sign,
@@ -64,30 +62,5 @@ final readonly class AddTransactionHandler
         ], $locale);
 
         $bot->sendMessage($message);
-    }
-
-    private function resolveType(string $sign): TransactionType
-    {
-        return match ($sign) {
-            '+' => TransactionType::Income,
-            '-' => TransactionType::Expense,
-            default => throw new UnexpectedValueException('Transaction sign must be + or -.'),
-        };
-    }
-
-    /**
-     * todo нужно разобраться с обработкой исключений
-     */
-    private function userMessage(DomainException|InvalidArgumentException $exception, Locale $locale): string
-    {
-        $key = match ($exception->getMessage()) {
-            'Category is not found.' => 'error.category_not_found',
-            'The user has no account.', 'Please run /start first.' => 'error.start_required',
-            default => null,
-        };
-
-        return $key === null
-            ? $exception->getMessage()
-            : $this->translator->trans($key, locale: $locale);
     }
 }

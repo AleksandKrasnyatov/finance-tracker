@@ -32,7 +32,7 @@ final readonly class AddTransactionHandler
     {
         $user = $this->users->get(new Id($command->userId));
         $account = $this->accounts->get(new Id($command->accountId));
-        $type = TransactionType::makeFrom($command->type);
+        $type = TransactionType::fromName($command->type);
 
         //todo можно упростить как будто, если передавать id категории
         $category = $this->categories->getByParams($account, $command->category, $type);

@@ -14,8 +14,10 @@ final class LocaleTest extends TestCase
      * @dataProvider languageCodes
      */
     #[Test]
-    public function mapsTelegramLanguageCode(?string $languageCode, Locale $expected): void
-    {
+    public function givenLanguageCodeWhenMakeLocaleThenExpectedLocaleIsCreated(
+        ?string $languageCode,
+        Locale $expected
+    ): void {
         self::assertSame($expected, Locale::fromLanguageCode($languageCode));
     }
 
