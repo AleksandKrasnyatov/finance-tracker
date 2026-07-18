@@ -7,6 +7,8 @@ namespace App\Infrastructure\Bot\Telegram\Handler;
 use App\Application\Gateway\TranslatorInterface;
 use App\Domain\Enum\Locale;
 use App\Domain\Exception\AccountManageException;
+use App\Domain\Exception\EntityNotFoundException;
+use App\Domain\Exception\EnumInvalidValueException;
 use App\Domain\Exception\NoAccessException;
 use Psr\Log\LoggerInterface;
 use SergiX44\Nutgram\Nutgram;
@@ -47,8 +49,10 @@ final readonly class ExceptionHandler
     private function getErrorMessage(Throwable $exception, Locale $locale): string
     {
         $key = match (true) {
-            $exception instanceof NoAccessException => 'bot.error.no_access',
-            $exception instanceof AccountManageException => 'bot.error.account_manage',
+            $exception instanceof NoAccessException => 'error.noAccess',
+            $exception instanceof AccountManageException => 'error.accountManage',
+            $exception instanceof EntityNotFoundException => 'error.notFound.' . $exception->getEntityName(),
+            $exception instanceof EnumInvalidValueException => 'error.invalidVal.' . $exception->getEntityName(),
             default => 'bot.error.generic',
         };
 

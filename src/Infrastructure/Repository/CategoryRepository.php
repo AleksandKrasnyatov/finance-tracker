@@ -7,6 +7,7 @@ namespace App\Infrastructure\Repository;
 use App\Domain\Entity\Account;
 use App\Domain\Entity\Category;
 use App\Domain\Enum\TransactionType;
+use App\Domain\Exception\EntityNotFoundException;
 use App\Domain\Repository\CategoryRepositoryInterface;
 use App\Domain\ValueObject\Id;
 use Doctrine\ORM\EntityManagerInterface;
@@ -39,7 +40,7 @@ final readonly class CategoryRepository implements CategoryRepositoryInterface
             ]);
 
         if ($entity === null) {
-            throw new DomainException('Category is not found.');
+            throw new EntityNotFoundException(Category::class);
         }
 
         return $entity;

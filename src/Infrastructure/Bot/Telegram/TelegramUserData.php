@@ -75,7 +75,7 @@ final readonly class TelegramUserData
         }
 
         $user = $this->users->getByTelegramId(new TelegramId($telegramId));
-        $account = $user->getAccounts()[0] ?? throw new DomainException('Please run /start first.');
+        $account = $user->getAccounts()[0] ?? throw new DomainException('User does not have any account.');
 
         $this->remember($bot, $user->id->value, $account->id->value, $user->locale, $telegramId);
 

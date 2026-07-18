@@ -39,7 +39,7 @@ final class TelegramBot
 
         foreach ([Locale::En, Locale::Ru] as $locale) {
             $this->bot->onText(
-                $this->translator->trans('bot.button.add_category', locale: $locale),
+                $this->translator->trans('bot.button.addCategory', locale: $locale),
                 AddCategoryConversation::class,
             );
         }

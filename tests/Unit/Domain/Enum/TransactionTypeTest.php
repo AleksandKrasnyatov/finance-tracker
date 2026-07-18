@@ -3,8 +3,8 @@
 namespace Test\Unit\Domain\Enum;
 
 use App\Domain\Enum\TransactionType;
+use App\Domain\Exception\EnumInvalidValueException;
 use Codeception\Test\Unit;
-use DomainException;
 
 class TransactionTypeTest extends Unit
 {
@@ -13,7 +13,7 @@ class TransactionTypeTest extends Unit
         self::assertEquals(TransactionType::Expense, TransactionType::fromName('expense'));
         self::assertEquals(TransactionType::Income, TransactionType::fromName('income'));
 
-        $this->expectException(DomainException::class);
+        $this->expectException(EnumInvalidValueException::class);
         TransactionType::fromName('wrong');
     }
 
@@ -22,7 +22,7 @@ class TransactionTypeTest extends Unit
         self::assertEquals(TransactionType::Expense, TransactionType::fromSign('-'));
         self::assertEquals(TransactionType::Income, TransactionType::fromSign('+'));
 
-        $this->expectException(DomainException::class);
+        $this->expectException(EnumInvalidValueException::class);
         TransactionType::fromSign('*');
     }
 }

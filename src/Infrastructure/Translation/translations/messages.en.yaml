@@ -2,22 +2,25 @@ bot:
   welcome: 'Welcome! Your main account and categories are ready.'
   error:
     generic: 'Could not complete the command. Please try again later.'
-    no_access: 'You do not have access to the account.'
-    account_manage: 'An error occurred while processing account data. Please try again.'
+
   transaction:
     recorded: 'Recorded %sign%%amount% in "%category%" (%type%)%comment%.'
   category:
-    ask_type: 'What type of category?'
-    enter_name: 'Enter the category name:'
-    enter_name_text: 'Enter the category name as text:'
+    askType: 'What type of category?'
+    enterName: 'Enter the category name:'
+    enterNameText: 'Enter the category name as text:'
     created: 'Category "%name%" (%type%) added.'
     cancelled: 'Category creation cancelled.'
   button:
-    add_category: 'Add category'
+    addCategory: 'Add category'
     income: 'Income'
     expense: 'Expense'
     cancel: 'Cancel'
 
 error:
-  category_not_found: 'Category not found. Check the name and sign (+ income / − expense), or add it via "Add category".'
-  start_required: 'Please run /start first.'
+  noAccess: 'You do not have access to the account.'
+  accountManage: 'An error occurred while processing account data. Please try again.'
+  notFound:
+    Category: 'Category not found.'
+  invalidVal:
+    TransactionType: 'Invalid transaction type.'

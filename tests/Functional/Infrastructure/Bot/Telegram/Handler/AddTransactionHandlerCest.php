@@ -90,7 +90,7 @@ final class AddTransactionHandlerCest
             ->hearText('-100 unknown')
             ->reply()
             ->assertReplyText(
-                'Category not found. Check the name and sign (+ income / − expense), or add it via "Add category".',
+                'Category not found.',
             );
 
         $I->dontSeeInRepository(Transaction::class, []);

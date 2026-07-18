@@ -38,7 +38,7 @@ final class AddCategoryConversation extends Conversation
         $locale = $this->locale($bot);
 
         $bot->sendMessage(
-            text: $this->translator->trans('bot.category.ask_type', locale: $locale),
+            text: $this->translator->trans('bot.category.askType', locale: $locale),
             reply_markup: InlineKeyboardMarkup::make()
                 ->addRow(
                     InlineKeyboardButton::make(
@@ -90,7 +90,7 @@ final class AddCategoryConversation extends Conversation
         }
 
         $this->type = $type;
-        $bot->sendMessage($this->translator->trans('bot.category.enter_name', locale: $locale));
+        $bot->sendMessage($this->translator->trans('bot.category.enterName', locale: $locale));
         $this->step = 'create';
         $bot->stepConversation($this, $userId, $chatId);
     }
@@ -104,7 +104,7 @@ final class AddCategoryConversation extends Conversation
         $locale = $this->locale($bot);
         $name = trim((string)$bot->message()?->text);
         if ($name === '' || str_starts_with($name, '/')) {
-            $bot->sendMessage($this->translator->trans('bot.category.enter_name_text', locale: $locale));
+            $bot->sendMessage($this->translator->trans('bot.category.enterNameText', locale: $locale));
             $this->step = 'create';
             $bot->stepConversation($this, $userId, $chatId);
             return;
