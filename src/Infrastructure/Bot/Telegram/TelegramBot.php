@@ -8,14 +8,13 @@ use App\Application\Gateway\TranslatorInterface;
 use App\Domain\Enum\Locale;
 use App\Infrastructure\Bot\Telegram\Conversation\AddCategoryConversation;
 use App\Infrastructure\Bot\Telegram\Handler\AddTransactionHandler;
+use App\Infrastructure\Bot\Telegram\Handler\ExceptionHandler;
 use App\Infrastructure\Bot\Telegram\Handler\StartHandler;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use Psr\Log\LoggerInterface;
 use SergiX44\Nutgram\Conversations\Conversation;
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\RunningMode\RunningMode;
-use Throwable;
 
 final class TelegramBot
 {
@@ -55,26 +54,7 @@ final class TelegramBot
             ->where('amount', '\d+(?:[.,]\d{1,2})?')
             ->where('category', '\S+');
 
-        $this->bot->onException(function (Nutgram $bot, Throwable $exception): void {
-            $bot->getContainer()
-                ->get(LoggerInterface::class)
-                ->error('Telegram update processing failed: {message}', [
-                    'message' => $exception->getMessage(),
-                    'exception' => $exception,
-                    'update_id' => $bot->update()?->update_id,
-                    'update_type' => $bot->update()?->getType()?->value,
-                    'user_id' => $bot->userId(),
-                    'chat_id' => $bot->chatId(),
-                    'text' => $bot->message()?->text,
-                    'callback_data' => $bot->callbackQuery()?->data,
-                    'callback_query_id' => $bot->callbackQuery()?->id,
-                ]);
-
-            $bot->sendMessage($this->translator->trans(
-                'bot.error.generic',
-                locale: Locale::fromLanguageCode($bot->user()?->language_code),
-            ));
-        });
+        $this->bot->onException(ExceptionHandler::class);
 
         $this->configured = true;
     }
