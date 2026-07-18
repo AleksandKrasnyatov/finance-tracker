@@ -10,9 +10,10 @@ use App\Domain\Entity\Transaction;
 use App\Domain\Entity\User;
 use App\Domain\Enum\Currency;
 use App\Domain\Enum\TransactionType;
+use App\Domain\Exception\NoAccessException;
 use App\Domain\ValueObject\Id;
 use App\Domain\ValueObject\Money;
-use DomainException;
+use App\Domain\Exception\AccountManageException;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Test\Unit\Builder\AccountBuilder;
@@ -62,7 +63,7 @@ final class ChangeTransactionMoneyTest extends TestCase
     #[Test]
     public function givenUserHasAnAccountWithATransactionWhenInaccessibleUserChangesTransactionMoneyThenAnExceptionIsExpectedAndTheTransactionStaysUnchanged(): void
     {
-        $this->expectException(DomainException::class);
+        $this->expectException(NoAccessException::class);
 
         try {
             $this->account->changeTransactionMoney(
@@ -70,7 +71,7 @@ final class ChangeTransactionMoneyTest extends TestCase
                 $this->transaction->id,
                 new Money('250.50'),
             );
-        } catch (DomainException $e) {
+        } catch (NoAccessException $e) {
             self::assertCount(1, $transactions = $this->account->getTransactions());
             self::assertEquals($this->transaction->money, $transactions[0]->money);
             self::assertNull($transactions[0]->updater);
@@ -81,7 +82,7 @@ final class ChangeTransactionMoneyTest extends TestCase
     #[Test]
     public function givenUserHasAnAccountWithATransactionWhenTheUserChangesTransactionMoneyForUnknownTransactionThenAnExceptionIsExpectedAndTheTransactionStaysUnchanged(): void
     {
-        $this->expectException(DomainException::class);
+        $this->expectException(AccountManageException::class);
 
         try {
             $this->account->changeTransactionMoney(
@@ -89,7 +90,7 @@ final class ChangeTransactionMoneyTest extends TestCase
                 Id::generate(),
                 new Money('250.50'),
             );
-        } catch (DomainException $e) {
+        } catch (AccountManageException $e) {
             self::assertCount(1, $transactions = $this->account->getTransactions());
             self::assertEquals($this->transaction->money, $transactions[0]->money);
             self::assertNull($transactions[0]->updater);

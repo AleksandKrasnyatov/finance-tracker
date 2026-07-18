@@ -9,9 +9,9 @@ use App\Domain\Entity\Category;
 use App\Domain\Entity\Transaction;
 use App\Domain\Entity\User;
 use App\Domain\Enum\TransactionType;
+use App\Domain\Exception\NoAccessException;
 use App\Domain\ValueObject\Id;
 use App\Domain\ValueObject\Money;
-use DomainException;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Test\Unit\Builder\AccountBuilder;
@@ -53,11 +53,11 @@ final class DeleteTransactionTest extends TestCase
     #[Test]
     public function givenUserHasAnAccountWithATransactionWhenInaccessibleUserDeletesTheTransactionThenAnExceptionIsExpectedAndTheTransactionStaysUnchanged(): void
     {
-        $this->expectException(DomainException::class);
+        $this->expectException(NoAccessException::class);
 
         try {
             $this->account->deleteTransaction(new UserBuilder()->build(), $this->transaction->id);
-        } catch (DomainException $e) {
+        } catch (NoAccessException $e) {
             self::assertCount(1, $this->account->getTransactions());
             self::assertSame($this->transaction, $this->account->getTransactions()[0]);
             self::assertCount(1, $this->transactionCategory->getTransactions());

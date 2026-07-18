@@ -9,8 +9,9 @@ use App\Domain\Entity\Category;
 use App\Domain\Entity\User;
 use App\Domain\Enum\AccountType;
 use App\Domain\Enum\TransactionType;
+use App\Domain\Exception\NoAccessException;
 use App\Domain\ValueObject\Money;
-use DomainException;
+use App\Domain\Exception\AccountManageException;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Test\Unit\Builder\AccountBuilder;
@@ -54,7 +55,7 @@ class AddTransactionTest extends TestCase
     #[Test]
     public function givenUserHasAnAccountWithACategoryWhenTheUserAddsATransactionForWrongCategoryThenAnExceptionIsExpectedAndTheAccountDoesNotHaveTheTransaction(): void
     {
-        $this->expectException(DomainException::class);
+        $this->expectException(AccountManageException::class);
 
         $otherUser = new UserBuilder()->build();
         $otherAccount = Account::create($otherUser, 'other', AccountType::Personal);
@@ -67,7 +68,7 @@ class AddTransactionTest extends TestCase
                 $foreignCategory,
                 new Money('100.00')
             );
-        } catch (DomainException $e) {
+        } catch (AccountManageException $e) {
             self::assertCount(0, $this->account->getTransactions());
             throw $e;
         }
@@ -76,7 +77,7 @@ class AddTransactionTest extends TestCase
     #[Test]
     public function givenUserHasAnAccountWithACategoryWhenInaccessibleUserAddsACorrectTransactionThenAnExceptionIsExpectedAndTheAccountDoesNotHaveTheTransaction(): void
     {
-        $this->expectException(DomainException::class);
+        $this->expectException(NoAccessException::class);
 
         try {
             $this->account->addTransaction(
@@ -84,7 +85,7 @@ class AddTransactionTest extends TestCase
                 $this->accountCategory,
                 new Money('100.00')
             );
-        } catch (DomainException $e) {
+        } catch (NoAccessException $e) {
             self::assertCount(0, $this->account->getTransactions());
             throw $e;
         }

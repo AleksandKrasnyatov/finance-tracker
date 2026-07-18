@@ -8,7 +8,8 @@ use App\Domain\Entity\Account;
 use App\Domain\Entity\Category;
 use App\Domain\Entity\User;
 use App\Domain\Enum\TransactionType;
-use DomainException;
+use App\Domain\Exception\NoAccessException;
+use App\Domain\Exception\AccountManageException;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Test\Unit\Builder\AccountBuilder;
@@ -48,11 +49,11 @@ final class ChangeNameCategoryTest extends TestCase
     #[Test]
     public function givenUserHasAnAccountWithCategoryWhenInaccessibleUserChangesNameOfTheCategoryThenAnExceptionIsExpectedAndTheAccountStillHasUnchangedCategory(): void
     {
-        $this->expectException(DomainException::class);
+        $this->expectException(NoAccessException::class);
 
         try {
             $this->account->changeCategoryName(new UserBuilder()->build(), $this->accountCategory->id, 'snaCks');
-        } catch (DomainException $e) {
+        } catch (NoAccessException $e) {
             self::assertCount(1, $categories = $this->account->getCategories());
             self::assertEquals($categories[0], $this->accountCategory);
             throw $e;
@@ -81,11 +82,11 @@ final class ChangeNameCategoryTest extends TestCase
         $this->account->addCategory($this->accountCreator, TransactionType::Expense, $newName = 'shopping');
         $secondExistsCategory = $this->account->getCategories()[1];
 
-        $this->expectException(DomainException::class);
+        $this->expectException(AccountManageException::class);
 
         try {
             $this->account->changeCategoryName($this->accountCreator, $this->accountCategory->id, $newName);
-        } catch (DomainException $e) {
+        } catch (AccountManageException $e) {
             self::assertCount(2, $categories = $this->account->getCategories());
             self::assertEquals($categories[0], $this->accountCategory);
             self::assertEquals($categories[1], $secondExistsCategory);

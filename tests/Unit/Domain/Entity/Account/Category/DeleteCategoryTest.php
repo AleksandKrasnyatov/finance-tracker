@@ -8,9 +8,10 @@ use App\Domain\Entity\Account;
 use App\Domain\Entity\Category;
 use App\Domain\Entity\User;
 use App\Domain\Enum\TransactionType;
+use App\Domain\Exception\NoAccessException;
 use App\Domain\ValueObject\Id;
 use App\Domain\ValueObject\Money;
-use DomainException;
+use App\Domain\Exception\AccountManageException;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Test\Unit\Builder\AccountBuilder;
@@ -44,11 +45,11 @@ final class DeleteCategoryTest extends TestCase
     #[Test]
     public function givenUserHasAnAccountWithCategoryWhenInaccessibleUserDeletesTheCategoryThenAnExceptionIsExpectedAndTheAccountStillHasUnchangedCategory(): void
     {
-        $this->expectException(DomainException::class);
+        $this->expectException(NoAccessException::class);
 
         try {
             $this->account->deleteCategory(new UserBuilder()->build(), $this->accountCategory->id);
-        } catch (DomainException $e) {
+        } catch (NoAccessException $e) {
             self::assertCount(1, $categories = $this->account->getCategories());
             self::assertEquals($categories[0], $this->accountCategory);
             throw $e;
@@ -71,11 +72,11 @@ final class DeleteCategoryTest extends TestCase
     {
         $this->account->addTransaction($this->accountCreator, $this->accountCategory, new Money('12'));
 
-        $this->expectException(DomainException::class);
+        $this->expectException(AccountManageException::class);
 
         try {
             $this->account->deleteCategory($this->accountCreator, $this->accountCategory->id);
-        } catch (DomainException $e) {
+        } catch (AccountManageException $e) {
             self::assertCount(1, $categories = $this->account->getCategories());
             self::assertEquals($categories[0], $this->accountCategory);
             throw $e;

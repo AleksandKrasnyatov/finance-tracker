@@ -9,7 +9,8 @@ use App\Domain\Entity\Account;
 use App\Domain\Entity\Category;
 use App\Domain\Entity\User;
 use App\Domain\Enum\TransactionType;
-use DomainException;
+use App\Domain\Exception\NoAccessException;
+use App\Domain\Exception\AccountManageException;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Test\Unit\Builder\AccountBuilder;
@@ -53,11 +54,11 @@ final class AddDefaultCategoriesTest extends TestCase
     #[Test]
     public function givenUserHasAnEmptyAccountWhenInaccessibleUserAddsDefaultCategoriesThenAnExceptionIsExpectedAndTheAccountDoesNotHaveCategories(): void
     {
-        $this->expectException(DomainException::class);
+        $this->expectException(NoAccessException::class);
 
         try {
             $this->account->addDefaultCategories(new UserBuilder()->build(), $this->defaultCategories);
-        } catch (DomainException $e) {
+        } catch (NoAccessException $e) {
             self::assertCount(0, $this->account->getCategories());
             throw $e;
         }
@@ -69,11 +70,11 @@ final class AddDefaultCategoriesTest extends TestCase
         $this->account->addCategory($this->accountCreator, TransactionType::Expense, 'food');
         $existing = $this->account->getCategories()[0];
 
-        $this->expectException(DomainException::class);
+        $this->expectException(AccountManageException::class);
 
         try {
             $this->account->addDefaultCategories($this->accountCreator, $this->defaultCategories);
-        } catch (DomainException $e) {
+        } catch (AccountManageException $e) {
             self::assertCount(1, $categories = $this->account->getCategories());
             self::assertSame($existing, $categories[0]);
             throw $e;

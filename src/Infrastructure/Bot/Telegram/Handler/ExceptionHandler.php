@@ -6,6 +6,8 @@ namespace App\Infrastructure\Bot\Telegram\Handler;
 
 use App\Application\Gateway\TranslatorInterface;
 use App\Domain\Enum\Locale;
+use App\Domain\Exception\AccountManageException;
+use App\Domain\Exception\NoAccessException;
 use Psr\Log\LoggerInterface;
 use SergiX44\Nutgram\Nutgram;
 use Throwable;
@@ -34,9 +36,22 @@ final readonly class ExceptionHandler
             'callback_query_id' => $bot->callbackQuery()?->id,
         ]);
 
-        $bot->sendMessage($this->translator->trans(
-            'bot.error.generic',
+        $errorMessage = $this->getErrorMessage(
+            exception: $exception,
             locale: Locale::fromLanguageCode($bot->user()?->language_code),
-        ));
+        );
+
+        $bot->sendMessage($errorMessage);
+    }
+
+    private function getErrorMessage(Throwable $exception, Locale $locale): string
+    {
+        $key = match (true) {
+            $exception instanceof NoAccessException => 'bot.error.no_access',
+            $exception instanceof AccountManageException => 'bot.error.account_manage',
+            default => 'bot.error.generic',
+        };
+
+        return $this->translator->trans($key, locale: $locale);
     }
 }

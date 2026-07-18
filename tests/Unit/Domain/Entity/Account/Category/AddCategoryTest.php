@@ -7,7 +7,8 @@ namespace Test\Unit\Domain\Entity\Account\Category;
 use App\Domain\Entity\Account;
 use App\Domain\Entity\User;
 use App\Domain\Enum\TransactionType;
-use DomainException;
+use App\Domain\Exception\AccountManageException;
+use App\Domain\Exception\NoAccessException;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Test\Unit\Builder\AccountBuilder;
@@ -42,11 +43,11 @@ final class AddCategoryTest extends TestCase
     #[Test]
     public function givenUserHasAnAccountWhenInaccessibleUserAddsACorrectCategoryThenAnExceptionIsExpectedAndTheAccountDoesNotHaveTheCategory(): void
     {
-        $this->expectException(DomainException::class);
+        $this->expectException(NoAccessException::class);
 
         try {
             $this->account->addCategory(new UserBuilder()->build(), TransactionType::Expense, 'food');
-        } catch (DomainException $e) {
+        } catch (NoAccessException $e) {
             self::assertCount(0, $this->account->getCategories());
             throw $e;
         }
@@ -58,11 +59,11 @@ final class AddCategoryTest extends TestCase
         $this->account->addCategory($this->accountCreator, TransactionType::Expense, 'food');
         $category = $this->account->getCategories()[0];
 
-        $this->expectException(DomainException::class);
+        $this->expectException(AccountManageException::class);
 
         try {
             $this->account->addCategory($this->accountCreator, TransactionType::Expense, 'food');
-        } catch (DomainException $e) {
+        } catch (AccountManageException $e) {
             self::assertCount(1, $this->account->getCategories());
             self::assertEquals($category, $this->account->getCategories()[0]);
             throw $e;

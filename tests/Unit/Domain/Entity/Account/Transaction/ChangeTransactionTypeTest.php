@@ -9,9 +9,10 @@ use App\Domain\Entity\Category;
 use App\Domain\Entity\Transaction;
 use App\Domain\Entity\User;
 use App\Domain\Enum\TransactionType;
+use App\Domain\Exception\NoAccessException;
 use App\Domain\ValueObject\Id;
 use App\Domain\ValueObject\Money;
-use DomainException;
+use App\Domain\Exception\AccountManageException;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Test\Unit\Builder\AccountBuilder;
@@ -66,7 +67,7 @@ final class ChangeTransactionTypeTest extends TestCase
     #[Test]
     public function givenUserHasAnAccountWithATransactionWhenInaccessibleUserChangesTransactionCategoryThenAnExceptionIsExpectedAndTheTransactionStaysUnchanged(): void
     {
-        $this->expectException(DomainException::class);
+        $this->expectException(NoAccessException::class);
 
         try {
             $this->account->changeTransactionCategory(
@@ -74,7 +75,7 @@ final class ChangeTransactionTypeTest extends TestCase
                 $this->transaction->id,
                 $this->accountAnotherCategory,
             );
-        } catch (DomainException $e) {
+        } catch (NoAccessException $e) {
             self::assertCount(1, $transactions = $this->account->getTransactions());
             self::assertSame($this->transactionCategory, $transactions[0]->category);
             self::assertNull($transactions[0]->updater);
@@ -94,7 +95,7 @@ final class ChangeTransactionTypeTest extends TestCase
 
         $foreignCategory = $otherAccount->getCategories()[0];
 
-        $this->expectException(DomainException::class);
+        $this->expectException(AccountManageException::class);
 
         try {
             $this->account->changeTransactionCategory(
@@ -102,7 +103,7 @@ final class ChangeTransactionTypeTest extends TestCase
                 $this->transaction->id,
                 $foreignCategory,
             );
-        } catch (DomainException $e) {
+        } catch (AccountManageException $e) {
             self::assertCount(1, $transactions = $this->account->getTransactions());
             self::assertSame($this->transactionCategory, $transactions[0]->category);
             self::assertNull($transactions[0]->updater);
@@ -114,7 +115,7 @@ final class ChangeTransactionTypeTest extends TestCase
     #[Test]
     public function givenUserHasAnAccountWithATransactionWhenTheUserChangesTransactionCategoryForUnknownTransactionThenAnExceptionIsExpectedAndTheTransactionStaysUnchanged(): void
     {
-        $this->expectException(DomainException::class);
+        $this->expectException(AccountManageException::class);
 
         try {
             $this->account->changeTransactionCategory(
@@ -122,7 +123,7 @@ final class ChangeTransactionTypeTest extends TestCase
                 Id::generate(),
                 $this->accountAnotherCategory,
             );
-        } catch (DomainException $e) {
+        } catch (AccountManageException $e) {
             self::assertCount(1, $transactions = $this->account->getTransactions());
             self::assertSame($this->transactionCategory, $transactions[0]->category);
             self::assertNull($transactions[0]->updater);

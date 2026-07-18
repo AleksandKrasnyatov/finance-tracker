@@ -7,6 +7,8 @@ namespace App\Domain\Entity;
 use App\Domain\Dto\CategoryDto;
 use App\Domain\Enum\AccountType;
 use App\Domain\Enum\TransactionType;
+use App\Domain\Exception\AccountManageException;
+use App\Domain\Exception\NoAccessException;
 use App\Domain\ValueObject\Id;
 use App\Domain\ValueObject\Money;
 use App\Infrastructure\Doctrine\Type\IdType;
@@ -82,12 +84,10 @@ final class Account
 
     public function addCategory(User $user, TransactionType $type, string $name): void
     {
-        if (!$this->canManage($user)) {
-            throw new DomainException('User is not allowed to manage this account.');
-        }
+        $this->checkAccess($user);
 
         if ($this->hasCategoryWithParams($name, $type)) {
-            throw new DomainException('Category with this name and type already exists.');
+            throw new AccountManageException('Category with this name and type already exists.');
         }
 
         $category = new Category(Id::generate(), $this, $type, $name, $user);
@@ -100,12 +100,10 @@ final class Account
      */
     public function addDefaultCategories(User $user, array $categories): void
     {
-        if (!$this->canManage($user)) {
-            throw new DomainException('User is not allowed to manage this account.');
-        }
+        $this->checkAccess($user);
 
         if (!$this->categories->isEmpty()) {
-            throw new DomainException('Account already has categories.');
+            throw new AccountManageException('Account already has categories.');
         }
 
         foreach ($categories as $category) {
@@ -121,12 +119,10 @@ final class Account
 
     public function changeCategoryName(User $user, Id $categoryId, string $name): void
     {
-        if (!$this->canManage($user)) {
-            throw new DomainException('User is not allowed to manage this account.');
-        }
+        $this->checkAccess($user);
 
         if (!$category = $this->getCategory($categoryId)) {
-            throw new DomainException('Category not found.');
+            throw new AccountManageException('Category not found.');
         }
 
         if (mb_strtolower($name) === $category->name) {
@@ -134,7 +130,7 @@ final class Account
         }
 
         if ($this->hasCategoryWithParams($name, $category->type)) {
-            throw new DomainException('Category with this name and type already exists.');
+            throw new AccountManageException('Category with this name and type already exists.');
         }
 
         $category->rename($name);
@@ -142,16 +138,14 @@ final class Account
 
     public function deleteCategory(User $user, Id $categoryId): void
     {
-        if (!$this->canManage($user)) {
-            throw new DomainException('User is not allowed to manage this account.');
-        }
+        $this->checkAccess($user);
 
         if (!$category = $this->getCategory($categoryId)) {
             return;
         }
 
         if (!empty($category->getTransactions())) {
-            throw new DomainException('Category has transactions. Delete transactions first.');
+            throw new AccountManageException('Category has transactions. Delete transactions first.');
         }
 
         $this->categories->removeElement($category);
@@ -164,12 +158,10 @@ final class Account
         string $description = '',
         ?DateTimeImmutable $date = null
     ): void {
-        if (!$this->canManage($user)) {
-            throw new DomainException('User is not allowed to manage this account.');
-        }
+        $this->checkAccess($user);
 
         if (!$this->hasCategory($category)) {
-            throw new DomainException('Account does not have this category.');
+            throw new AccountManageException('Account does not have this category.');
         }
 
         $transaction = new Transaction($this, $user, $category, $money, $description, $date);
@@ -180,16 +172,14 @@ final class Account
 
     public function changeTransactionCategory(User $user, Id $transactionId, Category $category): void
     {
-        if (!$this->canManage($user)) {
-            throw new DomainException('User is not allowed to manage this account.');
-        }
+        $this->checkAccess($user);
 
         if (!$this->hasCategory($category)) {
-            throw new DomainException('Account does not have this category.');
+            throw new AccountManageException('Account does not have this category.');
         }
 
         if (!$transaction = $this->getTransaction($transactionId)) {
-            throw new DomainException('Transaction not found.');
+            throw new AccountManageException('Transaction not found.');
         }
 
         $transaction->category->removeTransaction($transaction);
@@ -199,12 +189,10 @@ final class Account
 
     public function changeTransactionMoney(User $user, Id $transactionId, Money $money): void
     {
-        if (!$this->canManage($user)) {
-            throw new DomainException('User is not allowed to manage this account.');
-        }
+        $this->checkAccess($user);
 
         if (!$transaction = $this->getTransaction($transactionId)) {
-            throw new DomainException('Transaction not found.');
+            throw new AccountManageException('Transaction not found.');
         }
 
         $transaction->changeMoney($user, $money);
@@ -212,12 +200,10 @@ final class Account
 
     public function changeTransactionDate(User $user, Id $transactionId, DateTimeImmutable $date): void
     {
-        if (!$this->canManage($user)) {
-            throw new DomainException('User is not allowed to manage this account.');
-        }
+        $this->checkAccess($user);
 
         if (!$transaction = $this->getTransaction($transactionId)) {
-            throw new DomainException('Transaction not found.');
+            throw new AccountManageException('Transaction not found.');
         }
 
         $transaction->changeDate($user, $date);
@@ -225,9 +211,7 @@ final class Account
 
     public function deleteTransaction(User $user, Id $transactionId): void
     {
-        if (!$this->canManage($user)) {
-            throw new DomainException('User is not allowed to manage this account.');
-        }
+        $this->checkAccess($user);
 
         if (!$transaction = $this->getTransaction($transactionId)) {
             return;
@@ -300,5 +284,12 @@ final class Account
     public function getMembers(): array
     {
         return $this->members->toArray();
+    }
+
+    private function checkAccess(User $user): void
+    {
+        if (!$this->canManage($user)) {
+            throw new NoAccessException('User is not allowed to manage this account.');
+        }
     }
 }

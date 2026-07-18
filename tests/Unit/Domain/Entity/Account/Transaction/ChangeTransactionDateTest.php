@@ -9,10 +9,11 @@ use App\Domain\Entity\Category;
 use App\Domain\Entity\Transaction;
 use App\Domain\Entity\User;
 use App\Domain\Enum\TransactionType;
+use App\Domain\Exception\NoAccessException;
 use App\Domain\ValueObject\Id;
 use App\Domain\ValueObject\Money;
 use DateTimeImmutable;
-use DomainException;
+use App\Domain\Exception\AccountManageException;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Test\Unit\Builder\AccountBuilder;
@@ -64,7 +65,7 @@ final class ChangeTransactionDateTest extends TestCase
     #[Test]
     public function givenUserHasAnAccountWithATransactionWhenInaccessibleUserChangesTransactionDateThenAnExceptionIsExpectedAndTheTransactionStaysUnchanged(): void
     {
-        $this->expectException(DomainException::class);
+        $this->expectException(NoAccessException::class);
 
         try {
             $this->account->changeTransactionDate(
@@ -72,7 +73,7 @@ final class ChangeTransactionDateTest extends TestCase
                 $this->transaction->id,
                 new DateTimeImmutable('2026-07-01'),
             );
-        } catch (DomainException $e) {
+        } catch (NoAccessException $e) {
             self::assertCount(1, $transactions = $this->account->getTransactions());
             self::assertEquals($this->transaction->date, $transactions[0]->date);
             self::assertNull($transactions[0]->updater);
@@ -83,7 +84,7 @@ final class ChangeTransactionDateTest extends TestCase
     #[Test]
     public function givenUserHasAnAccountWithATransactionWhenTheUserChangesTransactionDateForUnknownTransactionThenAnExceptionIsExpectedAndTheTransactionStaysUnchanged(): void
     {
-        $this->expectException(DomainException::class);
+        $this->expectException(AccountManageException::class);
 
         try {
             $this->account->changeTransactionDate(
@@ -91,7 +92,7 @@ final class ChangeTransactionDateTest extends TestCase
                 Id::generate(),
                 new DateTimeImmutable('2026-07-01'),
             );
-        } catch (DomainException $e) {
+        } catch (AccountManageException $e) {
             self::assertCount(1, $transactions = $this->account->getTransactions());
             self::assertEquals($this->transaction->date, $transactions[0]->date);
             self::assertNull($transactions[0]->updater);
