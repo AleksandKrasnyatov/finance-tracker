@@ -36,10 +36,14 @@ final class TelegramBot
 
         Conversation::refreshOnDeserialize();
 
-        $this->bot->onCommand('start', StartHandler::class);
-        $this->bot->onCommand('reset', ResetHandler::class);
-        $this->bot->onCommand('balance', BalanceHandler::class);
-        $this->bot->onCommand('category', AddCategoryConversation::class);
+        $this->bot->onCommand('start', StartHandler::class)
+            ->description($this->commandDescriptions('bot.command.start'));
+        $this->bot->onCommand('reset', ResetHandler::class)
+            ->description($this->commandDescriptions('bot.command.reset'));
+        $this->bot->onCommand('category', AddCategoryConversation::class)
+            ->description($this->commandDescriptions('bot.command.category'));
+        $this->bot->onCommand('balance', BalanceHandler::class)
+            ->description($this->commandDescriptions('bot.command.balance'));
 
         foreach ([Locale::En, Locale::Ru] as $locale) {
             $this->bot->onText(
@@ -63,6 +67,12 @@ final class TelegramBot
         $this->configured = true;
     }
 
+    public function syncCommandMenu(): void
+    {
+        $this->configure();
+        $this->bot->registerMyCommands();
+    }
+
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
@@ -72,5 +82,18 @@ final class TelegramBot
         $this->configure();
         $this->bot->setRunningMode($runningMode);
         $this->bot->run();
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function commandDescriptions(string $key): array
+    {
+        $descriptions = [];
+        foreach ([Locale::En, Locale::Ru] as $locale) {
+            $descriptions[$locale->value] = $this->translator->trans($key, locale: $locale);
+        }
+
+        return $descriptions;
     }
 }

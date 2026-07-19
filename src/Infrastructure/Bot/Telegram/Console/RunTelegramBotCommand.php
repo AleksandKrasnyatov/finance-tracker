@@ -33,6 +33,7 @@ final class RunTelegramBotCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $this->telegramBot->syncCommandMenu();
         $output->writeln('<info>Telegram bot is running.</info>');
         $this->telegramBot->run(new Polling());
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Bot\Telegram\Console;
 
+use App\Infrastructure\Bot\Telegram\TelegramBot;
 use GuzzleHttp\Exception\GuzzleException;
 use JsonException;
 use RuntimeException;
@@ -22,6 +23,7 @@ final class TelegramWebhookCommand extends Command
      */
     public function __construct(
         private readonly Nutgram $bot,
+        private readonly TelegramBot $telegramBot,
         private readonly string $secretToken,
         private readonly string $defaultUrl,
         private readonly array $allowedUpdates,
@@ -79,8 +81,10 @@ final class TelegramWebhookCommand extends Command
             drop_pending_updates: $dropPendingUpdates,
             secret_token: $this->secretToken,
         );
+        $this->telegramBot->syncCommandMenu();
 
         $output->writeln('<info>Webhook set:</info> ' . $url);
+        $output->writeln('<info>Telegram command menu updated.</info>');
         $this->writeWebhookInfo($output);
 
         return Command::SUCCESS;
