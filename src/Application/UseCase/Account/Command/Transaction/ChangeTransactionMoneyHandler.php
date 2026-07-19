@@ -2,14 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Application\UseCase\Account\Category;
+namespace App\Application\UseCase\Account\Command\Transaction;
 
 use App\Domain\Repository\AccountRepositoryInterface;
 use App\Domain\Repository\UserRepositoryInterface;
 use App\Domain\ValueObject\Id;
+use App\Domain\ValueObject\Money;
 use App\Infrastructure\Repository\Flusher;
 
-final readonly class ChangeCategoryNameHandler
+final readonly class ChangeTransactionMoneyHandler
 {
     public function __construct(
         private UserRepositoryInterface $users,
@@ -18,12 +19,14 @@ final readonly class ChangeCategoryNameHandler
     ) {
     }
 
-    public function handle(ChangeCategoryNameCommand $command): void
+    public function handle(ChangeTransactionMoneyCommand $command): void
     {
         $user = $this->users->get(new Id($command->userId));
         $account = $this->accounts->get(new Id($command->accountId));
 
-        $account->changeCategoryName($user, new Id($command->categoryId), $command->name);
+        $money = new Money($command->amount);
+
+        $account->changeTransactionMoney($user, new Id($command->transactionId), $money);
 
         $this->flusher->flush();
     }

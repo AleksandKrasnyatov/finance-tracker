@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\UseCase\Account;
+namespace App\Application\UseCase\Account\Command;
 
 final readonly class CreateUserAccountCommand
 {

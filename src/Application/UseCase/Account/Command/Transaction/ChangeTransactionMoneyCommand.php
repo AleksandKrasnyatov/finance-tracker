@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\UseCase\Account\Transaction;
+namespace App\Application\UseCase\Account\Command\Transaction;
 
 final readonly class ChangeTransactionMoneyCommand
 {

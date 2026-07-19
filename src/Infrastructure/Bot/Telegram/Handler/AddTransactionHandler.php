@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Infrastructure\Bot\Telegram\Handler;
 
 use App\Application\Gateway\TranslatorInterface;
-use App\Application\UseCase\Account\Transaction\AddTransactionCommand;
-use App\Application\UseCase\Account\Transaction\AddTransactionHandler as Handler;
+use App\Application\UseCase\Account\Command\Transaction\AddTransactionCommand;
+use App\Application\UseCase\Account\Command\Transaction\AddTransactionHandler as Handler;
 use App\Domain\Enum\TransactionType;
 use App\Infrastructure\Bot\Telegram\TelegramUserData;
 use DateMalformedStringException;

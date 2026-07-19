@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Infrastructure\Bot\Telegram\Conversation;
 
 use App\Application\Gateway\TranslatorInterface;
-use App\Application\UseCase\Account\Category\CreateCategoryCommand;
-use App\Application\UseCase\Account\Category\CreateCategoryHandler;
+use App\Application\UseCase\Account\Command\Category\CreateCategoryCommand;
+use App\Application\UseCase\Account\Command\Category\CreateCategoryHandler;
 use App\Domain\Enum\Locale;
 use App\Domain\Enum\TransactionType;
 use App\Infrastructure\Bot\Telegram\TelegramUserData;

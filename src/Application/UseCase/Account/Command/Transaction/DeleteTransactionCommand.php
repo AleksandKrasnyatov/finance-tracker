@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Application\UseCase\Account\Category;
+namespace App\Application\UseCase\Account\Command\Transaction;
 
-final readonly class DeleteCategoryCommand
+final readonly class DeleteTransactionCommand
 {
     public function __construct(
         public string $userId,
         public string $accountId,
-        public string $categoryId,
+        public string $transactionId,
     ) {
     }
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\UseCase\Account\Transaction;
+namespace App\Application\UseCase\Account\Command\Transaction;
 
 use App\Domain\Enum\TransactionType;
 use App\Domain\Repository\AccountRepositoryInterface;
@@ -13,7 +13,6 @@ use App\Domain\ValueObject\Money;
 use App\Infrastructure\Repository\Flusher;
 use DateMalformedStringException;
 use DateTimeImmutable;
-use DomainException;
 
 final readonly class AddTransactionHandler
 {

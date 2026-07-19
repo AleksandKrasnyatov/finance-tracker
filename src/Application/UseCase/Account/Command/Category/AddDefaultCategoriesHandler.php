@@ -2,33 +2,30 @@
 
 declare(strict_types=1);
 
-namespace App\Application\UseCase\Account;
+namespace App\Application\UseCase\Account\Command\Category;
 
 use App\Application\Service\SeedCatalog;
-use App\Domain\Entity\Account;
-use App\Domain\Enum\AccountType;
+use App\Domain\Repository\AccountRepositoryInterface;
 use App\Domain\Repository\UserRepositoryInterface;
 use App\Domain\ValueObject\Id;
 use App\Infrastructure\Repository\Flusher;
 
-final readonly class CreateUserAccountHandler
+final readonly class AddDefaultCategoriesHandler
 {
     public function __construct(
         private UserRepositoryInterface $users,
+        private AccountRepositoryInterface $accounts,
         private SeedCatalog $seeds,
         private Flusher $flusher,
     ) {
     }
 
-    public function handle(CreateUserAccountCommand $command): void
+    public function handle(AddDefaultCategoriesCommand $command): void
     {
         $user = $this->users->get(new Id($command->userId));
+        $account = $this->accounts->get(new Id($command->accountId));
 
-        Account::create(
-            $user,
-            $command->name ?? $this->seeds->accountName($user->locale),
-            AccountType::tryFrom($command->type) ?? AccountType::Personal,
-        );
+        $account->addDefaultCategories($user, $this->seeds->categories($user->locale));
 
         $this->flusher->flush();
     }

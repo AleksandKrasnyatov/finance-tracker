@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\UseCase\Account\Category;
+namespace App\Application\UseCase\Account\Command\Category;
 
 final readonly class ChangeCategoryNameCommand
 {
