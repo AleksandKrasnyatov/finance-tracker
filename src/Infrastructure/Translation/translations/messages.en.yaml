@@ -12,6 +12,30 @@ bot:
     enterNameText: 'Enter the category name as text:'
     created: 'Category "%name%" (%type%) added.'
     cancelled: 'Category creation cancelled.'
+  balance:
+    message: |
+      📊 Balance for %month%
+
+      📝 %balance%
+
+      ➕ %incomes%
+      ➖ %expenses%
+
+      Remaining from income:
+      %bar%  %percent%%
+  month:
+    1: 'January'
+    2: 'February'
+    3: 'March'
+    4: 'April'
+    5: 'May'
+    6: 'June'
+    7: 'July'
+    8: 'August'
+    9: 'September'
+    10: 'October'
+    11: 'November'
+    12: 'December'
   button:
     addCategory: 'Add category'
     income: 'Income'

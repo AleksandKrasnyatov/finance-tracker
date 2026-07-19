@@ -244,6 +244,11 @@ final class Account
         );
     }
 
+    public function canView(User $user): bool
+    {
+        return $this->canManage($user);
+    }
+
     public function hasCategory(Category $category): bool
     {
         return $this->categories->contains($category);
