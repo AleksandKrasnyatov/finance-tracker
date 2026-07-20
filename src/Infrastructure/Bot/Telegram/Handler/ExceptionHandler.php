@@ -38,6 +38,7 @@ final readonly class ExceptionHandler
         ];
 
         $this->logger->error('Telegram update processing failed', $context);
+        $this->endConversation($bot);
 
         $errorMessage = $this->getErrorMessage(
             exception: $exception,
@@ -46,10 +47,27 @@ final readonly class ExceptionHandler
 
         if ($bot->isCallbackQuery()) {
             $bot->answerCallbackQuery(text: $errorMessage, show_alert: true);
+
             return;
         }
 
         $bot->sendMessage($errorMessage);
+    }
+
+    private function endConversation(Nutgram $bot): void
+    {
+        try {
+            if ($bot->userId() !== null && $bot->chatId() !== null) {
+                $bot->endConversation();
+            }
+        } catch (Throwable $exception) {
+            $this->logger->error('Telegram conversation failed', [
+                'message' => $exception->getMessage(),
+                'exception' => $exception,
+                'user_id' => $bot->userId(),
+                'chat_id' => $bot->chatId(),
+            ]);
+        }
     }
 
     private function getErrorMessage(Throwable $exception, Locale $locale): string

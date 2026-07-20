@@ -7,8 +7,8 @@ namespace Test\Functional\Infrastructure\Bot\Telegram\Conversation;
 use App\Domain\Entity\Category;
 use App\Domain\Entity\User;
 use App\Domain\Enum\TransactionType;
+use App\Application\Gateway\TranslatorInterface;
 use Psr\SimpleCache\InvalidArgumentException;
-use SergiX44\Nutgram\Telegram\Properties\UpdateType;
 use SergiX44\Nutgram\Testing\FakeNutgram;
 use Test\Support\Fixture\OnboardedTelegramUserFixture;
 use Test\Support\FunctionalTester;
@@ -27,29 +27,28 @@ final class AddCategoryConversationCest
     /**
      * @throws InvalidArgumentException
      */
-    public function givenGivenUserHasAnAccountWhenTheUserAddsACategoryFromBotWithCorrectAnswersThenAllStepsHasSuccessAndTheAccountHasTheCategory(FunctionalTester $I): void
-    {
+    public function givenUserHasAnAccountWhenAddsCategoryWithAllCorrectStepsThenAllStepsHasSuccessAndTheAccountHasTheCategory(
+        FunctionalTester $I
+    ): void {
         $telegramId = OnboardedTelegramUserFixture::TELEGRAM_ID;
 
         $this->bot->willStartConversation()
-            ->hearUpdateType(UpdateType::MESSAGE, [
-                'text' => '/category',
-                'from' => ['id' => $telegramId, 'is_bot' => false, 'first_name' => 'Alex'],
-                'chat' => ['id' => $telegramId, 'type' => 'private'],
-            ])
+            ->hearText('/category')
             ->reply()
-            ->assertReplyText('What type of category?')
+            ->assertReplyText('Categories');
+
+        $this->bot
+            ->hearCallbackQueryData('cat:type:expense')
+            ->reply()
+            ->assertReply('editMessageText', index: 1);
+
+        $this->bot
+            ->hearCallbackQueryData('cat:add:expense')
+            ->reply()
+            ->assertReply('sendMessage', ['text' => 'Enter the category name:'], 1)
             ->assertActiveConversation($telegramId, $telegramId);
 
-        $this->bot->hearCallbackQueryData('expense')
-            ->reply()
-            ->assertReply('sendMessage', ['text' => 'Enter the category name:'], 1);
-
-        $this->bot->hearUpdateType(UpdateType::MESSAGE, [
-            'text' => $newCategoryName = 'Subscriptions',
-            'from' => ['id' => $telegramId, 'is_bot' => false, 'first_name' => 'Alex'],
-            'chat' => ['id' => $telegramId, 'type' => 'private'],
-        ])
+        $this->bot->hearText('Subscriptions')
             ->reply()
             ->assertReplyText('Category "Subscriptions" (expense) added.')
             ->assertNoConversation($telegramId, $telegramId);
@@ -59,8 +58,34 @@ final class AddCategoryConversationCest
 
         $I->seeInRepository(Category::class, [
             'account' => $account,
-            'name' => mb_strtolower($newCategoryName),
+            'name' => 'subscriptions',
             'type' => TransactionType::Expense,
         ]);
+    }
+
+    /**
+     * @throws InvalidArgumentException
+     */
+    public function givenDuplicateCategoryWhenAddsThenConversationEndsAndErrorIsShown(FunctionalTester $I): void
+    {
+        $telegramId = OnboardedTelegramUserFixture::TELEGRAM_ID;
+
+        $this->bot->willStartConversation()
+            ->hearText('/category')
+            ->reply();
+
+        $this->bot
+            ->hearCallbackQueryData('cat:type:expense')
+            ->reply();
+
+        $this->bot
+            ->hearCallbackQueryData('cat:add:expense')
+            ->reply()
+            ->assertActiveConversation($telegramId, $telegramId);
+
+        $this->bot->hearText('groceries')
+            ->reply()
+            ->assertReplyText($I->grabService(TranslatorInterface::class)->trans('error.accountManage'))
+            ->assertNoConversation($telegramId, $telegramId);
     }
 }
