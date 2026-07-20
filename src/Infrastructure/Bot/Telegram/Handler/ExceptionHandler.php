@@ -25,8 +25,7 @@ final readonly class ExceptionHandler
     public function __invoke(Nutgram $bot, Throwable $exception): void
     {
         $update = $bot->update();
-
-        $this->logger->error('Telegram update processing failed', [
+        $context = [
             'message' => $exception->getMessage(),
             'exception' => $exception,
             'update_id' => $update->update_id ?? null,
@@ -36,12 +35,19 @@ final readonly class ExceptionHandler
             'text' => $bot->message()?->text,
             'callback_data' => $bot->callbackQuery()?->data,
             'callback_query_id' => $bot->callbackQuery()?->id,
-        ]);
+        ];
+
+        $this->logger->error('Telegram update processing failed', $context);
 
         $errorMessage = $this->getErrorMessage(
             exception: $exception,
             locale: Locale::fromLanguageCode($bot->user()?->language_code),
         );
+
+        if ($bot->isCallbackQuery()) {
+            $bot->answerCallbackQuery(text: $errorMessage, show_alert: true);
+            return;
+        }
 
         $bot->sendMessage($errorMessage);
     }

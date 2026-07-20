@@ -55,4 +55,19 @@ final class ErrorHandlerCest
             ->reply()
             ->assertReplyText($this->translator->trans($messageKey));
     }
+
+    public function givenHandlerThrowsExceptionOnCallbackWhenUpdateIsProcessedThenAlertIsShown(): void
+    {
+        $this->bot->onUpdate(static fn() => throw new AccountManageException());
+
+        $message = $this->translator->trans('error.accountManage');
+
+        $this->bot
+            ->hearCallbackQueryData('cat:anything')
+            ->reply()
+            ->assertReply('answerCallbackQuery', [
+                'text' => $message,
+                'show_alert' => true,
+            ]);
+    }
 }
