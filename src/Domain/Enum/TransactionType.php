@@ -13,7 +13,7 @@ enum TransactionType: string
 
     public static function fromName(string $typeName): self
     {
-        return self::tryFrom($typeName) ?? throw new EnumInvalidValueException('Invalid transaction type');
+        return self::tryFrom($typeName) ?? throw new EnumInvalidValueException(self::class, 'Invalid transaction type');
     }
 
     public static function fromSign(string $sign): self
@@ -21,7 +21,7 @@ enum TransactionType: string
         return match ($sign) {
             '+' => TransactionType::Income,
             '-' => TransactionType::Expense,
-            default => throw new EnumInvalidValueException('Transaction sign must be + or -.')
+            default => throw new EnumInvalidValueException(self::class, 'Transaction type sign must be + or -.'),
         };
     }
 }

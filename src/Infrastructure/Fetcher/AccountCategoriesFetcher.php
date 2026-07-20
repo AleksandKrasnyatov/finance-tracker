@@ -7,6 +7,8 @@ namespace App\Infrastructure\Fetcher;
 use App\Application\Fetcher\AccountCategories;
 use App\Application\Fetcher\AccountCategoriesFetcherInterface;
 use App\Application\Fetcher\AccountCategory;
+use App\Domain\Entity\Account;
+use App\Domain\Entity\Category;
 use App\Domain\Enum\TransactionType;
 use App\Domain\ValueObject\Id;
 use Doctrine\DBAL\Exception;
@@ -57,5 +59,21 @@ final readonly class AccountCategoriesFetcher implements AccountCategoriesFetche
         }
 
         return new AccountCategories($incomes, $expenses);
+    }
+
+    public function fetchOne(Account $account, Id $categoryId): ?AccountCategory
+    {
+        $entity = $this->entityManager
+            ->getRepository(Category::class)
+            ->findOneBy([
+                'id' => $categoryId,
+                'account' => $account
+            ]);
+
+        if ($entity === null) {
+            return null;
+        }
+
+        return new AccountCategory($entity->id, $entity->name, $entity->type);
     }
 }
