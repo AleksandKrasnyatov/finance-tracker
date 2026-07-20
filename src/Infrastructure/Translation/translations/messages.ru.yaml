@@ -17,8 +17,21 @@ bot:
   command:
     start: 'Запустить бота и создать счёт'
     reset: 'Удалить все данные'
-    category: 'Добавить категорию'
+    category: 'Категории'
     balance: 'Баланс'
+  categories:
+    title: 'Категории'
+    typeTitle: 'Категории: %type%'
+    add: '➕ Добавить'
+    rename: '✏️ Переименовать'
+    delete: '🗑 Удалить'
+    deleteYes: 'Да'
+    deleteNo: 'Нет'
+    deleteConfirm: 'Удалить категорию «%name%»?'
+    detail: '%name% (%type%)'
+    back: '◀️ Назад'
+    enterNewName: 'Введите новое название категории:'
+    renamed: 'Категория переименована в «%name%».'
   error:
     generic: 'Не удалось выполнить команду. Попробуйте ещё раз позднее.'
   transaction:

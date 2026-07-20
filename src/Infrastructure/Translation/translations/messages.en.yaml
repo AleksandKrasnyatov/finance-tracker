@@ -4,8 +4,21 @@ bot:
   command:
     start: 'Start the bot and create your account'
     reset: 'Delete all your data'
-    category: 'Add a category'
+    category: 'Categories'
     balance: 'Balance'
+  categories:
+    title: 'Categories'
+    typeTitle: 'Categories: %type%'
+    add: '➕ Add'
+    rename: '✏️ Rename'
+    delete: '🗑 Delete'
+    deleteYes: 'Yes'
+    deleteNo: 'No'
+    deleteConfirm: 'Delete category "%name%"?'
+    detail: '%name% (%type%)'
+    back: '◀️ Back'
+    enterNewName: 'Enter the new category name:'
+    renamed: 'Category renamed to "%name%".'
   error:
     generic: 'Could not complete the command. Please try again later.'
 

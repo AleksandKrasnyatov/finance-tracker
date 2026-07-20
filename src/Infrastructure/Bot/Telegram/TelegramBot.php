@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace App\Infrastructure\Bot\Telegram;
 
 use App\Application\Gateway\TranslatorInterface;
-use App\Domain\Enum\Locale;
-use App\Infrastructure\Bot\Telegram\Conversation\AddCategoryConversation;
 use App\Infrastructure\Bot\Telegram\Handler\AddTransactionHandler;
 use App\Infrastructure\Bot\Telegram\Handler\BalanceHandler;
+use App\Infrastructure\Bot\Telegram\Handler\Category\CategoriesListHandler;
+use App\Infrastructure\Bot\Telegram\Handler\Category\CategoryCallback;
 use App\Infrastructure\Bot\Telegram\Handler\ExceptionHandler;
 use App\Infrastructure\Bot\Telegram\Handler\ResetHandler;
 use App\Infrastructure\Bot\Telegram\Handler\StartHandler;
+use App\Domain\Enum\Locale;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use SergiX44\Nutgram\Conversations\Conversation;
@@ -40,17 +41,12 @@ final class TelegramBot
             ->description($this->commandDescriptions('bot.command.start'));
         $this->bot->onCommand('reset', ResetHandler::class)
             ->description($this->commandDescriptions('bot.command.reset'));
-        $this->bot->onCommand('category', AddCategoryConversation::class)
+        $this->bot->onCommand('category', CategoriesListHandler::class)
             ->description($this->commandDescriptions('bot.command.category'));
         $this->bot->onCommand('balance', BalanceHandler::class)
             ->description($this->commandDescriptions('bot.command.balance'));
 
-        foreach ([Locale::En, Locale::Ru] as $locale) {
-            $this->bot->onText(
-                $this->translator->trans('bot.button.addCategory', locale: $locale),
-                AddCategoryConversation::class,
-            );
-        }
+        CategoryCallback::register($this->bot);
 
         $this->bot->onText('{sign}{amount} {category} {description}', AddTransactionHandler::class)
             ->where('sign', '[+-]')
