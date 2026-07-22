@@ -219,6 +219,17 @@ final class Account
         $transaction->changeDate($user, $date);
     }
 
+    public function changeTransactionDescription(User $user, Id $transactionId, string $description): void
+    {
+        $this->checkAccess($user);
+
+        if (!$transaction = $this->getTransaction($transactionId)) {
+            throw new AccountManageException('Transaction not found.');
+        }
+
+        $transaction->changeDescription($user, $description);
+    }
+
     public function deleteTransaction(User $user, Id $transactionId): void
     {
         $this->checkAccess($user);
