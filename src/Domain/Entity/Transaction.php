@@ -78,4 +78,10 @@ final class Transaction
         $this->date = $date;
         $this->updater = $user;
     }
+
+    public function changeDescription(User $user, string $description): void
+    {
+        $this->description = $description;
+        $this->updater = $user;
+    }
 }
