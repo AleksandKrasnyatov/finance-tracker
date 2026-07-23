@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Infrastructure\Console\HelloCommand;
+use App\Infrastructure\Console\SendDailyRemindersCommand;
 use App\Infrastructure\Bot\Telegram\Console\RunTelegramBotCommand;
 use App\Infrastructure\Bot\Telegram\Console\TelegramWebhookCommand;
 use Doctrine\Migrations\Tools\Console\Command\ExecuteCommand;
@@ -25,6 +26,7 @@ return [
         'console' => [
             'commands' => [
                 HelloCommand::class,
+                SendDailyRemindersCommand::class,
                 RunTelegramBotCommand::class,
                 TelegramWebhookCommand::class,
 

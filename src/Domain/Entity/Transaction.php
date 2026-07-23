@@ -40,6 +40,9 @@ final class Transaction
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
     private(set) DateTimeImmutable $date;
 
+    #[ORM\Column(type: Types::DATE_IMMUTABLE)]
+    private(set) DateTimeImmutable $createdAt;
+
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'updated_by', referencedColumnName: 'id')]
     private(set) ?User $updater = null;
@@ -51,6 +54,7 @@ final class Transaction
         Money $money,
         string $description = '',
         ?DateTimeImmutable $date = null,
+        ?DateTimeImmutable $createdAt = null,
     ) {
         $this->id = Id::generate();
         $this->account = $account;
@@ -59,6 +63,7 @@ final class Transaction
         $this->creator = $user;
         $this->description = $description;
         $this->date = $date ?? new DateTimeImmutable();
+        $this->createdAt = $createdAt ?? new DateTimeImmutable();
     }
 
     public function changeCategory(User $user, Category $category): void

@@ -58,6 +58,9 @@ lint:
 telegram-polling:
 	docker compose run --rm php-cli composer app telegram:run
 
+reminders-send:
+	docker compose run --rm php-cli composer app reminders:send
+
 telegram-add-webhook:
 	docker compose exec app php bin/app.php telegram:webhook
 

@@ -6,7 +6,9 @@ namespace App\Domain\Entity;
 
 use App\Domain\Enum\Locale;
 use App\Domain\ValueObject\Id;
+use App\Domain\ValueObject\ReminderTime;
 use App\Domain\ValueObject\TelegramId;
+use App\Domain\ValueObject\Timezone;
 use App\Infrastructure\Doctrine\Type\IdType;
 use App\Infrastructure\Doctrine\Type\TelegramIdType;
 use DateTimeImmutable;
@@ -28,6 +30,8 @@ final class User
     private(set) ?TelegramId $telegramId;
     #[ORM\Column(type: Types::ENUM, enumType: Locale::class)]
     private(set) Locale $locale;
+    #[ORM\Embedded]
+    private(set) Reminder $reminder;
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
     private(set) DateTimeImmutable $createdAt;
     /**
@@ -41,12 +45,14 @@ final class User
         DateTimeImmutable $createdAt,
         ?TelegramId $telegramId = null,
         Locale $locale = Locale::En,
+        ?Reminder $reminder = null
     ) {
         $this->id = $id;
         $this->telegramId = $telegramId;
         $this->locale = $locale;
         $this->createdAt = $createdAt;
         $this->accounts = new ArrayCollection();
+        $this->reminder = $reminder ?? Reminder::default();
     }
 
     public static function joinByTelegram(
