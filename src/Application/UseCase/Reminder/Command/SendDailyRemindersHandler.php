@@ -24,7 +24,6 @@ final readonly class SendDailyRemindersHandler
                 $candidate->userId,
                 new Notification(Notification::REMINDER_NO_TRANSACTIONS_TODAY),
             );
-
         }
     }
 }

@@ -6,9 +6,7 @@ namespace App\Domain\Entity;
 
 use App\Domain\Enum\Locale;
 use App\Domain\ValueObject\Id;
-use App\Domain\ValueObject\ReminderTime;
 use App\Domain\ValueObject\TelegramId;
-use App\Domain\ValueObject\Timezone;
 use App\Infrastructure\Doctrine\Type\IdType;
 use App\Infrastructure\Doctrine\Type\TelegramIdType;
 use DateTimeImmutable;

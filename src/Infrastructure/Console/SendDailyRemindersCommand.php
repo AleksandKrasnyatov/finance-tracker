@@ -39,8 +39,7 @@ final class SendDailyRemindersCommand extends Command
             $nowUtc->format('Y-m-d H:i:s'),
         ));
 
-        $processed = $this->handler->handle();
-        $output->writeln(sprintf('<info>Processed:</info> %d', $processed));
+        $this->handler->handle();
 
         return Command::SUCCESS;
     }
