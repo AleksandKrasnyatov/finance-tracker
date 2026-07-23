@@ -50,7 +50,7 @@ final class User
         $this->locale = $locale;
         $this->createdAt = $createdAt;
         $this->accounts = new ArrayCollection();
-        $this->reminder = $reminder ?? Reminder::default();
+        $this->reminder = $reminder ?? Reminder::create($locale);
     }
 
     public static function joinByTelegram(

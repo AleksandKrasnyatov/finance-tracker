@@ -6,7 +6,9 @@ namespace Test\Unit\Domain\Entity;
 
 use App\Domain\Entity\User;
 use App\Domain\Enum\Locale;
+use App\Domain\ValueObject\ReminderTime;
 use App\Domain\ValueObject\TelegramId;
+use App\Domain\ValueObject\Timezone;
 use DateTimeImmutable;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -16,7 +18,7 @@ use Test\Unit\Builder\UserBuilder;
 final class UserTest extends TestCase
 {
     #[Test]
-    public function givenTelegramIdWhenUserJoinsByTelegramThenUserHasTelegramIdAndCreatedAt(): void
+    public function givenTelegramIdWhenUserJoinsByTelegramThenUserHasTelegramIdAndCreatedAtAndDefaultReminderIsCreated(): void
     {
         $user = User::joinByTelegram(
             $telegramId = new TelegramId(1232424),
@@ -26,6 +28,11 @@ final class UserTest extends TestCase
         self::assertEquals($user->telegramId, $telegramId);
         self::assertEquals($user->createdAt, $date);
         self::assertSame(Locale::En, $user->locale);
+
+        self::assertTrue($user->reminder->remindersEnabled);
+        self::assertSame(ReminderTime::default()->value, $user->reminder->reminderTime->value);
+        self::assertSame(Timezone::defaultForLocale()->value, $user->reminder->timezone->value);
+        self::assertNull($user->reminder->lastReminderOn);
     }
 
     #[Test]

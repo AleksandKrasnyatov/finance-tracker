@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\ValueObject;
 
 use App\Domain\Enum\Locale;
+use DateInvalidTimeZoneException;
 use DateTimeZone;
 use DomainException;
 use Exception;
@@ -29,6 +30,9 @@ final readonly class Timezone
         };
     }
 
+    /**
+     * @throws DateInvalidTimeZoneException
+     */
     public function toDateTimeZone(): DateTimeZone
     {
         return new DateTimeZone($this->value);

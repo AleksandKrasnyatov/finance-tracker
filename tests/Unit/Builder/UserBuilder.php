@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Test\Unit\Builder;
 
+use App\Domain\Entity\Reminder;
 use App\Domain\Entity\User;
 use App\Domain\Enum\Locale;
 use App\Domain\ValueObject\Id;
@@ -17,6 +18,7 @@ final class UserBuilder
     private DateTimeImmutable $createdAt;
     private ?TelegramId $telegramId = null;
     private Locale $locale = Locale::En;
+    private ?Reminder $reminder = null;
 
     public function __construct()
     {
@@ -26,16 +28,23 @@ final class UserBuilder
 
     public function withTelegramId(TelegramId $telegramId): self
     {
-        $clone = clone $this;
-        $clone->telegramId = $telegramId;
-        return $clone;
+        return clone($this, [
+            "telegramId" => $telegramId
+        ]);
     }
 
     public function withLocale(Locale $locale): self
     {
-        $clone = clone $this;
-        $clone->locale = $locale;
-        return $clone;
+        return clone($this, [
+            "locale" => $locale
+        ]);
+    }
+
+    public function withReminder(Reminder $reminder): self
+    {
+        return clone($this, [
+            "reminder" => $reminder
+        ]);
     }
 
     public function build(): User
@@ -45,6 +54,7 @@ final class UserBuilder
             $this->createdAt,
             $this->telegramId,
             $this->locale,
+            $this->reminder,
         );
     }
 }

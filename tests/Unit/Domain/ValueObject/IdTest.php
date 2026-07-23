@@ -50,4 +50,12 @@ final class IdTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         new Id('');
     }
+
+    #[Test]
+    public function givenValidUuidWhenCastToStringThenStringMatchesValue(): void
+    {
+        $id = new Id($value = Uuid::uuid4()->toString());
+
+        self::assertSame($value, (string) $id);
+    }
 }

@@ -3,7 +3,9 @@
 declare(strict_types=1);
 
 use App\Infrastructure\Doctrine\Type\IdType;
+use App\Infrastructure\Doctrine\Type\ReminderTimeType;
 use App\Infrastructure\Doctrine\Type\TelegramIdType;
+use App\Infrastructure\Doctrine\Type\TimezoneType;
 use Doctrine\Common\EventManager;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\DBAL\DriverManager;
@@ -92,6 +94,8 @@ return [
             'types' => [
                 IdType::NAME => IdType::class,
                 TelegramIdType::NAME => TelegramIdType::class,
+                ReminderTimeType::NAME => ReminderTimeType::class,
+                TimezoneType::NAME => TimezoneType::class,
             ],
         ],
     ],

@@ -24,4 +24,11 @@ final class TelegramIdTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         new TelegramId(0);
     }
+
+    #[Test]
+    public function givenNonZeroTelegramIdWhenCastToStringThenStringMatchesValue(): void
+    {
+        self::assertSame('12', (string) new TelegramId(12));
+        self::assertSame('-124', (string) new TelegramId(-124));
+    }
 }
