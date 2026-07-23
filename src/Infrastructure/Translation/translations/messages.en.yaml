@@ -60,6 +60,9 @@ bot:
     expense: 'Expense'
     cancel: 'Cancel'
 
+reminder:
+  no_transactions_today: "You haven't recorded any transactions today. Don't forget to log your expenses or income."
+
 error:
   noAccess: 'You do not have access to the account.'
   accountManage: 'An error occurred while processing account data. Please try again.'
