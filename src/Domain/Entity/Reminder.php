@@ -10,6 +10,7 @@ use App\Domain\ValueObject\Timezone;
 use App\Infrastructure\Doctrine\Type\ReminderTimeType;
 use App\Infrastructure\Doctrine\Type\TimezoneType;
 use DateTimeImmutable;
+use DateTimeZone;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -22,19 +23,19 @@ final class Reminder
     private(set) ReminderTime $reminderTime;
     #[ORM\Column(type: TimezoneType::NAME, length: 64)]
     private(set) Timezone $timezone;
-    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
-    private(set) ?DateTimeImmutable $lastReminderOn;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private(set) ?DateTimeImmutable $lastReminderSentAt;
 
     public function __construct(
         ReminderTime $reminderTime,
         Timezone $timezone,
         bool $remindersEnabled = true,
-        ?DateTimeImmutable $lastReminderOn = null,
+        ?DateTimeImmutable $lastReminderSentAt = null,
     ) {
         $this->remindersEnabled = $remindersEnabled;
-        $this->lastReminderOn = $lastReminderOn;
         $this->reminderTime = $reminderTime;
         $this->timezone = $timezone;
+        $this->lastReminderSentAt = $lastReminderSentAt?->setTimezone(new DateTimeZone('UTC'));
     }
 
     public static function create(?Locale $locale = null): self
@@ -43,5 +44,10 @@ final class Reminder
             ReminderTime::default(),
             Timezone::defaultForLocale($locale),
         );
+    }
+
+    public function markSent(DateTimeImmutable $sentAt): void
+    {
+        $this->lastReminderSentAt = $sentAt->setTimezone(new DateTimeZone('UTC'));
     }
 }

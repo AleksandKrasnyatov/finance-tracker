@@ -71,6 +71,11 @@ final class User
         $this->locale = $locale;
     }
 
+    public function markReminderSent(DateTimeImmutable $sentAt): void
+    {
+        $this->reminder->markSent($sentAt);
+    }
+
     public function equals(User $user): bool
     {
         return $this->id->equals($user->id);

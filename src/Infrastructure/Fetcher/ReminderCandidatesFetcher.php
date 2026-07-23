@@ -6,7 +6,6 @@ namespace App\Infrastructure\Fetcher;
 
 use App\Application\Fetcher\ReminderCandidate;
 use App\Application\Fetcher\ReminderCandidatesFetcherInterface;
-use App\Domain\Enum\Locale;
 use App\Domain\ValueObject\Id;
 use DateTimeImmutable;
 use DateTimeZone;
@@ -33,21 +32,23 @@ final readonly class ReminderCandidatesFetcher implements ReminderCandidatesFetc
                 WITH candidate AS (
                     SELECT
                         u.id,
-                        u.locale,
                         u.reminder_timezone AS timezone,
                         u.reminder_reminder_time AS reminder_time,
-                        u.reminder_last_reminder_on AS last_reminder_on,
+                        u.reminder_last_reminder_sent_at AS last_reminder_sent_at,
                         (CAST(:now AS TIMESTAMP) AT TIME ZONE 'UTC')
                             AT TIME ZONE u.reminder_timezone AS local_now
                     FROM users u
                     WHERE u.reminder_reminders_enabled = TRUE
                 )
-                SELECT c.id, c.locale
+                SELECT c.id
                 FROM candidate c
-                WHERE TO_CHAR(c.local_now, 'HH24:MI') = c.reminder_time
+                WHERE TO_CHAR(c.local_now, 'HH24:MI') >= c.reminder_time
                   AND (
-                      c.last_reminder_on IS NULL
-                      OR c.last_reminder_on <> CAST(c.local_now AS DATE)
+                      c.last_reminder_sent_at IS NULL
+                      OR (
+                          (CAST(c.last_reminder_sent_at AS TIMESTAMP) AT TIME ZONE 'UTC')
+                              AT TIME ZONE c.timezone
+                      )::date <> CAST(c.local_now AS DATE)
                   )
                   AND NOT EXISTS (
                       SELECT 1
@@ -72,7 +73,6 @@ final readonly class ReminderCandidatesFetcher implements ReminderCandidatesFetc
         foreach ($rows as $row) {
             $candidates[] = new ReminderCandidate(
                 new Id((string) $row['id']),
-                Locale::from((string) $row['locale']),
             );
         }
 

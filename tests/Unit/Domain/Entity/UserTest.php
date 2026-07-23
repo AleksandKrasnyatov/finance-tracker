@@ -32,7 +32,7 @@ final class UserTest extends TestCase
         self::assertTrue($user->reminder->remindersEnabled);
         self::assertSame(ReminderTime::default()->value, $user->reminder->reminderTime->value);
         self::assertSame(Timezone::defaultForLocale()->value, $user->reminder->timezone->value);
-        self::assertNull($user->reminder->lastReminderOn);
+        self::assertNull($user->reminder->lastReminderSentAt);
     }
 
     #[Test]

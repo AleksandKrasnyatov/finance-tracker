@@ -73,14 +73,22 @@ final class ReminderCandidatesFixture implements FixtureInterface
         $this->user(
             $manager,
             self::MATCH_REMINDED_YESTERDAY,
-            $this->reminder('18:00', 'UTC', lastReminderOn: new DateTimeImmutable('2026-07-22')),
+            $this->reminder(
+                '18:00',
+                'UTC',
+                lastReminderSentAt: new DateTimeImmutable('2026-07-22 12:00:00', new DateTimeZone('UTC')),
+            ),
         );
         $this->user($manager, self::SKIP_WRONG_TIME, $this->reminder('19:00', 'UTC'));
         $this->user($manager, self::SKIP_DISABLED, $this->reminder('18:00', 'UTC', enabled: false));
         $this->user(
             $manager,
             self::SKIP_REMINDED_TODAY,
-            $this->reminder('18:00', 'UTC', lastReminderOn: new DateTimeImmutable('2026-07-23')),
+            $this->reminder(
+                '18:00',
+                'UTC',
+                lastReminderSentAt: new DateTimeImmutable('2026-07-23 10:00:00', new DateTimeZone('UTC')),
+            ),
         );
 
         $manager->flush();
@@ -148,13 +156,13 @@ final class ReminderCandidatesFixture implements FixtureInterface
         string $time,
         string $timezone,
         bool $enabled = true,
-        ?DateTimeImmutable $lastReminderOn = null,
+        ?DateTimeImmutable $lastReminderSentAt = null,
     ): Reminder {
         return new Reminder(
             new ReminderTime($time),
             new Timezone($timezone),
             $enabled,
-            $lastReminderOn,
+            $lastReminderSentAt,
         );
     }
 }
