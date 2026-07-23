@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration.
  */
-final class Version20260723203254 extends AbstractMigration
+final class Version20260723224804 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -25,7 +25,7 @@ final class Version20260723203254 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_3AF346689B6B5FBA ON categories (account_id)');
         $this->addSql('CREATE INDEX IDX_3AF34668DE12AB56 ON categories (created_by)');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_3AF346689B6B5FBA5E237E068CDE5729 ON categories (account_id, name, type)');
-        $this->addSql('CREATE TABLE transactions (id UUID NOT NULL, description VARCHAR(255) NOT NULL, date DATE NOT NULL, created_at DATE NOT NULL, money_amount NUMERIC(10, 2) NOT NULL, money_currency VARCHAR(3) NOT NULL, account_id UUID NOT NULL, category_id UUID NOT NULL, created_by UUID NOT NULL, updated_by UUID DEFAULT NULL, PRIMARY KEY (id))');
+        $this->addSql('CREATE TABLE transactions (id UUID NOT NULL, description VARCHAR(255) NOT NULL, date DATE NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, money_amount NUMERIC(10, 2) NOT NULL, money_currency VARCHAR(3) NOT NULL, account_id UUID NOT NULL, category_id UUID NOT NULL, created_by UUID NOT NULL, updated_by UUID DEFAULT NULL, PRIMARY KEY (id))');
         $this->addSql('CREATE INDEX IDX_EAA81A4C9B6B5FBA ON transactions (account_id)');
         $this->addSql('CREATE INDEX IDX_EAA81A4C12469DE2 ON transactions (category_id)');
         $this->addSql('CREATE INDEX IDX_EAA81A4CDE12AB56 ON transactions (created_by)');

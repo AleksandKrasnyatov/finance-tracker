@@ -10,7 +10,6 @@ use App\Application\Gateway\TranslatorInterface;
 use App\Domain\Entity\User;
 use App\Domain\ValueObject\Id;
 use DomainException;
-use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Testing\FakeNutgram;
 use Test\Support\Fixture\OnboardedTelegramUserFixture;
 use Test\Support\FunctionalTester;

@@ -166,7 +166,7 @@ final class Account
         Category $category,
         Money $money,
         string $description = '',
-        ?DateTimeImmutable $date = null
+        ?DateTimeImmutable $date = null,
     ): void {
         $this->checkAccess($user);
 
