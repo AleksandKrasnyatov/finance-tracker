@@ -1,0 +1,83 @@
+name: deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Image tag to deploy (use prod after build-images, or a full git SHA to roll back)"
+        required: true
+        default: prod
+        type: string
+
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Resolve SSH port
+        id: ssh
+        run: |
+          port="${{ secrets.PROD_SSH_PORT }}"
+          if [ -z "${port}" ]; then
+            port=22
+          fi
+          echo "port=${port}" >> "$GITHUB_OUTPUT"
+
+      - name: Copy compose and deploy script
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          port: ${{ steps.ssh.outputs.port }}
+          source: compose-prod.yml,scripts/prod-deploy.sh
+          target: ${{ secrets.PROD_DEPLOY_PATH }}
+          overwrite: true
+
+      - name: Pull, up, migrate, health
+        uses: appleboy/ssh-action@v1.2.2
+        env:
+          DEPLOY_IMAGE_TAG: ${{ inputs.image_tag }}
+          GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
+          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+          DEPLOY_PATH: ${{ secrets.PROD_DEPLOY_PATH }}
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          port: ${{ steps.ssh.outputs.port }}
+          envs: DEPLOY_IMAGE_TAG,GHCR_USERNAME,GHCR_TOKEN,DEPLOY_PATH
+          script: |
+            set -euo pipefail
+            cd "${DEPLOY_PATH}"
+
+            if [ ! -f .env ]; then
+              echo ".env is missing in ${DEPLOY_PATH}. Create it on the server first (see docs/DEPLOY.md)." >&2
+              exit 1
+            fi
+
+            chmod +x scripts/prod-deploy.sh
+
+            if [ -n "${GHCR_TOKEN:-}" ]; then
+              if [ -z "${GHCR_USERNAME:-}" ]; then
+                echo "GHCR_USERNAME secret is required when GHCR_TOKEN is set." >&2
+                exit 1
+              fi
+              echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USERNAME}" --password-stdin
+            fi
+
+            set -a
+            # shellcheck disable=SC1091
+            source .env
+            set +a
+            # Workflow input wins over IMAGE_TAG in server .env
+            export IMAGE_TAG="${DEPLOY_IMAGE_TAG}"
+
+            ./scripts/prod-deploy.sh deploy
