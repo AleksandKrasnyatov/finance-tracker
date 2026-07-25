@@ -1,0 +1,26 @@
+name: check
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: check-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Init
+        run: make init
+
+      - name: Run checks
+        run: make check
+
+      - name: Tear down
+        if: always()
+        run: make docker-down-clear

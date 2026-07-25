@@ -1,4 +1,4 @@
-init: copy-env docker-down-clear docker-build docker-up composer-install migrations
+init: copy-env docker-down-clear docker-build docker-up wait-db composer-install migrations
 up: docker-up
 down: docker-down
 restart: down up
@@ -18,6 +18,10 @@ docker-down-clear:
 
 docker-build:
 	docker compose build
+
+wait-db:
+	docker compose up -d postgres redis
+	docker compose run --rm php-cli wait-for-it postgres:5432 -t 30
 
 composer-install:
 	docker compose run --rm php-cli composer install
@@ -66,3 +70,28 @@ telegram-add-webhook:
 
 telegram-delete-webhook:
 	docker compose exec app php bin/app.php telegram:webhook --delete
+
+build:
+	docker build --pull --file=docker/production/nginx/Dockerfile --tag=${REGISTRY}/finance-tracker-nginx:${IMAGE_TAG} .
+	docker build --pull --file=docker/production/php-fpm/Dockerfile --tag=${REGISTRY}/finance-tracker-php-fpm:${IMAGE_TAG} .
+	docker build --pull --file=docker/production/php-cli/Dockerfile --tag=${REGISTRY}/finance-tracker-php-cli:${IMAGE_TAG} .
+
+push:
+	docker push ${REGISTRY}/finance-tracker-nginx:${IMAGE_TAG}
+	docker push ${REGISTRY}/finance-tracker-php-fpm:${IMAGE_TAG}
+	docker push ${REGISTRY}/finance-tracker-php-cli:${IMAGE_TAG}
+
+try-build:
+	REGISTRY=localhost IMAGE_TAG=testing $(MAKE) build
+
+testing-pull:
+	docker compose -f compose-testing.yml pull
+
+testing-up: copy-env
+	docker compose -f compose-testing.yml up -d
+
+testing-down:
+	docker compose -f compose-testing.yml down --remove-orphans
+
+testing-down-clear:
+	docker compose -f compose-testing.yml down -v --remove-orphans

@@ -1,0 +1,13 @@
+.git
+.github
+.idea
+.DS_Store
+.env
+.env.*
+!.env.example
+/vendor/
+/tests/
+/tests/_output/
+/var/
+.phpunit.result.cache
+*.md
