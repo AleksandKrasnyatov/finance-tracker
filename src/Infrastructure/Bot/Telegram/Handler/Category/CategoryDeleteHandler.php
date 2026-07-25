@@ -9,6 +9,7 @@ use App\Application\UseCase\Account\Command\Category\DeleteCategoryCommand;
 use App\Application\UseCase\Account\Command\Category\DeleteCategoryHandler;
 use App\Application\UseCase\Account\Query\GetAccountCategoryHandler;
 use App\Application\UseCase\Account\Query\GetAccountCategoryQuery;
+use App\Infrastructure\Bot\Telegram\TelegramScreen;
 use App\Infrastructure\Bot\Telegram\TelegramUserData;
 use Psr\SimpleCache\InvalidArgumentException;
 use SergiX44\Nutgram\Nutgram;
@@ -31,7 +32,7 @@ final readonly class CategoryDeleteHandler
      */
     public function confirm(Nutgram $bot, string $id, string $type): void
     {
-        CategoryScreen::ensureUser($bot);
+        TelegramScreen::ensureUser($bot);
         $context = $this->userData->getOrSet($bot);
         $locale = $context['locale'];
         $category = $this->getCategory->handle(new GetAccountCategoryQuery(
@@ -40,7 +41,7 @@ final readonly class CategoryDeleteHandler
             $id,
         ))->category;
 
-        CategoryScreen::render(
+        TelegramScreen::render(
             $bot,
             $this->translator->trans('bot.categories.deleteConfirm', [
                 '%name%' => $category->name,
@@ -63,7 +64,7 @@ final readonly class CategoryDeleteHandler
      */
     public function delete(Nutgram $bot, string $id, string $type): void
     {
-        CategoryScreen::ensureUser($bot);
+        TelegramScreen::ensureUser($bot);
         $context = $this->userData->getOrSet($bot);
 
         $this->deleteCategory->handle(new DeleteCategoryCommand(

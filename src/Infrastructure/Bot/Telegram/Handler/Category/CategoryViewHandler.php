@@ -7,6 +7,7 @@ namespace App\Infrastructure\Bot\Telegram\Handler\Category;
 use App\Application\Gateway\TranslatorInterface;
 use App\Application\UseCase\Account\Query\GetAccountCategoryHandler;
 use App\Application\UseCase\Account\Query\GetAccountCategoryQuery;
+use App\Infrastructure\Bot\Telegram\TelegramScreen;
 use App\Infrastructure\Bot\Telegram\TelegramUserData;
 use Psr\SimpleCache\InvalidArgumentException;
 use SergiX44\Nutgram\Nutgram;
@@ -27,7 +28,7 @@ final readonly class CategoryViewHandler
      */
     public function __invoke(Nutgram $bot, string $id): void
     {
-        CategoryScreen::ensureUser($bot);
+        TelegramScreen::ensureUser($bot);
         $context = $this->userData->getOrSet($bot);
         $locale = $context['locale'];
         $category = $this->getCategory->handle(new GetAccountCategoryQuery(
@@ -51,7 +52,7 @@ final readonly class CategoryViewHandler
                 callback_data: CategoryCallback::data(CategoryCallback::TYPE, $type),
             ));
 
-        CategoryScreen::render(
+        TelegramScreen::render(
             $bot,
             $this->translator->trans('bot.categories.detail', [
                 '%name%' => $category->name,

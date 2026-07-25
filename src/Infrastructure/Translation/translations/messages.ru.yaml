@@ -26,6 +26,15 @@ bot:
     reset: 'Удалить все данные'
     category: 'Категории'
     balance: 'Баланс'
+    settings: 'Настройки'
+  settings:
+    title: 'Настройки'
+    language: 'Язык'
+    notifications: 'Уведомления'
+    languageTitle: 'Язык'
+    languageChanged: 'Язык обновлён.'
+    notificationsStub: 'Настройки уведомлений скоро появятся.'
+    back: '◀️ Назад'
   categories:
     title: 'Категории'
     typeTitle: 'Категории: %type%'

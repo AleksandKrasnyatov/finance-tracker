@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Bot\Telegram\Handler\Category;
+namespace App\Infrastructure\Bot\Telegram;
 
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardMarkup;
 use UnexpectedValueException;
 
-final class CategoryScreen
+final class TelegramScreen
 {
     public static function render(Nutgram $bot, string $text, InlineKeyboardMarkup $markup): void
     {

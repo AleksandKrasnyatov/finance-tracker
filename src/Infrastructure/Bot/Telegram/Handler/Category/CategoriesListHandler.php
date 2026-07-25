@@ -8,6 +8,7 @@ use App\Application\Gateway\TranslatorInterface;
 use App\Application\UseCase\Account\Query\GetAccountCategoriesHandler;
 use App\Application\UseCase\Account\Query\GetAccountCategoriesQuery;
 use App\Domain\Enum\TransactionType;
+use App\Infrastructure\Bot\Telegram\TelegramScreen;
 use App\Infrastructure\Bot\Telegram\TelegramUserData;
 use Psr\SimpleCache\InvalidArgumentException;
 use SergiX44\Nutgram\Nutgram;
@@ -36,7 +37,7 @@ final readonly class CategoriesListHandler
      */
     public function list(Nutgram $bot): void
     {
-        CategoryScreen::ensureUser($bot);
+        TelegramScreen::ensureUser($bot);
         $locale = $this->userData->getOrSet($bot)['locale'];
         $markup = InlineKeyboardMarkup::make()
             ->addRow(InlineKeyboardButton::make(
@@ -48,7 +49,7 @@ final readonly class CategoriesListHandler
                 callback_data: CategoryCallback::data(CategoryCallback::TYPE, TransactionType::Expense->value),
             ));
 
-        CategoryScreen::render(
+        TelegramScreen::render(
             $bot,
             $this->translator->trans('bot.categories.title', locale: $locale),
             $markup,
@@ -60,7 +61,7 @@ final readonly class CategoriesListHandler
      */
     public function byType(Nutgram $bot, string $type): void
     {
-        CategoryScreen::ensureUser($bot);
+        TelegramScreen::ensureUser($bot);
         $transactionType = TransactionType::fromName($type);
         $context = $this->userData->getOrSet($bot);
         $locale = $context['locale'];
@@ -88,7 +89,7 @@ final readonly class CategoriesListHandler
             callback_data: CategoryCallback::LIST,
         ));
 
-        CategoryScreen::render(
+        TelegramScreen::render(
             $bot,
             $this->translator->trans('bot.categories.typeTitle', [
                 '%type%' => $this->translator->trans($transactionType->value, locale: $locale),

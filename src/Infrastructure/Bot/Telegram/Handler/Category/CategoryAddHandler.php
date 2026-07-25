@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Bot\Telegram\Handler\Category;
 
 use App\Infrastructure\Bot\Telegram\Conversation\AddCategoryConversation;
+use App\Infrastructure\Bot\Telegram\TelegramScreen;
 use Psr\SimpleCache\InvalidArgumentException;
 use SergiX44\Nutgram\Nutgram;
 
@@ -15,7 +16,7 @@ final readonly class CategoryAddHandler
      */
     public function __invoke(Nutgram $bot, string $type): void
     {
-        CategoryScreen::ensureUser($bot);
+        TelegramScreen::ensureUser($bot);
         if ($bot->isCallbackQuery()) {
             $bot->answerCallbackQuery();
         }
