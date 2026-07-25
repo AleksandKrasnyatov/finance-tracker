@@ -12,7 +12,7 @@ cmd="${1:-deploy}"
 
 case "${cmd}" in
   pull)
-    compose pull
+    compose --profile tools pull
     ;;
   up)
     compose up -d
@@ -34,7 +34,7 @@ case "${cmd}" in
     echo "health: alive"
     ;;
   deploy)
-    compose pull
+    compose --profile tools pull
     compose up -d
     compose --profile tools run --rm php-cli \
       php bin/app.php migrations:migrate --no-interaction
