@@ -84,7 +84,7 @@ final class TelegramWebhookCommand extends Command
         $this->telegramBot->syncCommandMenu();
 
         $output->writeln('<info>Webhook set:</info> ' . $url);
-        $output->writeln('<info>Telegram command menu updated.</info>');
+        $output->writeln('<info>Telegram command menu and description updated.</info>');
         $this->writeWebhookInfo($output);
 
         return Command::SUCCESS;

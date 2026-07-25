@@ -67,6 +67,21 @@ final class TelegramBot
     {
         $this->configure();
         $this->bot->registerMyCommands();
+        $this->syncDescription();
+    }
+
+    private function syncDescription(): void
+    {
+        foreach ([Locale::En, Locale::Ru] as $locale) {
+            $this->bot->setMyDescription(
+                description: $this->translator->trans('bot.description', locale: $locale),
+                language_code: $locale->value,
+            );
+        }
+
+        $this->bot->setMyDescription(
+            description: $this->translator->trans('bot.description', locale: Locale::default()),
+        );
     }
 
     /**

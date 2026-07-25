@@ -1,5 +1,12 @@
 bot:
   welcome: 'Welcome! Your main account and categories are ready.'
+  description: |-
+    A personal finance tracker in Telegram.
+    • Log income and expenses
+    • Check monthly balance
+    • Manage categories
+
+    Press Start to create your account and begin.
   reset: 'All your data has been deleted. Send /start to begin again.'
   command:
     start: 'Start the bot and create your account'
