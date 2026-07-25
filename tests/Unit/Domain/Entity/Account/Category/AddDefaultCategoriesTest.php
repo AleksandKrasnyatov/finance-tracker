@@ -46,6 +46,7 @@ final class AddDefaultCategoriesTest extends TestCase
         foreach ($this->defaultCategories as $index => $expected) {
             self::assertSame($expected->type, $categories[$index]->type);
             self::assertSame(mb_strtolower($expected->name), $categories[$index]->name);
+            self::assertSame($expected->code, $categories[$index]->code);
             self::assertSame($this->accountCreator, $categories[$index]->creator);
             self::assertSame($this->account, $categories[$index]->account);
         }

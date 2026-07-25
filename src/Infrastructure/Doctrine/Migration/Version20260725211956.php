@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration.
  */
-final class Version20260723232051 extends AbstractMigration
+final class Version20260725211956 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,8 +20,8 @@ final class Version20260723232051 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE TABLE accounts (id UUID NOT NULL, name VARCHAR(100) NOT NULL, type VARCHAR(8) NOT NULL, created_at DATE NOT NULL, PRIMARY KEY (id))');
-        $this->addSql('CREATE TABLE categories (id UUID NOT NULL, type VARCHAR(7) NOT NULL, name VARCHAR(30) NOT NULL, account_id UUID NOT NULL, created_by UUID NOT NULL, PRIMARY KEY (id))');
+        $this->addSql('CREATE TABLE accounts (id UUID NOT NULL, name VARCHAR(100) NOT NULL, code VARCHAR(30) DEFAULT NULL, type VARCHAR(8) NOT NULL, created_at DATE NOT NULL, PRIMARY KEY (id))');
+        $this->addSql('CREATE TABLE categories (id UUID NOT NULL, type VARCHAR(7) NOT NULL, name VARCHAR(30) NOT NULL, code VARCHAR(30) DEFAULT NULL, account_id UUID NOT NULL, created_by UUID NOT NULL, PRIMARY KEY (id))');
         $this->addSql('CREATE INDEX IDX_3AF346689B6B5FBA ON categories (account_id)');
         $this->addSql('CREATE INDEX IDX_3AF34668DE12AB56 ON categories (created_by)');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_3AF346689B6B5FBA5E237E068CDE5729 ON categories (account_id, name, type)');

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Test\Unit\Domain\Entity\Account\Category;
 
+use App\Domain\Dto\CategoryDto;
 use App\Domain\Entity\Account;
 use App\Domain\Entity\Category;
 use App\Domain\Entity\User;
@@ -42,8 +43,47 @@ final class ChangeNameCategoryTest extends TestCase
         self::assertEquals($category->id, $categoryId);
         self::assertEquals($category->type, $this->accountCategory->type);
         self::assertEquals($category->name, mb_strtolower($newName));
+        self::assertNull($category->code);
         self::assertEquals($category->account, $this->account);
         self::assertEquals($category->creator, $this->accountCreator);
+    }
+
+    #[Test]
+    public function givenSeededCategoryWhenUserRenamesThenCodeIsCleared(): void
+    {
+        $account = new AccountBuilder()->withUser($this->accountCreator)->build();
+        $account->addDefaultCategories($this->accountCreator, [
+            new CategoryDto(
+                TransactionType::Expense,
+                'продукты',
+                'groceries',
+            ),
+        ]);
+        $category = $account->getCategories()[0];
+
+        $account->changeCategoryName($this->accountCreator, $category->id, 'еда');
+
+        self::assertSame('еда', $account->getCategories()[0]->name);
+        self::assertNull($account->getCategories()[0]->code);
+    }
+
+    #[Test]
+    public function givenSeededCategoryWhenRelocalizedThenNameChangesAndCodeRemains(): void
+    {
+        $account = new AccountBuilder()->withUser($this->accountCreator)->build();
+        $account->addDefaultCategories($this->accountCreator, [
+            new CategoryDto(
+                TransactionType::Expense,
+                'продукты',
+                'groceries',
+            ),
+        ]);
+        $category = $account->getCategories()[0];
+
+        $account->relocalizeCategoryName($this->accountCreator, $category->id, 'groceries');
+
+        self::assertSame('groceries', $account->getCategories()[0]->name);
+        self::assertSame('groceries', $account->getCategories()[0]->code);
     }
 
     #[Test]

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Test\Support\Fixture;
 
+use App\Application\Service\SeedCatalog;
 use App\Domain\Entity\Account;
 use App\Domain\Entity\Category;
 use App\Domain\Entity\User;
@@ -29,7 +30,7 @@ final class OnboardedTelegramUserWithBalanceFixture implements FixtureInterface
             new TelegramId(self::TELEGRAM_ID),
             new DateTimeImmutable('2026-01-01'),
         );
-        $account = Account::create($user, 'main', AccountType::Personal);
+        $account = Account::create($user, 'main', AccountType::Personal, SeedCatalog::ACCOUNT_CODE);
         $account->addDefaultCategories($user, Category::defaults());
 
         $income = $this->category($account, 'salary', TransactionType::Income);

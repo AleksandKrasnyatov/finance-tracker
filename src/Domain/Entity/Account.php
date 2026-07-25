@@ -31,6 +31,9 @@ final class Account
     #[ORM\Column(type: Types::STRING, length: 100)]
     private(set) string $name;
 
+    #[ORM\Column(type: Types::STRING, length: 30, nullable: true)]
+    private(set) ?string $code;
+
     #[ORM\Column(type: Types::ENUM, enumType: AccountType::class)]
     private(set) AccountType $type;
 
@@ -69,11 +72,13 @@ final class Account
         Id $id,
         string $name,
         AccountType $type,
+        ?string $code = null,
     ) {
         Assert::notEmpty($name);
 
         $this->id = $id;
         $this->name = mb_strtolower($name);
+        $this->code = $code !== null ? mb_strtolower($code) : null;
         $this->type = $type;
         $this->createdAt = new DateTimeImmutable();
         $this->categories = new ArrayCollection();
@@ -85,11 +90,20 @@ final class Account
         User $owner,
         string $name,
         AccountType $type,
+        ?string $code = null,
     ): self {
-        $account = new self(Id::generate(), $name, $type);
+        $account = new self(Id::generate(), $name, $type, $code);
         $owner->addAccount($account);
 
         return $account;
+    }
+
+    public function relocalizeName(User $user, string $name): void
+    {
+        $this->checkAccess($user);
+        Assert::notNull($this->code);
+        Assert::notEmpty($name);
+        $this->name = mb_strtolower($name);
     }
 
     public function addCategory(User $user, TransactionType $type, string $name): void
@@ -123,6 +137,7 @@ final class Account
                 $category->type,
                 $category->name,
                 $user,
+                $category->code,
             ));
         }
     }
@@ -144,6 +159,29 @@ final class Account
         }
 
         $category->rename($name);
+    }
+
+    public function relocalizeCategoryName(User $user, Id $categoryId, string $name): void
+    {
+        $this->checkAccess($user);
+
+        if (!$category = $this->getCategory($categoryId)) {
+            throw new AccountManageException('Category not found.');
+        }
+
+        if ($category->code === null) {
+            return;
+        }
+
+        if (mb_strtolower($name) === $category->name) {
+            return;
+        }
+
+        if ($this->hasCategoryWithParams($name, $category->type)) {
+            throw new AccountManageException('Category with this name and type already exists.');
+        }
+
+        $category->relocalize($name);
     }
 
     public function deleteCategory(User $user, Id $categoryId): void

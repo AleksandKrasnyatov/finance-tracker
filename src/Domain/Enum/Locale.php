@@ -9,6 +9,14 @@ enum Locale: string
     case Ru = 'ru';
     case En = 'en';
 
+    public function label(): string
+    {
+        return match ($this) {
+            self::Ru => 'Русский',
+            self::En => 'English',
+        };
+    }
+
     public static function default(): self
     {
         return self::En;
@@ -24,5 +32,18 @@ enum Locale: string
         $primary = explode('-', $normalized, 2)[0];
 
         return Locale::tryFrom($primary) ?? Locale::default();
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function list(): array
+    {
+        $list = [];
+        foreach (Locale::cases() as $locale) {
+            $list[$locale->value] = $locale->label();
+        }
+
+        return $list;
     }
 }

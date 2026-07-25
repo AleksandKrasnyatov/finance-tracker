@@ -30,13 +30,14 @@ final readonly class OnboardByTelegramHandler
             return;
         }
 
-        $locale = Locale::tryFrom($command->locale) ?? Locale::default();
+        $locale = Locale::fromLanguageCode($command->locale);
 
         $user = User::joinByTelegram($telegramId, new DateTimeImmutable(), $locale);
         $account = Account::create(
             $user,
             $this->seeds->accountName($locale),
             AccountType::Personal,
+            SeedCatalog::ACCOUNT_CODE,
         );
         $account->addDefaultCategories($user, $this->seeds->categories($locale));
 

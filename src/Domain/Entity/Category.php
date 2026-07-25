@@ -33,6 +33,9 @@ final class Category
     #[ORM\Column(type: Types::STRING, length: 30)]
     private(set) string $name;
 
+    #[ORM\Column(type: Types::STRING, length: 30, nullable: true)]
+    private(set) ?string $code;
+
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'created_by', referencedColumnName: 'id', nullable: false)]
     private(set) User $creator;
@@ -49,6 +52,7 @@ final class Category
         TransactionType $type,
         string $name,
         User $creator,
+        ?string $code = null,
     ) {
         Assert::notEmpty($name);
 
@@ -56,6 +60,7 @@ final class Category
         $this->account = $account;
         $this->type = $type;
         $this->name = mb_strtolower($name);
+        $this->code = $code !== null ? mb_strtolower($code) : null;
         $this->creator = $creator;
         $this->transactions = new ArrayCollection();
     }
@@ -66,20 +71,28 @@ final class Category
     public static function defaults(): array
     {
         return [
-            new CategoryDto(TransactionType::Income, 'salary'),
-            new CategoryDto(TransactionType::Income, 'other'),
-            new CategoryDto(TransactionType::Expense, 'groceries'),
-            new CategoryDto(TransactionType::Expense, 'cafe'),
-            new CategoryDto(TransactionType::Expense, 'transport'),
-            new CategoryDto(TransactionType::Expense, 'housing'),
-            new CategoryDto(TransactionType::Expense, 'health'),
-            new CategoryDto(TransactionType::Expense, 'entertainment'),
-            new CategoryDto(TransactionType::Expense, 'other'),
+            new CategoryDto(TransactionType::Income, 'salary', 'salary'),
+            new CategoryDto(TransactionType::Income, 'other', 'other'),
+            new CategoryDto(TransactionType::Expense, 'groceries', 'groceries'),
+            new CategoryDto(TransactionType::Expense, 'cafe', 'cafe'),
+            new CategoryDto(TransactionType::Expense, 'transport', 'transport'),
+            new CategoryDto(TransactionType::Expense, 'housing', 'housing'),
+            new CategoryDto(TransactionType::Expense, 'health', 'health'),
+            new CategoryDto(TransactionType::Expense, 'entertainment', 'entertainment'),
+            new CategoryDto(TransactionType::Expense, 'other', 'other'),
         ];
     }
 
     public function rename(string $name): void
     {
+        Assert::notEmpty($name);
+        $this->name = mb_strtolower($name);
+        $this->code = null;
+    }
+
+    public function relocalize(string $name): void
+    {
+        Assert::notNull($this->code);
         Assert::notEmpty($name);
         $this->name = mb_strtolower($name);
     }

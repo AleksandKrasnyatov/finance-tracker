@@ -11,6 +11,10 @@ use App\Domain\Enum\Locale;
 
 final readonly class SeedCatalog
 {
+    public const string ACCOUNT_CODE = 'main';
+
+    private const string PREFIX = 'catalog.';
+
     public function __construct(
         private TranslatorInterface $translator,
     ) {
@@ -18,7 +22,7 @@ final readonly class SeedCatalog
 
     public function accountName(Locale $locale): string
     {
-        return $this->translator->trans('main', locale: $locale);
+        return $this->localize(self::ACCOUNT_CODE, $locale);
     }
 
     /**
@@ -26,19 +30,22 @@ final readonly class SeedCatalog
      */
     public function categories(Locale $locale): array
     {
-        if ($locale === Locale::default()) {
-            return Category::defaults();
-        }
-
         $categories = [];
 
         foreach (Category::defaults() as $category) {
+            $code = $category->code;
             $categories[] = new CategoryDto(
                 $category->type,
-                $this->translator->trans($category->name, locale: $locale),
+                $this->localize($code, $locale),
+                $code,
             );
         }
 
         return $categories;
+    }
+
+    public function localize(string $code, Locale $locale): string
+    {
+        return $this->translator->trans(self::PREFIX . $code, locale: $locale);
     }
 }

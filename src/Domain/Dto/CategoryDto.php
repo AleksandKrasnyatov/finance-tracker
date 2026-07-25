@@ -12,7 +12,9 @@ final readonly class CategoryDto
     public function __construct(
         public TransactionType $type,
         public string $name,
+        public string $code,
     ) {
         Assert::stringNotEmpty($name);
+        Assert::stringNotEmpty($code);
     }
 }

@@ -11,6 +11,8 @@ use App\Infrastructure\Bot\Telegram\Handler\Category\CategoriesListHandler;
 use App\Infrastructure\Bot\Telegram\Handler\Category\CategoryCallback;
 use App\Infrastructure\Bot\Telegram\Handler\ExceptionHandler;
 use App\Infrastructure\Bot\Telegram\Handler\ResetHandler;
+use App\Infrastructure\Bot\Telegram\Handler\Settings\SettingsCallback;
+use App\Infrastructure\Bot\Telegram\Handler\Settings\SettingsHandler;
 use App\Infrastructure\Bot\Telegram\Handler\StartHandler;
 use App\Domain\Enum\Locale;
 use Psr\Container\ContainerExceptionInterface;
@@ -45,8 +47,11 @@ final class TelegramBot
             ->description($this->commandDescriptions('bot.command.category'));
         $this->bot->onCommand('balance', BalanceHandler::class)
             ->description($this->commandDescriptions('bot.command.balance'));
+        $this->bot->onCommand('settings', SettingsHandler::class)
+            ->description($this->commandDescriptions('bot.command.settings'));
 
         CategoryCallback::register($this->bot);
+        SettingsCallback::register($this->bot);
 
         $this->bot->onText('{sign}{amount} {category} {description}', AddTransactionHandler::class)
             ->where('sign', '[+-]')

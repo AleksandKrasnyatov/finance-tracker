@@ -1,3 +1,14 @@
+catalog:
+  main: 'main'
+  salary: 'salary'
+  other: 'other'
+  groceries: 'groceries'
+  cafe: 'cafe'
+  transport: 'transport'
+  housing: 'housing'
+  health: 'health'
+  entertainment: 'entertainment'
+
 bot:
   welcome: 'Welcome! Your main account and categories are ready.'
   description: |-
@@ -13,6 +24,15 @@ bot:
     reset: 'Delete all your data'
     category: 'Categories'
     balance: 'Balance'
+    settings: 'Settings'
+  settings:
+    title: 'Settings'
+    language: 'Language'
+    notifications: 'Notifications'
+    languageTitle: 'Language'
+    languageChanged: 'Language updated.'
+    notificationsStub: 'Notification settings will be available soon.'
+    back: '◀️ Back'
   categories:
     title: 'Categories'
     typeTitle: 'Categories: %type%'

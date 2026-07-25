@@ -72,7 +72,8 @@ final class StartHandlerCest
         foreach (Category::defaults() as $category) {
             $I->seeInRepository(Category::class, [
                 'type' => $category->type->value,
-                'name' => $this->translator->trans($category->name, locale: $locale),
+                'name' => $this->seeds->localize($category->code, $locale ?? Locale::default()),
+                'code' => $category->code,
             ]);
         }
 

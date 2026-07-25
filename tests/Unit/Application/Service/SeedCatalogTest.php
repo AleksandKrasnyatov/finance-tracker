@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 
 final class SeedCatalogTest extends TestCase
 {
-    private seedCatalog $seedCatalog;
+    private SeedCatalog $seedCatalog;
 
     protected function setUp(): void
     {
@@ -45,15 +45,15 @@ final class SeedCatalogTest extends TestCase
         self::assertSame('основной', $catalog->accountName(Locale::Ru));
         self::assertEquals(
             [
-                new CategoryDto(TransactionType::Income, 'зарплата'),
-                new CategoryDto(TransactionType::Income, 'другое'),
-                new CategoryDto(TransactionType::Expense, 'продукты'),
-                new CategoryDto(TransactionType::Expense, 'кафе'),
-                new CategoryDto(TransactionType::Expense, 'транспорт'),
-                new CategoryDto(TransactionType::Expense, 'жильё'),
-                new CategoryDto(TransactionType::Expense, 'здоровье'),
-                new CategoryDto(TransactionType::Expense, 'развлечения'),
-                new CategoryDto(TransactionType::Expense, 'другое'),
+                new CategoryDto(TransactionType::Income, 'зарплата', 'salary'),
+                new CategoryDto(TransactionType::Income, 'другое', 'other'),
+                new CategoryDto(TransactionType::Expense, 'продукты', 'groceries'),
+                new CategoryDto(TransactionType::Expense, 'кафе', 'cafe'),
+                new CategoryDto(TransactionType::Expense, 'транспорт', 'transport'),
+                new CategoryDto(TransactionType::Expense, 'жильё', 'housing'),
+                new CategoryDto(TransactionType::Expense, 'здоровье', 'health'),
+                new CategoryDto(TransactionType::Expense, 'развлечения', 'entertainment'),
+                new CategoryDto(TransactionType::Expense, 'другое', 'other'),
             ],
             $catalog->categories(Locale::Ru),
         );
