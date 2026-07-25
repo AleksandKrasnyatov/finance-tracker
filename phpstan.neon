@@ -4,5 +4,5 @@ parameters:
         - src
         - tests
     excludePaths:
-        - tests/_output
+        - tests/_output (?)
         - tests/Support
