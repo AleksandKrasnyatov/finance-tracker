@@ -1,4 +1,4 @@
-init: copy-env docker-down-clear docker-build docker-up wait-db composer-install migrations
+init: copy-env docker-down-clear docker-build docker-up wait-db composer-install test-build migrations
 up: docker-up
 down: docker-down
 restart: down up
@@ -31,6 +31,9 @@ migrations:
 
 validate-schema:
 	docker compose run --rm php-cli composer app orm:validate-schema -- -v
+
+test-build:
+	docker compose run --rm php-cli composer test-build
 
 test:
 	docker compose run --rm php-cli composer test

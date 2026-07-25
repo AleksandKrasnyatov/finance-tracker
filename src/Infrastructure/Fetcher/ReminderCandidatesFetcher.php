@@ -71,8 +71,13 @@ final readonly class ReminderCandidatesFetcher implements ReminderCandidatesFetc
 
         $candidates = [];
         foreach ($rows as $row) {
+            $id = $row['id'] ?? null;
+            if (!is_string($id)) {
+                continue;
+            }
+
             $candidates[] = new ReminderCandidate(
-                new Id((string) $row['id']),
+                new Id($id),
             );
         }
 

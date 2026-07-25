@@ -8,6 +8,7 @@ use App\Domain\Entity\Category;
 use App\Domain\Entity\User;
 use App\Domain\Enum\TransactionType;
 use App\Application\Gateway\TranslatorInterface;
+use App\Infrastructure\Translation\SymfonyTranslator;
 use Psr\SimpleCache\InvalidArgumentException;
 use SergiX44\Nutgram\Testing\FakeNutgram;
 use Test\Support\Fixture\OnboardedTelegramUserFixture;
@@ -17,11 +18,15 @@ use Test\Support\TelegramBotTester;
 final class AddCategoryConversationCest
 {
     private FakeNutgram $bot;
+    private TranslatorInterface $translator;
 
     public function _before(FunctionalTester $I): void
     {
         $I->loadFixtures(OnboardedTelegramUserFixture::class);
         $this->bot = TelegramBotTester::configure($I, OnboardedTelegramUserFixture::TELEGRAM_ID);
+        /** @var SymfonyTranslator $translator */
+        $translator = $I->grabService(TranslatorInterface::class);
+        $this->translator = $translator;
     }
 
     /**
@@ -85,7 +90,7 @@ final class AddCategoryConversationCest
 
         $this->bot->hearText('groceries')
             ->reply()
-            ->assertReplyText($I->grabService(TranslatorInterface::class)->trans('error.accountManage'))
+            ->assertReplyText($this->translator->trans('error.accountManage'))
             ->assertNoConversation($telegramId, $telegramId);
     }
 }

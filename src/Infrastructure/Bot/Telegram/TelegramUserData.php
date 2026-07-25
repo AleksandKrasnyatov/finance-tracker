@@ -61,9 +61,9 @@ final readonly class TelegramUserData
         $locale = $bot->getUserData(self::KEY_LOCALE);
 
         if (
-            !empty($userId)
-            && !empty($accountId)
-            && !empty($locale)
+            is_string($userId) && $userId !== ''
+            && is_string($accountId) && $accountId !== ''
+            && $locale instanceof Locale
         ) {
             return [
                 'userId' => $userId,

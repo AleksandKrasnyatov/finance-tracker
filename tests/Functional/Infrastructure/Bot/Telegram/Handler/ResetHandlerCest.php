@@ -9,8 +9,8 @@ use App\Domain\Entity\Account;
 use App\Domain\Entity\Category;
 use App\Domain\Entity\Transaction;
 use App\Domain\Entity\User;
-use App\Domain\Enum\Locale;
 use App\Infrastructure\Bot\Telegram\TelegramUserData;
+use App\Infrastructure\Translation\SymfonyTranslator;
 use Psr\SimpleCache\InvalidArgumentException;
 use SergiX44\Nutgram\Testing\FakeNutgram;
 use Test\Support\Fixture\OnboardedTelegramUserFixture;
@@ -26,7 +26,9 @@ final class ResetHandlerCest
     {
         $I->loadFixtures(OnboardedTelegramUserFixture::class);
         $this->bot = TelegramBotTester::configure($I, OnboardedTelegramUserFixture::TELEGRAM_ID);
-        $this->translator = $I->grabService(TranslatorInterface::class);
+        /** @var SymfonyTranslator $translator */
+        $translator = $I->grabService(TranslatorInterface::class);
+        $this->translator = $translator;
     }
 
     /**
