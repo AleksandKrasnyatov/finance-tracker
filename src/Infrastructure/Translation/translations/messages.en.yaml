@@ -25,14 +25,32 @@ bot:
     category: 'Categories'
     balance: 'Balance'
     settings: 'Settings'
+    reminders: 'Reminders'
   settings:
     title: 'Settings'
     language: 'Language'
-    notifications: 'Notifications'
+    notifications: 'Reminders'
     languageTitle: 'Language'
     languageChanged: 'Language updated.'
-    notificationsStub: 'Notification settings will be available soon.'
     back: '◀️ Back'
+  reminders:
+    body: |
+      <b>🔔 Reminders</b>
+
+      The bot will send a reminder if no transactions were added during the day.
+
+      Here you can enable or disable reminders and choose a convenient time to receive them.
+    on: 'On'
+    off: 'Off'
+    time: '🕰️ Reminder time: %time%'
+    timezone: '🕒 Time zone'
+    timezoneTitle: 'Choose a time zone:'
+    timezoneInvalid: 'Invalid time zone.'
+    enterTime: 'Enter the reminder time as HH:MM, for example 12:23:'
+    enterTimeText: 'Enter the time as text in HH:MM format:'
+    timeInvalid: 'Invalid time. Use HH:MM format, for example 12:23:'
+    timeChanged: 'Reminder time updated: %time%.'
+    back: '← Back'
   categories:
     title: 'Categories'
     typeTitle: 'Categories: %type%'

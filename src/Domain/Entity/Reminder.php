@@ -46,6 +46,26 @@ final class Reminder
         );
     }
 
+    public function enable(): void
+    {
+        $this->remindersEnabled = true;
+    }
+
+    public function disable(): void
+    {
+        $this->remindersEnabled = false;
+    }
+
+    public function changeTime(ReminderTime $reminderTime): void
+    {
+        $this->reminderTime = $reminderTime;
+    }
+
+    public function changeTimezone(Timezone $timezone): void
+    {
+        $this->timezone = $timezone;
+    }
+
     public function markSent(DateTimeImmutable $sentAt): void
     {
         $this->lastReminderSentAt = $sentAt->setTimezone(new DateTimeZone('UTC'));

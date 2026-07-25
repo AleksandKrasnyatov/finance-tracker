@@ -6,7 +6,9 @@ namespace App\Domain\Entity;
 
 use App\Domain\Enum\Locale;
 use App\Domain\ValueObject\Id;
+use App\Domain\ValueObject\ReminderTime;
 use App\Domain\ValueObject\TelegramId;
+use App\Domain\ValueObject\Timezone;
 use App\Infrastructure\Doctrine\Type\IdType;
 use App\Infrastructure\Doctrine\Type\TelegramIdType;
 use DateTimeImmutable;
@@ -69,6 +71,26 @@ final class User
     public function changeLocale(Locale $locale): void
     {
         $this->locale = $locale;
+    }
+
+    public function enableReminders(): void
+    {
+        $this->reminder->enable();
+    }
+
+    public function disableReminders(): void
+    {
+        $this->reminder->disable();
+    }
+
+    public function changeReminderTime(ReminderTime $reminderTime): void
+    {
+        $this->reminder->changeTime($reminderTime);
+    }
+
+    public function changeReminderTimezone(Timezone $timezone): void
+    {
+        $this->reminder->changeTimezone($timezone);
     }
 
     public function markReminderSent(DateTimeImmutable $sentAt): void

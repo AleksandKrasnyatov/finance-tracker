@@ -11,7 +11,6 @@ final class SettingsCallback
     public const string LIST = 'settings:list';
     public const string LANGUAGE = 'settings:language';
     public const string SET_LANGUAGE = 'settings:set_language';
-    public const string NOTIFICATIONS = 'settings:notifications';
 
     public static function register(Nutgram $bot): void
     {
@@ -21,7 +20,6 @@ final class SettingsCallback
             self::pattern(self::SET_LANGUAGE, 'locale'),
             [SettingsHandler::class, 'setLanguage'],
         );
-        $bot->onCallbackQueryData(self::NOTIFICATIONS, [SettingsHandler::class, 'notifications']);
     }
 
     public static function pattern(string $prefix, string ...$params): string

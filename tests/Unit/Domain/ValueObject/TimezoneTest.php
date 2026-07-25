@@ -45,6 +45,15 @@ final class TimezoneTest extends TestCase
         self::assertSame('UTC', Timezone::defaultForLocale()->value);
     }
 
+    #[Test]
+    public function givenCommonTimezonesWhenListedThenThereAreTwentyFourValidZones(): void
+    {
+        $zones = Timezone::common();
+
+        self::assertCount(24, $zones);
+        self::assertSame('Europe/Moscow', $zones[15]->value);
+    }
+
     /**
      * @dataProvider invalidTimezones
      */

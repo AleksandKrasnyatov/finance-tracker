@@ -8,6 +8,7 @@ use App\Application\Gateway\TranslatorInterface;
 use App\Application\UseCase\User\Command\ChangeUserLocaleCommand;
 use App\Application\UseCase\User\Command\ChangeUserLocaleHandler;
 use App\Domain\Enum\Locale;
+use App\Infrastructure\Bot\Telegram\Handler\Reminder\ReminderCallback;
 use App\Infrastructure\Bot\Telegram\TelegramScreen;
 use App\Infrastructure\Bot\Telegram\TelegramUserData;
 use Psr\SimpleCache\InvalidArgumentException;
@@ -47,7 +48,7 @@ final readonly class SettingsHandler
             ))
             ->addRow(InlineKeyboardButton::make(
                 $this->translator->trans('bot.settings.notifications', locale: $locale),
-                callback_data: SettingsCallback::NOTIFICATIONS,
+                callback_data: ReminderCallback::LIST,
             ));
 
         TelegramScreen::render(
@@ -95,27 +96,6 @@ final readonly class SettingsHandler
         $bot->editMessageText(
             text: $this->translator->trans('bot.settings.languageTitle', locale: $context['locale']),
             reply_markup: $this->languageMarkup($context['locale']),
-        );
-    }
-
-    /**
-     * @throws InvalidArgumentException
-     */
-    public function notifications(Nutgram $bot): void
-    {
-        TelegramScreen::ensureUser($bot);
-        $locale = $this->userData->getOrSet($bot)['locale'];
-
-        $markup = InlineKeyboardMarkup::make()
-            ->addRow(InlineKeyboardButton::make(
-                $this->translator->trans('bot.settings.back', locale: $locale),
-                callback_data: SettingsCallback::LIST,
-            ));
-
-        TelegramScreen::render(
-            $bot,
-            $this->translator->trans('bot.settings.notificationsStub', locale: $locale),
-            $markup,
         );
     }
 

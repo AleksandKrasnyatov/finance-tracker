@@ -58,6 +58,23 @@ final class UserTest extends TestCase
     }
 
     #[Test]
+    public function givenUserWhenReminderSettingsAreChangedThenReminderIsUpdated(): void
+    {
+        $user = new UserBuilder()->build();
+
+        $user->disableReminders();
+        $user->changeReminderTime(new ReminderTime('19:17'));
+        $user->changeReminderTimezone(new Timezone('Europe/Berlin'));
+
+        self::assertFalse($user->reminder->remindersEnabled);
+        self::assertSame('19:17', $user->reminder->reminderTime->value);
+        self::assertSame('Europe/Berlin', $user->reminder->timezone->value);
+
+        $user->enableReminders();
+        self::assertTrue($user->reminder->remindersEnabled);
+    }
+
+    #[Test]
     public function givenUserAndAccountWhenAccountIsAddedDirectlyThenUserAndAccountAreLinked(): void
     {
         $user = new UserBuilder()->build();

@@ -31,6 +31,39 @@ final readonly class Timezone
     }
 
     /**
+     * @return list<self>
+     */
+    public static function common(): array
+    {
+        return [
+            new self('Pacific/Midway'),
+            new self('Pacific/Honolulu'),
+            new self('America/Anchorage'),
+            new self('America/Los_Angeles'),
+            new self('America/Denver'),
+            new self('America/Chicago'),
+            new self('America/New_York'),
+            new self('America/Halifax'),
+            new self('America/Sao_Paulo'),
+            new self('Atlantic/South_Georgia'),
+            new self('Atlantic/Azores'),
+            new self('UTC'),
+            new self('Europe/London'),
+            new self('Europe/Berlin'),
+            new self('Europe/Helsinki'),
+            new self('Europe/Moscow'),
+            new self('Asia/Dubai'),
+            new self('Asia/Karachi'),
+            new self('Asia/Dhaka'),
+            new self('Asia/Bangkok'),
+            new self('Asia/Shanghai'),
+            new self('Asia/Tokyo'),
+            new self('Australia/Sydney'),
+            new self('Pacific/Auckland'),
+        ];
+    }
+
+    /**
      * @throws DateInvalidTimeZoneException
      */
     public function toDateTimeZone(): DateTimeZone

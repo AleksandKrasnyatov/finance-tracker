@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Test\Functional\Infrastructure\Bot\Telegram\Handler;
 
 use App\Application\Service\SeedCatalog;
-use App\Application\UseCase\Account\Command\Category\ChangeCategoryNameCommand;
-use App\Application\UseCase\Account\Command\Category\ChangeCategoryNameHandler;
 use App\Domain\Entity\Account;
 use App\Domain\Entity\Category;
 use App\Domain\Entity\User;
