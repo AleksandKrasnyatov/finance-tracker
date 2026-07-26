@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Bot\Telegram\Handler\Transaction;
 
+use App\Application\Fetcher\Account\AccountTransaction;
 use App\Application\Fetcher\Account\AccountTransactionMonth;
 use App\Application\Gateway\TranslatorInterface;
 use App\Application\UseCase\Account\Query\GetAccountTransactionMonthsHandler;
 use App\Application\UseCase\Account\Query\GetAccountTransactionMonthsQuery;
+use App\Application\UseCase\Account\Query\GetAccountTransactionsHandler;
+use App\Application\UseCase\Account\Query\GetAccountTransactionsQuery;
 use App\Domain\Enum\Locale;
-use App\Domain\Enum\TransactionType;
 use App\Infrastructure\Bot\Telegram\TelegramScreen;
 use App\Infrastructure\Bot\Telegram\TelegramUserData;
 use DateTimeImmutable;
@@ -23,6 +25,7 @@ final readonly class TransactionsListHandler
 {
     public function __construct(
         private TelegramUserData $userData,
+        private GetAccountTransactionsHandler $transactions,
         private GetAccountTransactionMonthsHandler $months,
         private TranslatorInterface $translator,
     ) {
@@ -51,22 +54,18 @@ final readonly class TransactionsListHandler
         $context = $this->userData->getOrSet($bot);
         $locale = $context['locale'];
 
-        // TODO Application: GetAccountTransactionsHandler::handle(
-        //   new GetAccountTransactionsQuery(
-        //     userId: $context['userId'],
-        //     accountId: $context['accountId'],
-        //     year: (int)$year,
-        //     month: (int)$month,
-        //     filter: $filter, // all|expense|income
-        //   )
-        // )
-        // Expected item fields: id, type (TransactionType), amount (decimal string), categoryName, date (DateTimeImmutable)
-        $transactions = [];
+        $result = $this->transactions->handle(new GetAccountTransactionsQuery(
+            $context['userId'],
+            $context['accountId'],
+            $year,
+            $month,
+            $filter === TransactionCallback::FILTER_ALL ? null : $filter,
+        ));
 
         TelegramScreen::render(
             $bot,
             $this->translator->trans('bot.transactions.title', locale: $locale),
-            $this->listMarkup($year, $month, $filter, $transactions, $locale),
+            $this->listMarkup($year, $month, $filter, $result->transactions, $locale),
             ParseMode::HTML,
         );
     }
@@ -104,9 +103,6 @@ final readonly class TransactionsListHandler
         );
     }
 
-    /**
-     * Transaction detail — not implemented yet.
-     */
     public function view(Nutgram $bot, string $id): void
     {
         TelegramScreen::ensureUser($bot);
@@ -114,9 +110,6 @@ final readonly class TransactionsListHandler
         // TODO Application + UI: GetAccountTransaction + edit/delete screen
     }
 
-    /**
-     * Parent navigation — destination TBD.
-     */
     public function back(Nutgram $bot): void
     {
         TelegramScreen::ensureUser($bot);
@@ -125,13 +118,7 @@ final readonly class TransactionsListHandler
     }
 
     /**
-     * @param list<array{
-     *     id: string,
-     *     type: TransactionType,
-     *     amount: string,
-     *     categoryName: string,
-     *     date: DateTimeImmutable
-     * }> $transactions
+     * @param list<AccountTransaction> $transactions
      */
     private function listMarkup(
         string $year,
@@ -183,7 +170,7 @@ final readonly class TransactionsListHandler
                 $this->transactionLabel($transaction),
                 callback_data: TransactionCallback::data(
                     TransactionCallback::VIEW,
-                    $transaction['id'],
+                    $transaction->id,
                 ),
             ));
         }
@@ -293,21 +280,16 @@ final readonly class TransactionsListHandler
         );
     }
 
-    /**
-     * @param array{
-     *     id: string,
-     *     type: TransactionType,
-     *     amount: string,
-     *     categoryName: string,
-     *     date: DateTimeImmutable
-     * } $transaction
-     */
-    private function transactionLabel(array $transaction): string
+    private function transactionLabel(AccountTransaction $transaction): string
     {
-        $sign = $transaction['type'] === TransactionType::Income ? '+' : '-';
-        $amount = number_format((float)$transaction['amount'], thousands_separator: ' ');
-        $day = $transaction['date']->format('d');
+        $amount = number_format((float)$transaction->amount, thousands_separator: ' ');
 
-        return sprintf('%s %s %s 🗓%s', $sign, $amount, $transaction['categoryName'], $day);
+        return sprintf(
+            '%s %s %s 🗓%s',
+            $transaction->type->sign(),
+            $amount,
+            $transaction->categoryName,
+            $transaction->date->format('d'),
+        );
     }
 }

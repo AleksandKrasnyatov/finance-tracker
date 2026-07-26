@@ -55,22 +55,38 @@ final class TransactionsHandlerCest
             ]);
     }
 
-    public function givenMonthsInDifferentYearsWhenOpensPeriodThenOnlyThoseMonthsAreShown(FunctionalTester $I): void
+    public function givenTransactionsWhenOpensJournalThenRowsAndPeriodSwitchWork(FunctionalTester $I): void
     {
         $I->loadFixtures(OnboardedTelegramUserWithTransactionMonthsFixture::class);
         $now = new DateTimeImmutable();
 
-        $this->bot->hearText('/transactions')->reply();
         $this->bot
-            ->hearCallbackQueryData(
-                TransactionCallback::data(
-                    TransactionCallback::MONTH,
-                    $now->format('Y'),
-                    $now->format('n'),
-                    TransactionCallback::FILTER_ALL,
-                    '1',
-                )
-            )
+            ->hearText('/transactions')
+            ->reply()
+            ->assertReplyMessage([
+                'reply_markup' => [
+                    'inline_keyboard' => [
+                        [['text' => 'July']],
+                        [
+                            ['text' => '🟠 All'],
+                            ['text' => '⚪️ Expenses'],
+                            ['text' => '⚪️ Income'],
+                        ],
+                        [['text' => '- 450 groceries 🗓26']],
+                        [['text' => '+ 100 salary 🗓15']],
+                        [['text' => '← Back']],
+                    ],
+                ],
+            ]);
+
+        $this->bot
+            ->hearCallbackQueryData(TransactionCallback::data(
+                TransactionCallback::MONTH,
+                $now->format('Y'),
+                $now->format('n'),
+                TransactionCallback::FILTER_ALL,
+                '1',
+            ))
             ->reply()
             ->assertReply('editMessageText', [
                 'text' => $this->translator->trans('bot.transactions.chooseMonth'),
@@ -95,6 +111,13 @@ final class TransactionsHandlerCest
                 'reply_markup' => [
                     'inline_keyboard' => [
                         [['text' => 'June 2024']],
+                        [
+                            ['text' => '🟠 All'],
+                            ['text' => '⚪️ Expenses'],
+                            ['text' => '⚪️ Income'],
+                        ],
+                        [['text' => '+ 200 salary 🗓10']],
+                        [['text' => '← Back']],
                     ],
                 ],
             ], 1);

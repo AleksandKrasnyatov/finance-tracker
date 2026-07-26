@@ -31,7 +31,14 @@ final class OnboardedTelegramUserWithTransactionMonthsFixture implements Fixture
         $account->addDefaultCategories($user, Category::defaults());
 
         $income = $this->category($account, 'salary', TransactionType::Income);
+        $expense = $this->category($account, 'groceries', TransactionType::Expense);
 
+        $account->addTransaction(
+            $user,
+            $expense,
+            new Money('450'),
+            date: new DateTimeImmutable('2026-07-26'),
+        );
         $account->addTransaction(
             $user,
             $income,
