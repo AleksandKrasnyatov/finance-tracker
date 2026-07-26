@@ -8,12 +8,15 @@ use DomainException;
 
 final readonly class ReminderTime
 {
-    public function __construct(
-        public string $value,
-    ) {
-        if (preg_match('/^([01]\d|2[0-3]):([0-5]\d)$/', $this->value) !== 1) {
-            throw new DomainException(sprintf('Invalid reminder time "%s", expected HH:MM.', $this->value));
+    public string $value;
+
+    public function __construct(string $value)
+    {
+        if (preg_match('/^(0?[0-9]|1[0-9]|2[0-3]):([0-5]\d)$/', $value, $matches) !== 1) {
+            throw new DomainException(sprintf('Invalid reminder time "%s", expected HH:MM.', $value));
         }
+
+        $this->value = sprintf('%02d:%s', (int)$matches[1], $matches[2]);
     }
 
     public static function default(): self

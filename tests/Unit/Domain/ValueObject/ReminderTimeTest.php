@@ -37,9 +37,11 @@ final class ReminderTimeTest extends TestCase
      * @dataProvider validTimes
      */
     #[Test]
-    public function givenBoundaryValidTimeWhenReminderTimeIsCreatedThenValueMatches(string $value): void
-    {
-        self::assertSame($value, new ReminderTime($value)->value);
+    public function givenBoundaryValidTimeWhenReminderTimeIsCreatedThenValueMatches(
+        string $input,
+        string $expected,
+    ): void {
+        self::assertSame($expected, new ReminderTime($input)->value);
     }
 
     /**
@@ -48,11 +50,14 @@ final class ReminderTimeTest extends TestCase
     public static function validTimes(): array
     {
         return [
-            ['00:00'],
-            ['09:05'],
-            ['19:59'],
-            ['20:00'],
-            ['23:59'],
+            ['00:00', '00:00'],
+            ['0:00', '00:00'],
+            ['9:00', '09:00'],
+            ['09:05', '09:05'],
+            ['9:05', '09:05'],
+            ['19:59', '19:59'],
+            ['20:00', '20:00'],
+            ['23:59', '23:59'],
         ];
     }
 
@@ -73,9 +78,9 @@ final class ReminderTimeTest extends TestCase
     {
         return [
             [''],
-            ['9:00'],
             ['24:00'],
             ['21:60'],
+            ['9:0'],
             ['21:00:00'],
             ['21-00'],
             ['ab:cd'],
