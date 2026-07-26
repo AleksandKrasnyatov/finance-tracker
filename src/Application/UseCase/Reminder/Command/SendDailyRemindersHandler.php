@@ -7,8 +7,8 @@ namespace App\Application\UseCase\Reminder\Command;
 use App\Application\Fetcher\ReminderCandidatesFetcherInterface;
 use App\Application\Gateway\Notification;
 use App\Application\Gateway\NotifierInterface;
+use App\Domain\Repository\UserRepositoryInterface;
 use App\Infrastructure\Repository\Flusher;
-use App\Infrastructure\Repository\UserRepository;
 use DateTimeImmutable;
 use Psr\Log\LoggerInterface;
 use Throwable;
@@ -18,7 +18,7 @@ final readonly class SendDailyRemindersHandler
     public function __construct(
         private ReminderCandidatesFetcherInterface $candidates,
         private NotifierInterface $notifier,
-        private UserRepository $users,
+        private UserRepositoryInterface $users,
         private LoggerInterface $logger,
         private Flusher $flusher,
     ) {
