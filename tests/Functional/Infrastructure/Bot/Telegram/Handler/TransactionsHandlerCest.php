@@ -82,5 +82,21 @@ final class TransactionsHandlerCest
                     ],
                 ],
             ], 1);
+
+        $this->bot
+            ->hearCallbackQueryData(TransactionCallback::data(
+                TransactionCallback::LIST,
+                '2024',
+                '6',
+                TransactionCallback::FILTER_ALL,
+            ))
+            ->reply()
+            ->assertReply('editMessageText', [
+                'reply_markup' => [
+                    'inline_keyboard' => [
+                        [['text' => 'June 2024']],
+                    ],
+                ],
+            ], 1);
     }
 }

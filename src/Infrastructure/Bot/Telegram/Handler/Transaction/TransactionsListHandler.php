@@ -142,7 +142,7 @@ final readonly class TransactionsListHandler
     ): InlineKeyboardMarkup {
         $markup = InlineKeyboardMarkup::make()
             ->addRow(InlineKeyboardButton::make(
-                $this->translator->trans('bot.month.' . $month, locale: $locale),
+                $this->periodLabel($year, $month, $locale),
                 callback_data: TransactionCallback::data(
                     TransactionCallback::MONTH,
                     $year,
@@ -260,6 +260,16 @@ final readonly class TransactionsListHandler
                 $filter,
             ),
         ));
+    }
+
+    private function periodLabel(string $year, string $month, Locale $locale): string
+    {
+        $label = $this->translator->trans('bot.month.' . $month, locale: $locale);
+        if ($year === new DateTimeImmutable()->format('Y')) {
+            return $label;
+        }
+
+        return sprintf('%s %s', $label, $year);
     }
 
     private function filterButton(
