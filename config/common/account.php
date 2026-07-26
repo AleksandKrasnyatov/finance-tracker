@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Application\Fetcher\AccountBalanceFetcherInterface;
-use App\Application\Fetcher\AccountCategoriesFetcherInterface;
+use App\Application\Fetcher\Account\AccountBalanceFetcherInterface;
+use App\Application\Fetcher\Account\AccountCategoriesFetcherInterface;
 use App\Domain\Repository\AccountRepositoryInterface;
 use App\Domain\Repository\CategoryRepositoryInterface;
 use App\Infrastructure\Fetcher\AccountBalanceFetcher;

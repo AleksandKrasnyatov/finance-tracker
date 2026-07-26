@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\UseCase\Account\Query;
 
-use App\Application\Fetcher\AccountBalanceFetcherInterface;
+use App\Application\Fetcher\Account\AccountBalanceFetcherInterface;
 use App\Domain\Exception\NoAccessException;
 use App\Domain\Repository\AccountRepositoryInterface;
 use App\Domain\Repository\UserRepositoryInterface;

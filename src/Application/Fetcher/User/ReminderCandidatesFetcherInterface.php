@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Fetcher;
+namespace App\Application\Fetcher\User;
 
 use DateTimeImmutable;
 

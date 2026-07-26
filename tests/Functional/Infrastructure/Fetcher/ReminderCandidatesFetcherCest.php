@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Test\Functional\Infrastructure\Fetcher;
 
-use App\Application\Fetcher\ReminderCandidatesFetcherInterface;
+use App\Application\Fetcher\User\ReminderCandidatesFetcherInterface;
 use App\Domain\Entity\User;
 use DateTimeImmutable;
 use DateTimeZone;

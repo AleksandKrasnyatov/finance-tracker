@@ -11,6 +11,14 @@ enum TransactionType: string
     case Income = 'income';
     case Expense = 'expense';
 
+    public function sign(): string
+    {
+        return match ($this) {
+            self::Income => '+',
+            self::Expense => '-',
+        };
+    }
+
     public static function fromName(string $typeName): self
     {
         return self::tryFrom($typeName) ?? throw new EnumInvalidValueException(self::class, 'Invalid transaction type');

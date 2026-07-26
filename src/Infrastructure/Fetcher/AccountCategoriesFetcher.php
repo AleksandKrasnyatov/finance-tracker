@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Fetcher;
 
-use App\Application\Fetcher\AccountCategories;
-use App\Application\Fetcher\AccountCategoriesFetcherInterface;
-use App\Application\Fetcher\AccountCategory;
+use App\Application\Fetcher\Account\AccountCategories;
+use App\Application\Fetcher\Account\AccountCategoriesFetcherInterface;
+use App\Application\Fetcher\Account\AccountCategory;
 use App\Domain\Entity\Account;
 use App\Domain\Entity\Category;
 use App\Domain\Enum\TransactionType;

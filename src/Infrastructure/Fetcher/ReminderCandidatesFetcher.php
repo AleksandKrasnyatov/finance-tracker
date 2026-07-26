@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Fetcher;
 
-use App\Application\Fetcher\ReminderCandidate;
-use App\Application\Fetcher\ReminderCandidatesFetcherInterface;
+use App\Application\Fetcher\User\ReminderCandidate;
+use App\Application\Fetcher\User\ReminderCandidatesFetcherInterface;
 use App\Domain\ValueObject\Id;
 use DateTimeImmutable;
 use DateTimeZone;

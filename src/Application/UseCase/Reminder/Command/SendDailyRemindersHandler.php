@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\UseCase\Reminder\Command;
 
-use App\Application\Fetcher\ReminderCandidatesFetcherInterface;
+use App\Application\Fetcher\User\ReminderCandidatesFetcherInterface;
 use App\Application\Gateway\Notification;
 use App\Application\Gateway\NotifierInterface;
 use App\Domain\Repository\UserRepositoryInterface;

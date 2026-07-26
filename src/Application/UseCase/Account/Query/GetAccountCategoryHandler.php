@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\UseCase\Account\Query;
 
-use App\Application\Fetcher\AccountCategoriesFetcherInterface;
+use App\Application\Fetcher\Account\AccountCategoriesFetcherInterface;
 use App\Domain\Entity\Category;
 use App\Domain\Exception\EntityNotFoundException;
 use App\Domain\Exception\NoAccessException;

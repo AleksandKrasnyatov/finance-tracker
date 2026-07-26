@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Application\Fetcher\ReminderCandidatesFetcherInterface;
+use App\Application\Fetcher\User\ReminderCandidatesFetcherInterface;
 use App\Application\Gateway\NotifierInterface;
 use App\Infrastructure\Fetcher\ReminderCandidatesFetcher;
 use App\Infrastructure\Gateway\TelegramNotifier;

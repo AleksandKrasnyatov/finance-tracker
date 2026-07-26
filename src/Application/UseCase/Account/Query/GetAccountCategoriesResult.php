@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\UseCase\Account\Query;
 
-use App\Application\Fetcher\AccountCategory;
+use App\Application\Fetcher\Account\AccountCategory;
 
 final readonly class GetAccountCategoriesResult
 {

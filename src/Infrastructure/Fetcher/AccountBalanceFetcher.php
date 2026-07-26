@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Fetcher;
 
-use App\Application\Fetcher\AccountBalance;
-use App\Application\Fetcher\AccountBalanceFetcherInterface;
+use App\Application\Fetcher\Account\AccountBalance;
+use App\Application\Fetcher\Account\AccountBalanceFetcherInterface;
 use App\Domain\Enum\Currency;
 use App\Domain\Enum\TransactionType;
 use App\Domain\ValueObject\Id;
