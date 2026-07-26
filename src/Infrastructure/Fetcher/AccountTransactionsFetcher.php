@@ -42,7 +42,8 @@ final readonly class AccountTransactionsFetcher implements AccountTransactionsFe
                 t.money_currency AS currency,
                 c.id AS category_id,
                 c.name AS category_name,
-                t.date
+                t.date,
+                t.description
             FROM transactions t
             INNER JOIN categories c ON c.id = t.category_id
             WHERE t.account_id = :accountId
@@ -81,7 +82,8 @@ final readonly class AccountTransactionsFetcher implements AccountTransactionsFe
                     t.money_currency AS currency,
                     c.id AS category_id,
                     c.name AS category_name,
-                    t.date
+                    t.date,
+                    t.description
                 FROM transactions t
                 INNER JOIN categories c ON c.id = t.category_id
                 WHERE t.account_id = :accountId
@@ -118,6 +120,7 @@ final readonly class AccountTransactionsFetcher implements AccountTransactionsFe
             $categoryId = $row['category_id'] ?? null;
             $categoryName = $row['category_name'] ?? null;
             $date = $row['date'] ?? null;
+            $description = $row['description'] ?? '';
 
             if (
                 !is_string($id)
@@ -127,6 +130,7 @@ final readonly class AccountTransactionsFetcher implements AccountTransactionsFe
                 || !is_string($categoryId)
                 || !is_string($categoryName)
                 || !is_string($date)
+                || !is_string($description)
             ) {
                 continue;
             }
@@ -139,6 +143,7 @@ final readonly class AccountTransactionsFetcher implements AccountTransactionsFe
                 $categoryId,
                 $categoryName,
                 new DateTimeImmutable($date),
+                $description
             );
         }
 

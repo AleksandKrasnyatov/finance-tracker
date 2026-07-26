@@ -18,6 +18,7 @@ final readonly class AccountTransaction
         public string $categoryId,
         public string $categoryName,
         public DateTimeImmutable $date,
+        public string $description,
     ) {
     }
 }

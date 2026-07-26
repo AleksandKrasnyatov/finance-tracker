@@ -50,6 +50,7 @@ final class TransactionEditingHandlerCest
                         [['text' => '450 ₽']],
                         [['text' => 'groceries']],
                         [['text' => '2026-07-26']],
+                        [['text' => $this->translator->trans('bot.transactions.descriptionPlaceholder')]],
                         [['text' => '🗑 Delete']],
                         [['text' => '← Back']],
                     ],
@@ -123,6 +124,41 @@ final class TransactionEditingHandlerCest
         $I->seeInRepository(Transaction::class, [
             'id' => $transactionId,
             'date' => '2026-10-25',
+        ]);
+    }
+
+    public function givenTransactionWhenEditDescriptionThenDescriptionSuccessfullyChanged(FunctionalTester $I): void
+    {
+        $transactionId = $this->transaction->id->value;
+
+        $this->bot->willStartConversation()
+            ->hearText('/transactions')
+            ->reply();
+
+        $this->bot
+            ->hearCallbackQueryData(TransactionCallback::data(TransactionCallback::VIEW, $transactionId))
+            ->reply();
+
+        $this->bot
+            ->hearCallbackQueryData(TransactionCallback::data(TransactionCallback::DESCRIPTION, $transactionId))
+            ->reply()
+            ->assertReply('sendMessage', [
+                'text' => $this->translator->trans('bot.transactions.enterDescription'),
+            ], 1)
+            ->assertActiveConversation(
+                OnboardedTelegramUserWithTransactionMonthsFixture::TELEGRAM_ID,
+                OnboardedTelegramUserWithTransactionMonthsFixture::TELEGRAM_ID,
+            );
+
+        $this->bot
+            ->hearText($newDescription = 'new transaction description')
+            ->reply()
+            ->assertReplyText($this->translator->trans('bot.transactions.descriptionChanged'));
+
+
+        $I->seeInRepository(Transaction::class, [
+            'id' => $transactionId,
+            'description' => $newDescription,
         ]);
     }
 

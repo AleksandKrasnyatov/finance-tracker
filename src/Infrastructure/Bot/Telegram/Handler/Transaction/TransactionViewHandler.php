@@ -154,6 +154,10 @@ final readonly class TransactionViewHandler
                 callback_data: TransactionCallback::data(TransactionCallback::DATE, $transaction->id),
             ))
             ->addRow(InlineKeyboardButton::make(
+                $transaction->description ?: $this->translator->trans('bot.transactions.descriptionPlaceholder', locale: $locale),
+                callback_data: TransactionCallback::data(TransactionCallback::DESCRIPTION, $transaction->id),
+            ))
+            ->addRow(InlineKeyboardButton::make(
                 $this->translator->trans('bot.transactions.delete', locale: $locale),
                 callback_data: TransactionCallback::data(TransactionCallback::DELETE, $transaction->id),
             ))

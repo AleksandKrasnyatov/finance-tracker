@@ -14,6 +14,7 @@ final class TransactionCallback
     public const string VIEW = 'transaction:view';
     public const string MONEY = 'transaction:money';
     public const string DATE = 'transaction:date';
+    public const string DESCRIPTION = 'transaction:description';
     public const string CATEGORY = 'transaction:cat';
     public const string SET_CATEGORY = 'transaction:set_cat';
     public const string DELETE = 'transaction:delete';
@@ -50,6 +51,10 @@ final class TransactionCallback
         $bot->onCallbackQueryData(
             self::pattern(self::DATE, 'id'),
             [TransactionEditHandler::class, 'date'],
+        );
+        $bot->onCallbackQueryData(
+            self::pattern(self::DESCRIPTION, 'id'),
+            [TransactionEditHandler::class, 'description'],
         );
         $bot->onCallbackQueryData(
             self::pattern(self::CATEGORY, 'id'),
