@@ -6,6 +6,7 @@ namespace App\Infrastructure\Fetcher;
 
 use App\Application\Fetcher\Account\AccountTransaction;
 use App\Application\Fetcher\Account\AccountTransactionsFetcherInterface;
+use App\Domain\Enum\Currency;
 use App\Domain\Enum\TransactionType;
 use App\Domain\ValueObject\Id;
 use DateMalformedStringException;
@@ -34,7 +35,14 @@ final readonly class AccountTransactionsFetcher implements AccountTransactionsFe
         $to = $from->modify('first day of next month');
 
         $sql = <<<'SQL'
-            SELECT t.id, c.type, t.money_amount AS amount, c.name AS category_name, t.date
+            SELECT
+                t.id,
+                c.type,
+                t.money_amount AS amount,
+                t.money_currency AS currency,
+                c.id AS category_id,
+                c.name AS category_name,
+                t.date
             FROM transactions t
             INNER JOIN categories c ON c.id = t.category_id
             WHERE t.account_id = :accountId
@@ -54,13 +62,60 @@ final readonly class AccountTransactionsFetcher implements AccountTransactionsFe
 
         $sql .= ' ORDER BY t.date DESC, t.created_at DESC';
 
-        $rows = $this->entityManager->getConnection()->fetchAllAssociative($sql, $params);
+        return $this->mapRows(
+            $this->entityManager->getConnection()->fetchAllAssociative($sql, $params),
+        );
+    }
 
+    /**
+     * @throws Exception|DateMalformedStringException
+     */
+    public function fetchOne(Id $accountId, Id $transactionId): ?AccountTransaction
+    {
+        $row = $this->entityManager->getConnection()->fetchAssociative(
+            <<<'SQL'
+                SELECT
+                    t.id,
+                    c.type,
+                    t.money_amount AS amount,
+                    t.money_currency AS currency,
+                    c.id AS category_id,
+                    c.name AS category_name,
+                    t.date
+                FROM transactions t
+                INNER JOIN categories c ON c.id = t.category_id
+                WHERE t.account_id = :accountId
+                  AND t.id = :transactionId
+                SQL,
+            [
+                'accountId' => $accountId->value,
+                'transactionId' => $transactionId->value,
+            ],
+        );
+
+        if ($row === false) {
+            return null;
+        }
+
+        $mapped = $this->mapRows([$row]);
+
+        return $mapped[0] ?? null;
+    }
+
+    /**
+     * @param list<array<string, mixed>> $rows
+     * @return list<AccountTransaction>
+     * @throws DateMalformedStringException
+     */
+    private function mapRows(array $rows): array
+    {
         $transactions = [];
         foreach ($rows as $row) {
             $id = $row['id'] ?? null;
             $typeValue = $row['type'] ?? null;
             $amount = $row['amount'] ?? null;
+            $currency = $row['currency'] ?? null;
+            $categoryId = $row['category_id'] ?? null;
             $categoryName = $row['category_name'] ?? null;
             $date = $row['date'] ?? null;
 
@@ -68,6 +123,8 @@ final readonly class AccountTransactionsFetcher implements AccountTransactionsFe
                 !is_string($id)
                 || !is_string($typeValue)
                 || !is_numeric($amount)
+                || !is_string($currency)
+                || !is_string($categoryId)
                 || !is_string($categoryName)
                 || !is_string($date)
             ) {
@@ -78,6 +135,8 @@ final readonly class AccountTransactionsFetcher implements AccountTransactionsFe
                 $id,
                 TransactionType::fromName($typeValue),
                 (string)$amount,
+                Currency::from($currency),
+                $categoryId,
                 $categoryName,
                 new DateTimeImmutable($date),
             );

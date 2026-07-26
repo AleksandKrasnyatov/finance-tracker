@@ -73,10 +73,26 @@ bot:
   transactions:
     title: '<b>🧾 Журнал операций</b>'
     chooseMonth: '<b>🗓️ Выбери месяц</b>'
+    detail: |
+      <b>✏️ Редактирование</b>
+
+      Нажми на поле, чтобы изменить.
+    chooseCategory: '<b>🏷 Категория</b>'
     filter:
       all: 'Все'
       expense: 'Траты'
       income: 'Доходы'
+    delete: '🗑 Удалить'
+    deleteYes: 'Да'
+    deleteNo: 'Нет'
+    deleteConfirm: 'Удалить операцию %amount% «%category%»?'
+    enterAmount: 'Введите новую сумму, например 450:'
+    enterAmountText: 'Введите сумму текстом:'
+    amountChanged: 'Сумма обновлена: %amount%.'
+    enterDate: 'Введите дату в формате ДД.ММ.ГГГГ, например 26.07.2026:'
+    dateInvalid: 'Некорректная дата. Используйте формат ДД.ММ.ГГГГ:'
+    dateChanged: 'Дата обновлена: %date%.'
+    categoryChanged: 'Категория обновлена.'
     back: '← Назад'
   transaction:
     recorded: 'Записал %sign%%amount% в «%category%» (%type%)%comment%.'
@@ -124,5 +140,6 @@ error:
   accountManage: 'Возникла ошибка с данными аккаунта. Попробуйте еще раз.'
   notFound:
     Category: 'Категория не найдена.'
+    Transaction: 'Операция не найдена.'
   invalidVal:
     TransactionType: 'Неправильный тип транзакции.'

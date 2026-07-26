@@ -53,6 +53,7 @@ final readonly class TransactionsListHandler
         TelegramScreen::ensureUser($bot);
         $context = $this->userData->getOrSet($bot);
         $locale = $context['locale'];
+        TransactionCallback::rememberList($bot, $year, $month, $filter);
 
         $result = $this->transactions->handle(new GetAccountTransactionsQuery(
             $context['userId'],
@@ -103,18 +104,13 @@ final readonly class TransactionsListHandler
         );
     }
 
-    public function view(Nutgram $bot, string $id): void
-    {
-        TelegramScreen::ensureUser($bot);
-        $bot->answerCallbackQuery();
-        // TODO Application + UI: GetAccountTransaction + edit/delete screen
-    }
-
+    /**
+     * @throws InvalidArgumentException
+     */
     public function back(Nutgram $bot): void
     {
-        TelegramScreen::ensureUser($bot);
-        $bot->answerCallbackQuery();
-        // TODO: navigate to parent screen when menu hierarchy exists
+        $list = TransactionCallback::listContext($bot);
+        $this->list($bot, $list['year'], $list['month'], $list['filter']);
     }
 
     /**

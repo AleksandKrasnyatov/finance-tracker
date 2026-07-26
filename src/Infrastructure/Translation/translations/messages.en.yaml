@@ -71,10 +71,26 @@ bot:
   transactions:
     title: '<b>🧾 Transaction log</b>'
     chooseMonth: '<b>🗓️ Select month</b>'
+    detail: |
+      <b>✏️ Editing</b>
+
+      Tap a field to edit.
+    chooseCategory: '<b>🏷 Category</b>'
     filter:
       all: 'All'
       expense: 'Expenses'
       income: 'Income'
+    delete: '🗑 Delete'
+    deleteYes: 'Yes'
+    deleteNo: 'No'
+    deleteConfirm: 'Delete transaction %amount% "%category%"?'
+    enterAmount: 'Enter the new amount, for example 450:'
+    enterAmountText: 'Enter the amount as text:'
+    amountChanged: 'Amount updated: %amount%.'
+    enterDate: 'Enter the date as DD.MM.YYYY, for example 26.07.2026:'
+    dateInvalid: 'Invalid date. Use DD.MM.YYYY format:'
+    dateChanged: 'Date updated: %date%.'
+    categoryChanged: 'Category updated.'
     back: '← Back'
   transaction:
     recorded: 'Recorded %sign%%amount% in "%category%" (%type%)%comment%.'
@@ -122,5 +138,6 @@ error:
   accountManage: 'An error occurred while processing account data. Please try again.'
   notFound:
     Category: 'Category not found.'
+    Transaction: 'Transaction not found.'
   invalidVal:
     TransactionType: 'Invalid transaction type.'

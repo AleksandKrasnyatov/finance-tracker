@@ -18,4 +18,6 @@ interface AccountTransactionsFetcherInterface
         string $month,
         ?TransactionType $type = null,
     ): array;
+
+    public function fetchOne(Id $accountId, Id $transactionId): ?AccountTransaction;
 }

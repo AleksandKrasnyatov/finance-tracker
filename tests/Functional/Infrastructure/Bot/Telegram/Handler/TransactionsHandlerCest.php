@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Test\Functional\Infrastructure\Bot\Telegram\Handler;
 
 use App\Application\Gateway\TranslatorInterface;
+use App\Domain\Entity\Transaction;
 use App\Infrastructure\Bot\Telegram\Handler\Transaction\TransactionCallback;
 use DateTimeImmutable;
 use SergiX44\Nutgram\Testing\FakeNutgram;
