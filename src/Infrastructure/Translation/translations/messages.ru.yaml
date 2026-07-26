@@ -29,6 +29,7 @@ bot:
     balance: 'Баланс'
     settings: 'Настройки'
     reminders: 'Напоминания'
+    transactions: 'Журнал операций'
   settings:
     title: 'Настройки'
     language: 'Язык'
@@ -69,6 +70,13 @@ bot:
     renamed: 'Категория переименована в «%name%».'
   error:
     generic: 'Не удалось выполнить команду. Попробуйте ещё раз позднее.'
+  transactions:
+    title: '<b>🧾 Журнал операций</b>'
+    filter:
+      all: 'Все'
+      expense: 'Траты'
+      income: 'Доходы'
+    back: '← Назад'
   transaction:
     recorded: 'Записал %sign%%amount% в «%category%» (%type%)%comment%.'
   category:

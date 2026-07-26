@@ -26,6 +26,7 @@ bot:
     balance: 'Balance'
     settings: 'Settings'
     reminders: 'Reminders'
+    transactions: 'Transaction log'
   settings:
     title: 'Settings'
     language: 'Language'
@@ -67,6 +68,13 @@ bot:
   error:
     generic: 'Could not complete the command. Please try again later.'
 
+  transactions:
+    title: '<b>🧾 Transaction log</b>'
+    filter:
+      all: 'All'
+      expense: 'Expenses'
+      income: 'Income'
+    back: '← Back'
   transaction:
     recorded: 'Recorded %sign%%amount% in "%category%" (%type%)%comment%.'
   category:

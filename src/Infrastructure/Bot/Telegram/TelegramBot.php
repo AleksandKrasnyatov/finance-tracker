@@ -16,6 +16,8 @@ use App\Infrastructure\Bot\Telegram\Handler\ResetHandler;
 use App\Infrastructure\Bot\Telegram\Handler\Settings\SettingsCallback;
 use App\Infrastructure\Bot\Telegram\Handler\Settings\SettingsHandler;
 use App\Infrastructure\Bot\Telegram\Handler\StartHandler;
+use App\Infrastructure\Bot\Telegram\Handler\Transaction\TransactionCallback;
+use App\Infrastructure\Bot\Telegram\Handler\Transaction\TransactionsListHandler;
 use App\Domain\Enum\Locale;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -53,10 +55,13 @@ final class TelegramBot
             ->description($this->commandDescriptions('bot.command.settings'));
         $this->bot->onCommand('reminders', RemindersHandler::class)
             ->description($this->commandDescriptions('bot.command.reminders'));
+        $this->bot->onCommand('transactions', TransactionsListHandler::class)
+            ->description($this->commandDescriptions('bot.command.transactions'));
 
         CategoryCallback::register($this->bot);
         SettingsCallback::register($this->bot);
         ReminderCallback::register($this->bot);
+        TransactionCallback::register($this->bot);
 
         $this->bot->onText('{sign}{amount} {category} {description}', AddTransactionHandler::class)
             ->where('sign', '[+-]')
