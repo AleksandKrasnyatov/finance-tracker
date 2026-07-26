@@ -24,7 +24,7 @@ final class TransactionCallback
             [TransactionsListHandler::class, 'list'],
         );
         $bot->onCallbackQueryData(
-            self::pattern(self::MONTH, 'year', 'month'),
+            self::pattern(self::MONTH, 'year', 'month', 'filter', 'page'),
             [TransactionsListHandler::class, 'month'],
         );
         $bot->onCallbackQueryData(

@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Bot\Telegram\Handler\Transaction;
 
+use App\Application\Fetcher\Account\AccountTransactionMonth;
 use App\Application\Gateway\TranslatorInterface;
+use App\Application\UseCase\Account\Query\GetAccountTransactionMonthsHandler;
+use App\Application\UseCase\Account\Query\GetAccountTransactionMonthsQuery;
 use App\Domain\Enum\Locale;
 use App\Domain\Enum\TransactionType;
 use App\Infrastructure\Bot\Telegram\TelegramScreen;
@@ -20,6 +23,7 @@ final readonly class TransactionsListHandler
 {
     public function __construct(
         private TelegramUserData $userData,
+        private GetAccountTransactionMonthsHandler $months,
         private TranslatorInterface $translator,
     ) {
     }
@@ -62,19 +66,42 @@ final readonly class TransactionsListHandler
         TelegramScreen::render(
             $bot,
             $this->translator->trans('bot.transactions.title', locale: $locale),
-            $this->markup($year, $month, $filter, $transactions, $locale),
+            $this->listMarkup($year, $month, $filter, $transactions, $locale),
             ParseMode::HTML,
         );
     }
 
     /**
-     * Month picker — not implemented yet.
+     * @throws InvalidArgumentException
      */
-    public function month(Nutgram $bot, string $year, string $month): void
+    public function month(Nutgram $bot, string $year, string $month, string $filter, string $page): void
     {
         TelegramScreen::ensureUser($bot);
-        $bot->answerCallbackQuery();
-        // TODO: month navigation / picker screen
+        $context = $this->userData->getOrSet($bot);
+        $locale = $context['locale'];
+        $pageNumber = max(1, (int)$page);
+
+        $result = $this->months->handle(new GetAccountTransactionMonthsQuery(
+            $context['userId'],
+            $context['accountId'],
+            $pageNumber,
+        ));
+
+        TelegramScreen::render(
+            $bot,
+            $this->translator->trans('bot.transactions.chooseMonth', locale: $locale),
+            $this->monthMarkup(
+                $year,
+                $month,
+                $filter,
+                $result->page,
+                $result->months,
+                $result->hasPrev,
+                $result->hasNext,
+                $locale
+            ),
+            ParseMode::HTML,
+        );
     }
 
     /**
@@ -106,7 +133,7 @@ final readonly class TransactionsListHandler
      *     date: DateTimeImmutable
      * }> $transactions
      */
-    private function markup(
+    private function listMarkup(
         string $year,
         string $month,
         string $filter,
@@ -120,6 +147,8 @@ final readonly class TransactionsListHandler
                     TransactionCallback::MONTH,
                     $year,
                     $month,
+                    $filter,
+                    '1',
                 ),
             ))
             ->addRow(
@@ -162,6 +191,74 @@ final readonly class TransactionsListHandler
         return $markup->addRow(InlineKeyboardButton::make(
             $this->translator->trans('bot.transactions.back', locale: $locale),
             callback_data: TransactionCallback::BACK,
+        ));
+    }
+
+    /**
+     * @param list<AccountTransactionMonth> $months
+     */
+    private function monthMarkup(
+        string $year,
+        string $month,
+        string $filter,
+        int $page,
+        array $months,
+        bool $hasPrev,
+        bool $hasNext,
+        Locale $locale,
+    ): InlineKeyboardMarkup {
+        $markup = InlineKeyboardMarkup::make();
+
+        foreach ($months as $item) {
+            $markup->addRow(InlineKeyboardButton::make(
+                sprintf(
+                    '%s %d',
+                    $this->translator->trans('bot.month.' . $item->month, locale: $locale),
+                    $item->year,
+                ),
+                callback_data: TransactionCallback::data(
+                    TransactionCallback::LIST,
+                    $item->year,
+                    $item->month,
+                    $filter,
+                ),
+            ));
+        }
+
+        if ($hasPrev) {
+            $markup->addRow(InlineKeyboardButton::make(
+                '‹',
+                callback_data: TransactionCallback::data(
+                    TransactionCallback::MONTH,
+                    $year,
+                    $month,
+                    $filter,
+                    (string)($page - 1),
+                ),
+            ));
+        }
+
+        if ($hasNext) {
+            $markup->addRow(InlineKeyboardButton::make(
+                '›',
+                callback_data: TransactionCallback::data(
+                    TransactionCallback::MONTH,
+                    $year,
+                    $month,
+                    $filter,
+                    (string)($page + 1),
+                ),
+            ));
+        }
+
+        return $markup->addRow(InlineKeyboardButton::make(
+            $this->translator->trans('bot.transactions.back', locale: $locale),
+            callback_data: TransactionCallback::data(
+                TransactionCallback::LIST,
+                $year,
+                $month,
+                $filter,
+            ),
         ));
     }
 

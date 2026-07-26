@@ -72,6 +72,7 @@ bot:
     generic: 'Не удалось выполнить команду. Попробуйте ещё раз позднее.'
   transactions:
     title: '<b>🧾 Журнал операций</b>'
+    chooseMonth: '<b>🗓️ Выбери месяц</b>'
     filter:
       all: 'Все'
       expense: 'Траты'
