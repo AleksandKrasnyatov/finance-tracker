@@ -45,7 +45,7 @@ final readonly class BalanceMessageFormatter
     {
         $filled = max(0, min(self::BAR_LENGTH, (int)round($percent / 100 * self::BAR_LENGTH)));
 
-        return str_repeat('💚', $filled) . str_repeat('🩸', self::BAR_LENGTH - $filled);
+        return str_repeat('🦖', $filled) . str_repeat('☄️', self::BAR_LENGTH - $filled);
     }
 
     private function formatSignedMoney(int $amount, string $currency): string

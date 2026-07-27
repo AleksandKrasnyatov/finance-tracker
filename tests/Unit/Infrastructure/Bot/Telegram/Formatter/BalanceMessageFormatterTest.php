@@ -51,7 +51,7 @@ final class BalanceMessageFormatterTest extends TestCase
             ➖ 1 000 $
 
             Remaining from income:
-            💚💚💚💚💚💚💚💚💚🩸  92%
+            🦖🦖🦖🦖🦖🦖🦖🦖🦖☄️  92%
 
             TEXT,
             $message,
@@ -75,7 +75,7 @@ final class BalanceMessageFormatterTest extends TestCase
 
         self::assertStringContainsString('Баланс за Июль', $message);
         self::assertStringContainsString('📝 −500 ₽', $message);
-        self::assertStringContainsString('🩸🩸🩸🩸🩸🩸🩸🩸🩸🩸  0%', $message);
+        self::assertStringContainsString('☄️☄️☄️☄️☄️☄️☄️☄️☄️☄️  0%', $message);
     }
 
     #[Test]
@@ -94,6 +94,6 @@ final class BalanceMessageFormatterTest extends TestCase
         );
 
         self::assertStringContainsString('📝 +0 $', $message);
-        self::assertStringContainsString('💚💚💚💚💚💚💚💚💚💚  100%', $message);
+        self::assertStringContainsString('🦖🦖🦖🦖🦖🦖🦖🦖🦖🦖  100%', $message);
     }
 }
