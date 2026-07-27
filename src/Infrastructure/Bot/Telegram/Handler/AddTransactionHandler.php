@@ -23,6 +23,19 @@ final readonly class AddTransactionHandler
     ) {
     }
 
+    public static function register(Nutgram $bot): void
+    {
+        $bot->onText('{sign}{amount} {category} {description}', AddTransactionHandler::class)
+            ->where('sign', '[+-]')
+            ->where('amount', '\d+(?:[.,]\d{1,2})?')
+            ->where('category', '\S+')
+            ->where('description', '.+');
+        $bot->onText('{sign}{amount} {category}', AddTransactionHandler::class)
+            ->where('sign', '[+-]')
+            ->where('amount', '\d+(?:[.,]\d{1,2})?')
+            ->where('category', '\S+');
+    }
+
     /**
      * @throws DateMalformedStringException
      * @throws InvalidArgumentException

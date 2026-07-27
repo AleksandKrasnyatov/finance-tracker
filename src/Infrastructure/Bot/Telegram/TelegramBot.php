@@ -62,16 +62,7 @@ final class TelegramBot
         SettingsCallback::register($this->bot);
         ReminderCallback::register($this->bot);
         TransactionCallback::register($this->bot);
-
-        $this->bot->onText('{sign}{amount} {category} {description}', AddTransactionHandler::class)
-            ->where('sign', '[+-]')
-            ->where('amount', '\d+(?:[.,]\d{1,2})?')
-            ->where('category', '\S+')
-            ->where('description', '.+');
-        $this->bot->onText('{sign}{amount} {category}', AddTransactionHandler::class)
-            ->where('sign', '[+-]')
-            ->where('amount', '\d+(?:[.,]\d{1,2})?')
-            ->where('category', '\S+');
+        AddTransactionHandler::register($this->bot);
 
         $this->bot->onException(ExceptionHandler::class);
 
