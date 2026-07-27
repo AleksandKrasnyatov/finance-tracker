@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Bot\Telegram\Handler\Reminder;
 
+use App\Infrastructure\Bot\Telegram\CallbackData;
 use SergiX44\Nutgram\Nutgram;
 
 final class ReminderCallback
@@ -23,20 +24,8 @@ final class ReminderCallback
         $bot->onCallbackQueryData(self::TIME, [RemindersHandler::class, 'askTime']);
         $bot->onCallbackQueryData(self::TIMEZONE, [RemindersHandler::class, 'timezones']);
         $bot->onCallbackQueryData(
-            self::pattern(self::SET_TIMEZONE, 'index'),
+            CallbackData::pattern(self::SET_TIMEZONE, 'index'),
             [RemindersHandler::class, 'setTimezone'],
         );
-    }
-
-    public static function pattern(string $prefix, string ...$params): string
-    {
-        $parts = array_map(static fn(string $param): string => '{' . $param . '}', $params);
-
-        return $prefix . ':' . implode(':', $parts);
-    }
-
-    public static function data(string $prefix, string ...$values): string
-    {
-        return $prefix . ':' . implode(':', $values);
     }
 }

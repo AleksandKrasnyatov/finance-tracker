@@ -42,8 +42,8 @@ final class ChangeReminderTimeConversation extends Conversation
     public function save(Nutgram $bot): void
     {
         $locale = $this->locale($bot);
-        $text = trim((string) $bot->message()?->text);
-        if ($text === '' || str_starts_with($text, '/')) {
+        $text = ConversationText::fromMessage($bot);
+        if (ConversationText::isCommandOrEmpty($text)) {
             $bot->sendMessage($this->translator->trans(
                 'bot.reminders.enterTimeText',
                 locale: $locale,

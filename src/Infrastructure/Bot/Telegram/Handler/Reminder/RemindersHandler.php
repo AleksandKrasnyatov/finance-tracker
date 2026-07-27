@@ -14,6 +14,7 @@ use App\Domain\Enum\Locale;
 use App\Domain\Repository\UserRepositoryInterface;
 use App\Domain\ValueObject\Id;
 use App\Domain\ValueObject\Timezone;
+use App\Infrastructure\Bot\Telegram\CallbackData;
 use App\Infrastructure\Bot\Telegram\Conversation\ChangeReminderTimeConversation;
 use App\Infrastructure\Bot\Telegram\Handler\Settings\SettingsCallback;
 use App\Infrastructure\Bot\Telegram\TelegramScreen;
@@ -48,7 +49,6 @@ final readonly class RemindersHandler
      */
     public function list(Nutgram $bot): void
     {
-        TelegramScreen::ensureUser($bot);
         $context = $this->userData->getOrSet($bot);
         $locale = $context['locale'];
         $reminder = $this->reminder($context['userId']);
@@ -92,7 +92,6 @@ final readonly class RemindersHandler
      */
     public function timezones(Nutgram $bot): void
     {
-        TelegramScreen::ensureUser($bot);
         $context = $this->userData->getOrSet($bot);
         $locale = $context['locale'];
         $currentTimezone = $this->reminder($context['userId'])->timezone;
@@ -102,7 +101,7 @@ final readonly class RemindersHandler
             $prefix = $timezone->value === $currentTimezone->value ? '✓ ' : '';
             $markup->addRow(InlineKeyboardButton::make(
                 $prefix . $timezone->value,
-                callback_data: ReminderCallback::data(ReminderCallback::SET_TIMEZONE, (string)$index),
+                callback_data: CallbackData::data(ReminderCallback::SET_TIMEZONE, (string)$index),
             ));
         }
         $markup->addRow(InlineKeyboardButton::make(
@@ -122,7 +121,6 @@ final readonly class RemindersHandler
      */
     public function setTimezone(Nutgram $bot, string $index): void
     {
-        TelegramScreen::ensureUser($bot);
         $zones = Timezone::common();
         $timezone = $zones[(int)$index] ?? null;
         if ($timezone === null) {
@@ -151,7 +149,6 @@ final readonly class RemindersHandler
      */
     private function setEnabled(Nutgram $bot, bool $enabled): void
     {
-        TelegramScreen::ensureUser($bot);
         $context = $this->userData->getOrSet($bot);
         $reminder = $this->reminder($context['userId']);
 

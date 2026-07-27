@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Test\Functional\Infrastructure\Bot\Telegram\Handler;
 
 use App\Application\Gateway\TranslatorInterface;
-use App\Domain\Entity\Transaction;
+use App\Infrastructure\Bot\Telegram\CallbackData;
 use App\Infrastructure\Bot\Telegram\Handler\Transaction\TransactionCallback;
 use DateTimeImmutable;
 use SergiX44\Nutgram\Testing\FakeNutgram;
@@ -81,7 +81,7 @@ final class TransactionsHandlerCest
             ]);
 
         $this->bot
-            ->hearCallbackQueryData(TransactionCallback::data(
+            ->hearCallbackQueryData(CallbackData::data(
                 TransactionCallback::MONTH,
                 $now->format('Y'),
                 $now->format('n'),
@@ -101,7 +101,7 @@ final class TransactionsHandlerCest
             ], 1);
 
         $this->bot
-            ->hearCallbackQueryData(TransactionCallback::data(
+            ->hearCallbackQueryData(CallbackData::data(
                 TransactionCallback::LIST,
                 '2024',
                 '6',

@@ -45,8 +45,8 @@ final class AddCategoryConversation extends Conversation
     public function create(Nutgram $bot): void
     {
         $locale = $this->locale($bot);
-        $name = trim((string)$bot->message()?->text);
-        if ($name === '' || str_starts_with($name, '/')) {
+        $name = ConversationText::fromMessage($bot);
+        if (ConversationText::isCommandOrEmpty($name)) {
             $bot->sendMessage($this->translator->trans('bot.category.enterNameText', locale: $locale));
             $this->next('create');
 

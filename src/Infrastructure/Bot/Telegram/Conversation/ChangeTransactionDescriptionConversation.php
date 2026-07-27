@@ -45,8 +45,8 @@ final class ChangeTransactionDescriptionConversation extends Conversation
     public function save(Nutgram $bot): void
     {
         $locale = $this->locale($bot);
-        $text = trim((string)$bot->message()?->text);
-        if (str_starts_with($text, '/')) {
+        $text = ConversationText::fromMessage($bot);
+        if (ConversationText::isCommand($text)) {
             $bot->sendMessage($this->translator->trans(
                 'bot.transactions.enterDescriptionText',
                 locale: $locale,

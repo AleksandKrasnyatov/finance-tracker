@@ -9,6 +9,7 @@ use App\Application\UseCase\Account\Command\Transaction\DeleteTransactionCommand
 use App\Application\UseCase\Account\Command\Transaction\DeleteTransactionHandler;
 use App\Application\UseCase\Account\Query\GetAccountTransactionHandler;
 use App\Application\UseCase\Account\Query\GetAccountTransactionQuery;
+use App\Infrastructure\Bot\Telegram\CallbackData;
 use App\Infrastructure\Bot\Telegram\TelegramScreen;
 use App\Infrastructure\Bot\Telegram\TelegramUserData;
 use Psr\SimpleCache\InvalidArgumentException;
@@ -32,7 +33,6 @@ final readonly class TransactionDeleteHandler
      */
     public function confirm(Nutgram $bot, string $id): void
     {
-        TelegramScreen::ensureUser($bot);
         $context = $this->userData->getOrSet($bot);
         $locale = $context['locale'];
         $transaction = $this->getTransaction->handle(new GetAccountTransactionQuery(
@@ -51,11 +51,11 @@ final readonly class TransactionDeleteHandler
             InlineKeyboardMarkup::make()->addRow(
                 InlineKeyboardButton::make(
                     $this->translator->trans('bot.transactions.deleteYes', locale: $locale),
-                    callback_data: TransactionCallback::data(TransactionCallback::DELETE_OK, $id),
+                    callback_data: CallbackData::data(TransactionCallback::DELETE_OK, $id),
                 ),
                 InlineKeyboardButton::make(
                     $this->translator->trans('bot.transactions.deleteNo', locale: $locale),
-                    callback_data: TransactionCallback::data(TransactionCallback::VIEW, $id),
+                    callback_data: CallbackData::data(TransactionCallback::VIEW, $id),
                 ),
             ),
         );
@@ -66,7 +66,6 @@ final readonly class TransactionDeleteHandler
      */
     public function delete(Nutgram $bot, string $id): void
     {
-        TelegramScreen::ensureUser($bot);
         $context = $this->userData->getOrSet($bot);
 
         $this->deleteTransaction->handle(new DeleteTransactionCommand(

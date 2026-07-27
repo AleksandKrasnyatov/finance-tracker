@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Bot\Telegram\Handler\Transaction;
 
+use App\Infrastructure\Bot\Telegram\CallbackData;
 use Psr\SimpleCache\InvalidArgumentException;
 use SergiX44\Nutgram\Nutgram;
 
@@ -33,58 +34,46 @@ final class TransactionCallback
     public static function register(Nutgram $bot): void
     {
         $bot->onCallbackQueryData(
-            self::pattern(self::LIST, 'year', 'month', 'filter'),
+            CallbackData::pattern(self::LIST, 'year', 'month', 'filter'),
             [TransactionsListHandler::class, 'list'],
         );
         $bot->onCallbackQueryData(
-            self::pattern(self::MONTH, 'year', 'month', 'filter', 'page'),
+            CallbackData::pattern(self::MONTH, 'year', 'month', 'filter', 'page'),
             [TransactionsListHandler::class, 'month'],
         );
         $bot->onCallbackQueryData(
-            self::pattern(self::VIEW, 'id'),
+            CallbackData::pattern(self::VIEW, 'id'),
             [TransactionViewHandler::class, '__invoke'],
         );
         $bot->onCallbackQueryData(
-            self::pattern(self::MONEY, 'id'),
+            CallbackData::pattern(self::MONEY, 'id'),
             [TransactionEditHandler::class, 'money'],
         );
         $bot->onCallbackQueryData(
-            self::pattern(self::DATE, 'id'),
+            CallbackData::pattern(self::DATE, 'id'),
             [TransactionEditHandler::class, 'date'],
         );
         $bot->onCallbackQueryData(
-            self::pattern(self::DESCRIPTION, 'id'),
+            CallbackData::pattern(self::DESCRIPTION, 'id'),
             [TransactionEditHandler::class, 'description'],
         );
         $bot->onCallbackQueryData(
-            self::pattern(self::CATEGORY, 'id'),
+            CallbackData::pattern(self::CATEGORY, 'id'),
             [TransactionViewHandler::class, 'categories'],
         );
         $bot->onCallbackQueryData(
-            self::pattern(self::SET_CATEGORY, 'categoryId'),
+            CallbackData::pattern(self::SET_CATEGORY, 'categoryId'),
             [TransactionViewHandler::class, 'setCategory'],
         );
         $bot->onCallbackQueryData(
-            self::pattern(self::DELETE, 'id'),
+            CallbackData::pattern(self::DELETE, 'id'),
             [TransactionDeleteHandler::class, 'confirm'],
         );
         $bot->onCallbackQueryData(
-            self::pattern(self::DELETE_OK, 'id'),
+            CallbackData::pattern(self::DELETE_OK, 'id'),
             [TransactionDeleteHandler::class, 'delete'],
         );
         $bot->onCallbackQueryData(self::BACK, [TransactionsListHandler::class, 'back']);
-    }
-
-    public static function pattern(string $prefix, string ...$params): string
-    {
-        $parts = array_map(static fn(string $param): string => '{' . $param . '}', $params);
-
-        return $prefix . ':' . implode(':', $parts);
-    }
-
-    public static function data(string $prefix, string ...$values): string
-    {
-        return $prefix . ':' . implode(':', $values);
     }
 
     /**

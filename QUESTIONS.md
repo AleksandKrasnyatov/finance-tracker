@@ -3,6 +3,4 @@
 
 
 Рефакторинг:
-1. if ($text === '' || str_starts_with($text, '/')) {} повтор валидации
-2. ensureUser в скрине
-3. pattern и data в Callback классах 
+1. ensureUser в скрине

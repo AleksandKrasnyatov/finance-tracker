@@ -14,6 +14,7 @@ use App\Application\UseCase\Account\Query\GetAccountTransactionHandler;
 use App\Application\UseCase\Account\Query\GetAccountTransactionQuery;
 use App\Domain\Enum\Locale;
 use App\Domain\Enum\TransactionType;
+use App\Infrastructure\Bot\Telegram\CallbackData;
 use App\Infrastructure\Bot\Telegram\TelegramScreen;
 use App\Infrastructure\Bot\Telegram\TelegramUserData;
 use Psr\SimpleCache\InvalidArgumentException;
@@ -39,7 +40,6 @@ final readonly class TransactionViewHandler
      */
     public function __invoke(Nutgram $bot, string $id): void
     {
-        TelegramScreen::ensureUser($bot);
         $context = $this->userData->getOrSet($bot);
         $locale = $context['locale'];
         $transaction = $this->transaction($context['userId'], $context['accountId'], $id);
@@ -57,7 +57,6 @@ final readonly class TransactionViewHandler
      */
     public function categories(Nutgram $bot, string $id): void
     {
-        TelegramScreen::ensureUser($bot);
         $context = $this->userData->getOrSet($bot);
         $locale = $context['locale'];
         $transaction = $this->transaction($context['userId'], $context['accountId'], $id);
@@ -75,7 +74,7 @@ final readonly class TransactionViewHandler
             $prefix = $category->id->value === $transaction->categoryId ? '✓ ' : '';
             $markup->addRow(InlineKeyboardButton::make(
                 $prefix . $category->name,
-                callback_data: TransactionCallback::data(
+                callback_data: CallbackData::data(
                     TransactionCallback::SET_CATEGORY,
                     $category->id->value,
                 ),
@@ -83,7 +82,7 @@ final readonly class TransactionViewHandler
         }
         $markup->addRow(InlineKeyboardButton::make(
             $this->translator->trans('bot.transactions.back', locale: $locale),
-            callback_data: TransactionCallback::data(TransactionCallback::VIEW, $id),
+            callback_data: CallbackData::data(TransactionCallback::VIEW, $id),
         ));
 
         TelegramScreen::render(
@@ -100,7 +99,6 @@ final readonly class TransactionViewHandler
     public function setCategory(Nutgram $bot, string $categoryId): void
     {
         //todo просится в edit handler
-        TelegramScreen::ensureUser($bot);
         $context = $this->userData->getOrSet($bot);
         $transactionId = TransactionCallback::editId($bot)
             ?? throw new UnexpectedValueException('Transaction edit context is missing.');
@@ -143,23 +141,23 @@ final readonly class TransactionViewHandler
         return InlineKeyboardMarkup::make()
             ->addRow(InlineKeyboardButton::make(
                 sprintf('%s %s', $amount, $transaction->currency->symbol()),
-                callback_data: TransactionCallback::data(TransactionCallback::MONEY, $transaction->id),
+                callback_data: CallbackData::data(TransactionCallback::MONEY, $transaction->id),
             ))
             ->addRow(InlineKeyboardButton::make(
                 $transaction->categoryName,
-                callback_data: TransactionCallback::data(TransactionCallback::CATEGORY, $transaction->id),
+                callback_data: CallbackData::data(TransactionCallback::CATEGORY, $transaction->id),
             ))
             ->addRow(InlineKeyboardButton::make(
                 $transaction->date->format('Y-m-d'),
-                callback_data: TransactionCallback::data(TransactionCallback::DATE, $transaction->id),
+                callback_data: CallbackData::data(TransactionCallback::DATE, $transaction->id),
             ))
             ->addRow(InlineKeyboardButton::make(
                 $transaction->description ?: $this->translator->trans('bot.transactions.descriptionPlaceholder', locale: $locale),
-                callback_data: TransactionCallback::data(TransactionCallback::DESCRIPTION, $transaction->id),
+                callback_data: CallbackData::data(TransactionCallback::DESCRIPTION, $transaction->id),
             ))
             ->addRow(InlineKeyboardButton::make(
                 $this->translator->trans('bot.transactions.delete', locale: $locale),
-                callback_data: TransactionCallback::data(TransactionCallback::DELETE, $transaction->id),
+                callback_data: CallbackData::data(TransactionCallback::DELETE, $transaction->id),
             ))
             ->addRow(InlineKeyboardButton::make(
                 $this->translator->trans('bot.transactions.back', locale: $locale),

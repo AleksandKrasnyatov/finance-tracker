@@ -12,6 +12,7 @@ use App\Application\UseCase\Account\Query\GetAccountTransactionMonthsQuery;
 use App\Application\UseCase\Account\Query\GetAccountTransactionsHandler;
 use App\Application\UseCase\Account\Query\GetAccountTransactionsQuery;
 use App\Domain\Enum\Locale;
+use App\Infrastructure\Bot\Telegram\CallbackData;
 use App\Infrastructure\Bot\Telegram\TelegramScreen;
 use App\Infrastructure\Bot\Telegram\TelegramUserData;
 use DateTimeImmutable;
@@ -50,7 +51,6 @@ final readonly class TransactionsListHandler
      */
     public function list(Nutgram $bot, string $year, string $month, string $filter): void
     {
-        TelegramScreen::ensureUser($bot);
         $context = $this->userData->getOrSet($bot);
         $locale = $context['locale'];
         TransactionCallback::rememberList($bot, $year, $month, $filter);
@@ -76,7 +76,6 @@ final readonly class TransactionsListHandler
      */
     public function month(Nutgram $bot, string $year, string $month, string $filter, string $page): void
     {
-        TelegramScreen::ensureUser($bot);
         $context = $this->userData->getOrSet($bot);
         $locale = $context['locale'];
         $pageNumber = max(1, (int)$page);
@@ -126,7 +125,7 @@ final readonly class TransactionsListHandler
         $markup = InlineKeyboardMarkup::make()
             ->addRow(InlineKeyboardButton::make(
                 $this->periodLabel($year, $month, $locale),
-                callback_data: TransactionCallback::data(
+                callback_data: CallbackData::data(
                     TransactionCallback::MONTH,
                     $year,
                     $month,
@@ -164,7 +163,7 @@ final readonly class TransactionsListHandler
         foreach ($transactions as $transaction) {
             $markup->addRow(InlineKeyboardButton::make(
                 $this->transactionLabel($transaction),
-                callback_data: TransactionCallback::data(
+                callback_data: CallbackData::data(
                     TransactionCallback::VIEW,
                     $transaction->id,
                 ),
@@ -199,7 +198,7 @@ final readonly class TransactionsListHandler
                     $this->translator->trans('bot.month.' . $item->month, locale: $locale),
                     $item->year,
                 ),
-                callback_data: TransactionCallback::data(
+                callback_data: CallbackData::data(
                     TransactionCallback::LIST,
                     $item->year,
                     $item->month,
@@ -211,7 +210,7 @@ final readonly class TransactionsListHandler
         if ($hasPrev) {
             $markup->addRow(InlineKeyboardButton::make(
                 '‹',
-                callback_data: TransactionCallback::data(
+                callback_data: CallbackData::data(
                     TransactionCallback::MONTH,
                     $year,
                     $month,
@@ -224,7 +223,7 @@ final readonly class TransactionsListHandler
         if ($hasNext) {
             $markup->addRow(InlineKeyboardButton::make(
                 '›',
-                callback_data: TransactionCallback::data(
+                callback_data: CallbackData::data(
                     TransactionCallback::MONTH,
                     $year,
                     $month,
@@ -236,7 +235,7 @@ final readonly class TransactionsListHandler
 
         return $markup->addRow(InlineKeyboardButton::make(
             $this->translator->trans('bot.transactions.back', locale: $locale),
-            callback_data: TransactionCallback::data(
+            callback_data: CallbackData::data(
                 TransactionCallback::LIST,
                 $year,
                 $month,
@@ -267,7 +266,7 @@ final readonly class TransactionsListHandler
 
         return InlineKeyboardButton::make(
             $emoji . ' ' . $this->translator->trans($labelKey, locale: $locale),
-            callback_data: TransactionCallback::data(
+            callback_data: CallbackData::data(
                 TransactionCallback::LIST,
                 $year,
                 $month,

@@ -47,7 +47,7 @@ final class ChangeTransactionDateConversation extends Conversation
     public function save(Nutgram $bot): void
     {
         $locale = $this->locale($bot);
-        $text = trim((string)$bot->message()?->text);
+        $text = ConversationText::fromMessage($bot);
         if (!$this->validateDate($text)) {
             $bot->sendMessage($this->translator->trans(
                 'bot.transactions.dateInvalid',
@@ -77,7 +77,7 @@ final class ChangeTransactionDateConversation extends Conversation
 
     private function validateDate(string $text): bool
     {
-        if ($text === '' || str_starts_with($text, '/')) {
+        if (ConversationText::isCommandOrEmpty($text)) {
             return false;
         }
 

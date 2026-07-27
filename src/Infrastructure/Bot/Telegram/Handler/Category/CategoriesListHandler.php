@@ -8,6 +8,7 @@ use App\Application\Gateway\TranslatorInterface;
 use App\Application\UseCase\Account\Query\GetAccountCategoriesHandler;
 use App\Application\UseCase\Account\Query\GetAccountCategoriesQuery;
 use App\Domain\Enum\TransactionType;
+use App\Infrastructure\Bot\Telegram\CallbackData;
 use App\Infrastructure\Bot\Telegram\TelegramScreen;
 use App\Infrastructure\Bot\Telegram\TelegramUserData;
 use Psr\SimpleCache\InvalidArgumentException;
@@ -37,16 +38,15 @@ final readonly class CategoriesListHandler
      */
     public function list(Nutgram $bot): void
     {
-        TelegramScreen::ensureUser($bot);
         $locale = $this->userData->getOrSet($bot)['locale'];
         $markup = InlineKeyboardMarkup::make()
             ->addRow(InlineKeyboardButton::make(
                 $this->translator->trans('bot.button.income', locale: $locale),
-                callback_data: CategoryCallback::data(CategoryCallback::TYPE, TransactionType::Income->value),
+                callback_data: CallbackData::data(CategoryCallback::TYPE, TransactionType::Income->value),
             ))
             ->addRow(InlineKeyboardButton::make(
                 $this->translator->trans('bot.button.expense', locale: $locale),
-                callback_data: CategoryCallback::data(CategoryCallback::TYPE, TransactionType::Expense->value),
+                callback_data: CallbackData::data(CategoryCallback::TYPE, TransactionType::Expense->value),
             ));
 
         TelegramScreen::render(
@@ -61,7 +61,6 @@ final readonly class CategoriesListHandler
      */
     public function byType(Nutgram $bot, string $type): void
     {
-        TelegramScreen::ensureUser($bot);
         $transactionType = TransactionType::fromName($type);
         $context = $this->userData->getOrSet($bot);
         $locale = $context['locale'];
@@ -74,13 +73,13 @@ final readonly class CategoriesListHandler
         $markup = InlineKeyboardMarkup::make()
             ->addRow(InlineKeyboardButton::make(
                 $this->translator->trans('bot.categories.add', locale: $locale),
-                callback_data: CategoryCallback::data(CategoryCallback::ADD, $transactionType->value),
+                callback_data: CallbackData::data(CategoryCallback::ADD, $transactionType->value),
             ));
 
         foreach ($items as $category) {
             $markup->addRow(InlineKeyboardButton::make(
                 $category->name,
-                callback_data: CategoryCallback::data(CategoryCallback::VIEW, $category->id->value),
+                callback_data: CallbackData::data(CategoryCallback::VIEW, $category->id->value),
             ));
         }
 

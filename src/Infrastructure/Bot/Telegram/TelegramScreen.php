@@ -17,6 +17,8 @@ final class TelegramScreen
         InlineKeyboardMarkup $markup,
         ParseMode|string|null $parseMode = null,
     ): void {
+        self::ensureUser($bot);
+
         if ($bot->isCallbackQuery()) {
             $bot->answerCallbackQuery();
             $bot->editMessageText(text: $text, parse_mode: $parseMode, reply_markup: $markup);

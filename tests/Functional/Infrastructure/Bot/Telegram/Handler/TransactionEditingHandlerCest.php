@@ -6,8 +6,8 @@ namespace Test\Functional\Infrastructure\Bot\Telegram\Handler;
 
 use App\Application\Gateway\TranslatorInterface;
 use App\Domain\Entity\Transaction;
+use App\Infrastructure\Bot\Telegram\CallbackData;
 use App\Infrastructure\Bot\Telegram\Handler\Transaction\TransactionCallback;
-use DateTimeImmutable;
 use SergiX44\Nutgram\Testing\FakeNutgram;
 use Test\Support\Fixture\OnboardedTelegramUserFixture;
 use Test\Support\Fixture\OnboardedTelegramUserWithTransactionMonthsFixture;
@@ -41,7 +41,7 @@ final class TransactionEditingHandlerCest
             ->reply();
 
         $this->bot
-            ->hearCallbackQueryData(TransactionCallback::data(TransactionCallback::VIEW, $transactionId))
+            ->hearCallbackQueryData(CallbackData::data(TransactionCallback::VIEW, $transactionId))
             ->reply()
             ->assertReply('editMessageText', [
                 'text' => $this->translator->trans('bot.transactions.detail'),
@@ -67,11 +67,11 @@ final class TransactionEditingHandlerCest
             ->reply();
 
         $this->bot
-            ->hearCallbackQueryData(TransactionCallback::data(TransactionCallback::VIEW, $transactionId))
+            ->hearCallbackQueryData(CallbackData::data(TransactionCallback::VIEW, $transactionId))
             ->reply();
 
         $this->bot
-            ->hearCallbackQueryData(TransactionCallback::data(TransactionCallback::MONEY, $transactionId))
+            ->hearCallbackQueryData(CallbackData::data(TransactionCallback::MONEY, $transactionId))
             ->reply()
             ->assertReply('sendMessage', [
                 'text' => $this->translator->trans('bot.transactions.enterAmount'),
@@ -101,11 +101,11 @@ final class TransactionEditingHandlerCest
             ->reply();
 
         $this->bot
-            ->hearCallbackQueryData(TransactionCallback::data(TransactionCallback::VIEW, $transactionId))
+            ->hearCallbackQueryData(CallbackData::data(TransactionCallback::VIEW, $transactionId))
             ->reply();
 
         $this->bot
-            ->hearCallbackQueryData(TransactionCallback::data(TransactionCallback::DATE, $transactionId))
+            ->hearCallbackQueryData(CallbackData::data(TransactionCallback::DATE, $transactionId))
             ->reply()
             ->assertReply('sendMessage', [
                 'text' => $this->translator->trans('bot.transactions.enterDate'),
@@ -136,11 +136,11 @@ final class TransactionEditingHandlerCest
             ->reply();
 
         $this->bot
-            ->hearCallbackQueryData(TransactionCallback::data(TransactionCallback::VIEW, $transactionId))
+            ->hearCallbackQueryData(CallbackData::data(TransactionCallback::VIEW, $transactionId))
             ->reply();
 
         $this->bot
-            ->hearCallbackQueryData(TransactionCallback::data(TransactionCallback::DESCRIPTION, $transactionId))
+            ->hearCallbackQueryData(CallbackData::data(TransactionCallback::DESCRIPTION, $transactionId))
             ->reply()
             ->assertReply('sendMessage', [
                 'text' => $this->translator->trans('bot.transactions.enterDescription'),
@@ -171,7 +171,7 @@ final class TransactionEditingHandlerCest
             ->reply();
 
         $this->bot
-            ->hearCallbackQueryData(TransactionCallback::data(TransactionCallback::DELETE, $transactionId))
+            ->hearCallbackQueryData(CallbackData::data(TransactionCallback::DELETE, $transactionId))
             ->reply()
             ->assertReply('editMessageText', [
                 'text' => $this->translator->trans('bot.transactions.deleteConfirm', [
@@ -181,7 +181,7 @@ final class TransactionEditingHandlerCest
             ], 1);
 
         $this->bot
-            ->hearCallbackQueryData(TransactionCallback::data(TransactionCallback::DELETE_OK, $transactionId))
+            ->hearCallbackQueryData(CallbackData::data(TransactionCallback::DELETE_OK, $transactionId))
             ->reply();
 
         $I->dontSeeInRepository(Transaction::class, ['id' => $transactionId]);

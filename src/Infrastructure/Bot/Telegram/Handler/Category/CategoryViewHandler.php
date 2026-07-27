@@ -7,6 +7,7 @@ namespace App\Infrastructure\Bot\Telegram\Handler\Category;
 use App\Application\Gateway\TranslatorInterface;
 use App\Application\UseCase\Account\Query\GetAccountCategoryHandler;
 use App\Application\UseCase\Account\Query\GetAccountCategoryQuery;
+use App\Infrastructure\Bot\Telegram\CallbackData;
 use App\Infrastructure\Bot\Telegram\TelegramScreen;
 use App\Infrastructure\Bot\Telegram\TelegramUserData;
 use Psr\SimpleCache\InvalidArgumentException;
@@ -28,7 +29,6 @@ final readonly class CategoryViewHandler
      */
     public function __invoke(Nutgram $bot, string $id): void
     {
-        TelegramScreen::ensureUser($bot);
         $context = $this->userData->getOrSet($bot);
         $locale = $context['locale'];
         $category = $this->getCategory->handle(new GetAccountCategoryQuery(
@@ -41,15 +41,15 @@ final readonly class CategoryViewHandler
         $markup = InlineKeyboardMarkup::make()
             ->addRow(InlineKeyboardButton::make(
                 $this->translator->trans('bot.categories.rename', locale: $locale),
-                callback_data: CategoryCallback::data(CategoryCallback::RENAME, $id, $type),
+                callback_data: CallbackData::data(CategoryCallback::RENAME, $id, $type),
             ))
             ->addRow(InlineKeyboardButton::make(
                 $this->translator->trans('bot.categories.delete', locale: $locale),
-                callback_data: CategoryCallback::data(CategoryCallback::DELETE, $id, $type),
+                callback_data: CallbackData::data(CategoryCallback::DELETE, $id, $type),
             ))
             ->addRow(InlineKeyboardButton::make(
                 $this->translator->trans('bot.categories.back', locale: $locale),
-                callback_data: CategoryCallback::data(CategoryCallback::TYPE, $type),
+                callback_data: CallbackData::data(CategoryCallback::TYPE, $type),
             ));
 
         TelegramScreen::render(

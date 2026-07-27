@@ -45,8 +45,8 @@ final class ChangeTransactionMoneyConversation extends Conversation
     public function save(Nutgram $bot): void
     {
         $locale = $this->locale($bot);
-        $amount = str_replace(',', '.', trim((string)$bot->message()?->text));
-        if ($amount === '' || str_starts_with($amount, '/') || !is_numeric($amount)) {
+        $amount = str_replace(',', '.', ConversationText::fromMessage($bot));
+        if (ConversationText::isCommandOrEmpty($amount) || !is_numeric($amount)) {
             $bot->sendMessage($this->translator->trans(
                 'bot.transactions.enterAmountText',
                 locale: $locale,

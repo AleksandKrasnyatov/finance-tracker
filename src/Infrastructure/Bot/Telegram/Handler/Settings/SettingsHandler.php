@@ -8,6 +8,7 @@ use App\Application\Gateway\TranslatorInterface;
 use App\Application\UseCase\User\Command\ChangeUserLocaleCommand;
 use App\Application\UseCase\User\Command\ChangeUserLocaleHandler;
 use App\Domain\Enum\Locale;
+use App\Infrastructure\Bot\Telegram\CallbackData;
 use App\Infrastructure\Bot\Telegram\Handler\Reminder\ReminderCallback;
 use App\Infrastructure\Bot\Telegram\TelegramScreen;
 use App\Infrastructure\Bot\Telegram\TelegramUserData;
@@ -38,7 +39,6 @@ final readonly class SettingsHandler
      */
     public function list(Nutgram $bot): void
     {
-        TelegramScreen::ensureUser($bot);
         $locale = $this->userData->getOrSet($bot)['locale'];
 
         $markup = InlineKeyboardMarkup::make()
@@ -63,7 +63,6 @@ final readonly class SettingsHandler
      */
     public function language(Nutgram $bot): void
     {
-        TelegramScreen::ensureUser($bot);
         $locale = $this->userData->getOrSet($bot)['locale'];
 
         TelegramScreen::render(
@@ -78,7 +77,6 @@ final readonly class SettingsHandler
      */
     public function setLanguage(Nutgram $bot, string $locale): void
     {
-        TelegramScreen::ensureUser($bot);
         $context = $this->userData->getOrSet($bot);
         $newLocale = Locale::fromLanguageCode($locale);
 
@@ -107,7 +105,7 @@ final readonly class SettingsHandler
             $prefix = $current->value === $code ? '✓ ' : '';
             $markup->addRow(InlineKeyboardButton::make(
                 $prefix . $label,
-                callback_data: SettingsCallback::data(SettingsCallback::SET_LANGUAGE, $code),
+                callback_data: CallbackData::data(SettingsCallback::SET_LANGUAGE, $code),
             ));
         }
 
