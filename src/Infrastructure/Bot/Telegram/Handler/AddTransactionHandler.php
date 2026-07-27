@@ -12,7 +12,6 @@ use App\Infrastructure\Bot\Telegram\TelegramUserData;
 use DateMalformedStringException;
 use Psr\SimpleCache\InvalidArgumentException;
 use SergiX44\Nutgram\Nutgram;
-use UnexpectedValueException;
 
 final readonly class AddTransactionHandler
 {
@@ -47,10 +46,6 @@ final readonly class AddTransactionHandler
         string $category,
         ?string $description = null,
     ): void {
-        if ($bot->userId() === null) {
-            throw new UnexpectedValueException('Telegram user is missing from the update.');
-        }
-
         $type = TransactionType::fromSign($sign);
         $amount = str_replace(',', '.', $amount);
         $comment = trim((string)$description);

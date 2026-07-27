@@ -82,7 +82,6 @@ final readonly class RemindersHandler
      */
     public function askTime(Nutgram $bot): void
     {
-        TelegramScreen::ensureUser($bot);
         $bot->answerCallbackQuery();
         ChangeReminderTimeConversation::begin($bot);
     }

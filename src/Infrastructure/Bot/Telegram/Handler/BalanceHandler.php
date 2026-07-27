@@ -10,7 +10,6 @@ use App\Infrastructure\Bot\Telegram\Formatter\BalanceMessageFormatter;
 use App\Infrastructure\Bot\Telegram\TelegramUserData;
 use Psr\SimpleCache\InvalidArgumentException;
 use SergiX44\Nutgram\Nutgram;
-use UnexpectedValueException;
 
 final readonly class BalanceHandler
 {
@@ -26,10 +25,6 @@ final readonly class BalanceHandler
      */
     public function __invoke(Nutgram $bot): void
     {
-        if ($bot->userId() === null) {
-            throw new UnexpectedValueException('Telegram user is missing from the update.');
-        }
-
         $context = $this->userData->getOrSet($bot);
 
         $result = $this->handler->handle(new GetAccountBalanceQuery(

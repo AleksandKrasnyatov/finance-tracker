@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Bot\Telegram;
 
 use App\Application\Gateway\TranslatorInterface;
+use App\Domain\Enum\Locale;
 use App\Infrastructure\Bot\Telegram\Handler\AddTransactionHandler;
 use App\Infrastructure\Bot\Telegram\Handler\BalanceHandler;
 use App\Infrastructure\Bot\Telegram\Handler\Category\CategoriesListHandler;
@@ -18,7 +19,6 @@ use App\Infrastructure\Bot\Telegram\Handler\Settings\SettingsHandler;
 use App\Infrastructure\Bot\Telegram\Handler\StartHandler;
 use App\Infrastructure\Bot\Telegram\Handler\Transaction\TransactionCallback;
 use App\Infrastructure\Bot\Telegram\Handler\Transaction\TransactionsListHandler;
-use App\Domain\Enum\Locale;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use SergiX44\Nutgram\Conversations\Conversation;
@@ -76,6 +76,17 @@ final class TelegramBot
         $this->syncDescription();
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    public function run(RunningMode $runningMode): void
+    {
+        $this->configure();
+        $this->bot->setRunningMode($runningMode);
+        $this->bot->run();
+    }
+
     private function syncDescription(): void
     {
         foreach ([Locale::En, Locale::Ru] as $locale) {
@@ -88,17 +99,6 @@ final class TelegramBot
         $this->bot->setMyDescription(
             description: $this->translator->trans('bot.description', locale: Locale::default()),
         );
-    }
-
-    /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     */
-    public function run(RunningMode $runningMode): void
-    {
-        $this->configure();
-        $this->bot->setRunningMode($runningMode);
-        $this->bot->run();
     }
 
     /**

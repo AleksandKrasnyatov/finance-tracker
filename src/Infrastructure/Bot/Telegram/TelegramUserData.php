@@ -10,7 +10,6 @@ use App\Domain\ValueObject\TelegramId;
 use DomainException;
 use Psr\SimpleCache\InvalidArgumentException;
 use SergiX44\Nutgram\Nutgram;
-use UnexpectedValueException;
 
 final readonly class TelegramUserData
 {
@@ -43,7 +42,7 @@ final readonly class TelegramUserData
      */
     public function clear(Nutgram $bot): void
     {
-        $telegramId = $bot->userId();
+        $telegramId = TelegramUserGuard::telegramId($bot);
 
         $bot->deleteUserData(self::KEY_USER_ID, $telegramId);
         $bot->deleteUserData(self::KEY_ACCOUNT_ID, $telegramId);
@@ -81,10 +80,7 @@ final readonly class TelegramUserData
      */
     public function refresh(Nutgram $bot): array
     {
-        $telegramId = $bot->userId();
-        if ($telegramId === null) {
-            throw new UnexpectedValueException('Telegram user is missing from the update.');
-        }
+        $telegramId = TelegramUserGuard::telegramId($bot);
 
         $user = $this->users->getByTelegramId(new TelegramId($telegramId));
         $account = $user->getAccounts()[0] ?? throw new DomainException('User does not have any account.');

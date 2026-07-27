@@ -9,9 +9,9 @@ use App\Application\UseCase\Auth\Command\ResetByTelegramCommand;
 use App\Application\UseCase\Auth\Command\ResetByTelegramHandler;
 use App\Domain\Enum\Locale;
 use App\Infrastructure\Bot\Telegram\TelegramUserData;
+use App\Infrastructure\Bot\Telegram\TelegramUserGuard;
 use Psr\SimpleCache\InvalidArgumentException;
 use SergiX44\Nutgram\Nutgram;
-use UnexpectedValueException;
 
 final readonly class ResetHandler
 {
@@ -27,11 +27,7 @@ final readonly class ResetHandler
      */
     public function __invoke(Nutgram $bot): void
     {
-        $telegramId = $bot->userId();
-        if ($telegramId === null) {
-            throw new UnexpectedValueException('Telegram user is missing from the update.');
-        }
-
+        $telegramId = TelegramUserGuard::telegramId($bot);
         $locale = Locale::fromLanguageCode($bot->user()?->language_code);
 
         $this->reset->handle(new ResetByTelegramCommand($telegramId));

@@ -3,4 +3,6 @@
 
 
 Рефакторинг:
-1. ensureUser в скрине
+1. TelegramUserGuard
+2. TransactionViewHandler
+3. AddTransactionHandler
